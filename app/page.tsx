@@ -4,84 +4,90 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 
 export default function Home() {
   const stats = [
-    { number: '10K+', label: 'Meals Served', icon: '🍽️' },
-    { number: '250+', label: 'Active Partners', icon: '🤝' },
-    { number: '5K+', label: 'People Helped', icon: '❤️' },
-    { number: '50+', label: 'Communities', icon: '🏘️' },
+    { number: '10K+', label: 'Meals served' },
+    { number: '250+', label: 'Active partners' },
+    { number: '5K+', label: 'People helped' },
+    { number: '50+', label: 'Communities' },
   ];
 
   const features = [
     {
-      icon: '👥',
-      title: 'For Beneficiaries',
+      title: 'For beneficiaries',
       description: 'Request food support discreetly, receive vouchers, and access meals with dignity.',
       link: '/auth/signup',
     },
     {
-      icon: '🍽️',
-      title: 'For Food Partners',
+      title: 'For food partners',
       description: 'List surplus meals, accept vouchers, and make a real impact in your community.',
       link: '/partners/join',
     },
     {
-      icon: '💝',
-      title: 'For Donors',
+      title: 'For donors',
       description: 'Fund meal vouchers, track your impact, and help end hunger transparently.',
       link: '/donate',
     },
   ];
 
+  const steps = [
+    { step: '1', title: 'Request help', desc: 'Beneficiaries submit a support request.' },
+    { step: '2', title: 'Fund vouchers', desc: 'Donors sponsor meals directly.' },
+    { step: '3', title: 'Issue access', desc: 'Approved requests receive vouchers.' },
+    { step: '4', title: 'Redeem meals', desc: 'Partners serve meals and confirm redemption.' },
+  ];
+
   return (
-    <div className="bg-gradient-to-b from-white to-[var(--muted)]">
-      {/* Hero Section */}
+    <div className="page-shell">
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 to-[var(--accent)]/5"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center space-x-2 bg-[var(--primary)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
-              <span>🎯</span>
-              <span>Supporting SDG 2: Zero Hunger</span>
+        <div className="absolute -top-24 right-0 h-64 w-64 rounded-full bg-[var(--secondary)]/20 blur-3xl" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-3 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
+                SDG 2: Zero Hunger
+              </div>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl text-[var(--foreground)]">
+                Reducing hunger with calm, accountable technology.
+              </h1>
+              <p className="text-lg text-[var(--muted-foreground)] max-w-xl">
+                EcoEats connects people who need food, food providers, and donors through a transparent platform. Every meal is traceable, every person is respected.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/auth/signup">
+                  <Button size="lg">Get Started</Button>
+                </Link>
+                <Link href="/how-it-works">
+                  <Button size="lg" variant="outline">Learn More</Button>
+                </Link>
+              </div>
             </div>
-            
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[var(--foreground)] mb-6 leading-tight">
-              Reducing Hunger Through
-              <span className="block text-[var(--primary)] mt-2">
-                Technology & Community
-              </span>
-            </h1>
-            
-            <p className="text-lg sm:text-xl text-[var(--muted-foreground)] mb-10 max-w-2xl mx-auto">
-              EcoEats connects people who need food, food providers, and donors through a transparent, 
-              accountable platform. Every meal matters, every person counts.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/signup">
-                <Button size="lg" className="w-full sm:w-auto">
-                  Get Started
-                </Button>
-              </Link>
-              <Link href="/how-it-works">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                  Learn More
-                </Button>
-              </Link>
-            </div>
+
+            <Card className="bg-[var(--surface)]/90 backdrop-blur" hover>
+              <CardHeader className="mb-6">
+                <CardTitle className="text-2xl">Impact snapshot</CardTitle>
+                <p className="text-sm text-[var(--muted-foreground)]">
+                  Verified activity across the EcoEats network.
+                </p>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 gap-4">
+                {stats.map((stat) => (
+                  <div key={stat.label} className="rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] px-4 py-4">
+                    <div className="text-2xl font-semibold text-[var(--foreground)]">{stat.number}</div>
+                    <div className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)] mt-2">{stat.label}</div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="bg-white dark:bg-slate-900 py-16 shadow-inner">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-4xl mb-2">{stat.icon}</div>
-                <div className="text-3xl sm:text-4xl font-bold text-[var(--primary)] mb-1">
-                  {stat.number}
-                </div>
-                <div className="text-sm sm:text-base text-[var(--muted-foreground)]">
+      <section className="section-muted">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-2xl font-semibold text-[var(--foreground)]">{stat.number}</div>
+                <div className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)] mt-2">
                   {stat.label}
                 </div>
               </div>
@@ -90,23 +96,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] mb-4">
-              How You Can Make a Difference
-            </h2>
-            <p className="text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto">
-              Whether you need help, can provide food, or want to donate, EcoEats makes it simple and transparent.
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">How you can help</p>
+            <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">Choose your path to impact.</h2>
+            <p className="text-[var(--muted-foreground)] mt-4">
+              EcoEats supports beneficiaries, partners, and donors with a clear, trackable flow that prioritizes dignity.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} hover className="text-center">
+          <div className="grid md:grid-cols-3 gap-6 mt-10">
+            {features.map((feature) => (
+              <Card key={feature.title} hover>
                 <CardHeader>
-                  <div className="text-5xl mb-4">{feature.icon}</div>
                   <CardTitle>{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -125,60 +128,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="bg-white dark:bg-slate-900 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] mb-4">
-              Simple, Transparent Process
-            </h2>
-            <p className="text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto">
-              From donation to redemption, every step is tracked and verified.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              { step: '1', title: 'Request Help', desc: 'Beneficiaries submit support requests' },
-              { step: '2', title: 'Donors Fund', desc: 'Donors fund meal vouchers' },
-              { step: '3', title: 'Vouchers Issued', desc: 'Approved requests receive vouchers' },
-              { step: '4', title: 'Meals Served', desc: 'Partners redeem vouchers for meals' },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">
-                  {item.step}
+      <section className="section-muted">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
+            <div className="max-w-xl">
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Simple flow</p>
+              <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">A transparent journey from donation to meal.</h2>
+              <p className="text-[var(--muted-foreground)] mt-4">
+                Every step is verified so supporters can trust their contributions and beneficiaries feel respected.
+              </p>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4 w-full lg:max-w-xl">
+              {steps.map((step) => (
+                <div key={step.step} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Step {step.step}</div>
+                  <div className="text-lg font-semibold text-[var(--foreground)] mt-2">{step.title}</div>
+                  <p className="text-sm text-[var(--muted-foreground)] mt-2">{step.desc}</p>
                 </div>
-                <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-[var(--muted-foreground)]">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20">
+      <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Card className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] text-white border-none shadow-2xl">
+          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
             <CardContent className="py-12">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                Join the Fight Against Hunger
-              </h2>
-              <p className="text-lg mb-8 opacity-90">
-                Together, we can ensure no one goes hungry. Start making a difference today.
+              <h2 className="text-3xl sm:text-4xl mb-4">Join the fight against hunger.</h2>
+              <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto">
+                Every donation, partnership, and request helps build stronger, more nourished communities.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
                 <Link href="/auth/signup">
                   <Button size="lg" variant="secondary" className="w-full sm:w-auto">
                     Sign Up Now
                   </Button>
                 </Link>
                 <Link href="/donate">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white/10 text-white border-white hover:bg-white hover:text-[var(--primary)]">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white text-[var(--primary)] border-white hover:bg-white/90">
                     Donate Today
                   </Button>
                 </Link>

@@ -13,28 +13,24 @@ export default function Signup() {
     {
       id: 'beneficiary',
       title: 'Beneficiary',
-      icon: '👥',
       description: 'I need food support',
       details: 'Request help, receive vouchers, access meals with dignity',
     },
     {
       id: 'donor',
       title: 'Donor',
-      icon: '💝',
       description: 'I want to donate',
       details: 'Fund meal vouchers and track your impact',
     },
     {
       id: 'partner',
       title: 'Food Partner',
-      icon: '🍽️',
       description: 'I can provide food',
       details: 'List meals, accept vouchers, help your community',
     },
     {
       id: 'admin',
       title: 'Admin',
-      icon: '🛡️',
       description: 'I manage a program',
       details: 'Verify users, approve requests, track impact',
     },
@@ -45,228 +41,200 @@ export default function Signup() {
     setStep('form');
   };
 
+  const selectedRoleLabel = roles.find((role) => role.id === selectedRole)?.title;
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[var(--muted)] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center space-x-2 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-lg flex items-center justify-center shadow-md">
-              <span className="text-white text-2xl font-bold">🌱</span>
-            </div>
-            <span className="text-2xl font-bold text-[var(--foreground)]">
-              EcoEats
-            </span>
-          </Link>
-          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">
-            {step === 'role' ? 'Choose Your Role' : 'Create Your Account'}
-          </h1>
-          <p className="text-[var(--muted-foreground)]">
-            {step === 'role' 
-              ? 'Select the option that best describes you'
-              : `Signing up as ${roles.find(r => r.id === selectedRole)?.title}`
-            }
-          </p>
-        </div>
-
-        {/* Role Selection */}
-        {step === 'role' && (
-          <div className="grid md:grid-cols-2 gap-6">
-            {roles.map((role) => (
-              <Card
-                key={role.id}
-                hover
-                className="cursor-pointer bg-white transition-all duration-300 hover:scale-105"
-                onClick={() => handleRoleSelect(role.id)}
-              >
-                <CardHeader>
-                  <div className="text-5xl mb-4 text-center">{role.icon}</div>
-                  <CardTitle className="text-xl text-center mb-2">
-                    {role.title}
-                  </CardTitle>
-                  <p className="text-[var(--primary)] font-semibold text-center mb-3">
-                    {role.description}
-                  </p>
-                  <p className="text-[var(--muted-foreground)] text-sm text-center">
-                    {role.details}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="outline" size="sm" className="w-full">
-                    Select →
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+    <div className="page-shell">
+      <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <Link href="/" className="inline-flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-sm font-semibold shadow-sm">
+                EE
+              </div>
+              <div className="text-left">
+                <p className="text-xl font-semibold text-[var(--foreground)]">EcoEats</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Get started</p>
+              </div>
+            </Link>
+            <h1 className="text-3xl sm:text-4xl text-[var(--foreground)] mb-2">
+              {step === 'role' ? 'Choose your role' : 'Create your account'}
+            </h1>
+            <p className="text-sm text-[var(--muted-foreground)]">
+              {step === 'role'
+                ? 'Select the option that best describes you.'
+                : `Signing up as ${selectedRoleLabel}`}
+            </p>
           </div>
-        )}
 
-        {/* Registration Form */}
-        {step === 'form' && (
-          <Card className="bg-white shadow-xl max-w-2xl mx-auto">
-            <CardContent className="pt-6">
-              {/* Back Button */}
-              <button
-                onClick={() => setStep('role')}
-                className="flex items-center text-[var(--primary)] hover:text-[var(--primary-dark)] mb-6 transition-colors"
-              >
-                <span className="mr-2">←</span>
-                Change role
-              </button>
+          {step === 'role' && (
+            <div className="grid md:grid-cols-2 gap-6">
+              {roles.map((role) => (
+                <Card
+                  key={role.id}
+                  hover
+                  className="cursor-pointer transition-all"
+                  onClick={() => handleRoleSelect(role.id)}
+                >
+                  <CardHeader>
+                    <CardTitle className="text-xl text-center mb-2">{role.title}</CardTitle>
+                    <p className="text-[var(--primary)] font-semibold text-center mb-2 text-sm">
+                      {role.description}
+                    </p>
+                    <p className="text-[var(--muted-foreground)] text-sm text-center">
+                      {role.details}
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <Button variant="outline" size="sm" className="w-full">
+                      Select role
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
 
-              <form className="space-y-5">
-                {/* Full Name */}
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-semibold mb-2 text-[var(--foreground)]"
-                  >
-                    Full Name
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    required
-                    className="w-full px-4 py-3 border-2 border-[var(--border)] rounded-lg focus:border-[var(--primary)] focus:outline-none transition-colors"
-                    placeholder="John Doe"
-                  />
-                </div>
+          {step === 'form' && (
+            <Card className="shadow-[var(--shadow)] max-w-2xl mx-auto">
+              <CardContent className="pt-6">
+                <button
+                  onClick={() => setStep('role')}
+                  className="flex items-center text-sm font-semibold text-[var(--primary)] hover:text-[var(--primary-dark)] mb-6"
+                >
+                  <span className="mr-2">←</span>
+                  Change role
+                </button>
 
-                {/* Email */}
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-semibold mb-2 text-[var(--foreground)]"
-                  >
-                    Email Address
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    className="w-full px-4 py-3 border-2 border-[var(--border)] rounded-lg focus:border-[var(--primary)] focus:outline-none transition-colors"
-                    placeholder="you@example.com"
-                  />
-                </div>
-
-                {/* Phone (Optional) */}
-                <div>
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-semibold mb-2 text-[var(--foreground)]"
-                  >
-                    Phone Number <span className="text-[var(--muted-foreground)] font-normal">(Optional)</span>
-                  </label>
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    className="w-full px-4 py-3 border-2 border-[var(--border)] rounded-lg focus:border-[var(--primary)] focus:outline-none transition-colors"
-                    placeholder="+234 XXX XXX XXXX"
-                  />
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-semibold mb-2 text-[var(--foreground)]"
-                  >
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    className="w-full px-4 py-3 border-2 border-[var(--border)] rounded-lg focus:border-[var(--primary)] focus:outline-none transition-colors"
-                    placeholder="••••••••"
-                  />
-                  <p className="text-xs text-[var(--muted-foreground)] mt-1">
-                    Must be at least 8 characters
-                  </p>
-                </div>
-
-                {/* Confirm Password */}
-                <div>
-                  <label
-                    htmlFor="confirm-password"
-                    className="block text-sm font-semibold mb-2 text-[var(--foreground)]"
-                  >
-                    Confirm Password
-                  </label>
-                  <input
-                    id="confirm-password"
-                    name="confirm-password"
-                    type="password"
-                    required
-                    className="w-full px-4 py-3 border-2 border-[var(--border)] rounded-lg focus:border-[var(--primary)] focus:outline-none transition-colors"
-                    placeholder="••••••••"
-                  />
-                </div>
-
-                {/* Terms & Conditions */}
-                <div className="flex items-start">
-                  <input
-                    id="terms"
-                    name="terms"
-                    type="checkbox"
-                    required
-                    className="h-4 w-4 mt-1 text-[var(--primary)] focus:ring-[var(--primary)] border-[var(--border)] rounded"
-                  />
-                  <label
-                    htmlFor="terms"
-                    className="ml-3 block text-sm text-[var(--muted-foreground)]"
-                  >
-                    I agree to the{' '}
-                    <a href="#" className="text-[var(--primary)] hover:text-[var(--primary-dark)]">
-                      Terms of Service
-                    </a>{' '}
-                    and{' '}
-                    <a href="#" className="text-[var(--primary)] hover:text-[var(--primary-dark)]">
-                      Privacy Policy
-                    </a>
-                  </label>
-                </div>
-
-                {/* Submit Button */}
-                <Button type="submit" size="lg" className="w-full">
-                  Create Account
-                </Button>
-              </form>
-
-              {/* Divider */}
-              <div className="mt-6">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-[var(--border)]"></div>
+                <form className="space-y-5">
+                  <div>
+                    <label
+                      htmlFor="name"
+                      className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] mb-2"
+                    >
+                      Full Name
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm focus:border-[var(--primary)] focus:outline-none"
+                      placeholder="John Doe"
+                    />
                   </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-[var(--muted-foreground)]">
-                      Already have an account?
+
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] mb-2"
+                    >
+                      Email Address
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm focus:border-[var(--primary)] focus:outline-none"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="phone"
+                      className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] mb-2"
+                    >
+                      Phone Number (Optional)
+                    </label>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm focus:border-[var(--primary)] focus:outline-none"
+                      placeholder="+234 XXX XXX XXXX"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="password"
+                      className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] mb-2"
+                    >
+                      Password
+                    </label>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      required
+                      className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm focus:border-[var(--primary)] focus:outline-none"
+                      placeholder="••••••••"
+                    />
+                    <p className="text-xs text-[var(--muted-foreground)] mt-2">
+                      Must be at least 8 characters.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="confirm-password"
+                      className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] mb-2"
+                    >
+                      Confirm Password
+                    </label>
+                    <input
+                      id="confirm-password"
+                      name="confirm-password"
+                      type="password"
+                      required
+                      className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm focus:border-[var(--primary)] focus:outline-none"
+                      placeholder="••••••••"
+                    />
+                  </div>
+
+                  <label className="flex items-start gap-3 text-sm text-[var(--muted-foreground)]">
+                    <input
+                      id="terms"
+                      name="terms"
+                      type="checkbox"
+                      required
+                      className="mt-1 h-4 w-4 rounded border-[var(--border)] text-[var(--primary)] focus:ring-[var(--primary)]"
+                    />
+                    <span>
+                      I agree to the{' '}
+                      <a href="#" className="text-[var(--primary)] hover:text-[var(--primary-dark)]">
+                        Terms of Service
+                      </a>{' '}
+                      and{' '}
+                      <a href="#" className="text-[var(--primary)] hover:text-[var(--primary-dark)]">
+                        Privacy Policy
+                      </a>
                     </span>
-                  </div>
-                </div>
-              </div>
+                  </label>
 
-              {/* Login Link */}
-              <div className="mt-6 text-center">
-                <Link href="/auth/login">
-                  <Button variant="outline" size="lg" className="w-full">
-                    Sign In Instead
+                  <Button type="submit" size="lg" className="w-full">
+                    Create Account
                   </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                </form>
 
-        {/* Demo Note */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-[var(--muted-foreground)]">
-            🔒 This is a Phase A prototype. Full authentication coming in Phase B.
+                <div className="mt-6 text-center text-sm text-[var(--muted-foreground)]">
+                  Already have an account?
+                </div>
+                <div className="mt-4 text-center">
+                  <Link href="/auth/login">
+                    <Button variant="outline" size="lg" className="w-full">
+                      Sign In Instead
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <p className="mt-8 text-center text-xs text-[var(--muted-foreground)]">
+            This is a Phase A prototype. Full authentication arrives in Phase B.
           </p>
         </div>
       </div>

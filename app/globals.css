@@ -1,16 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --primary: #10b981;
-  --primary-dark: #059669;
-  --secondary: #f59e0b;
-  --accent: #3b82f6;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --border: #e2e8f0;
-  --destructive: #ef4444;
+  --background: #f7f4ef;
+  --foreground: #1f2a24;
+  --primary: #2f6b4f;
+  --primary-dark: #234e3a;
+  --secondary: #d6862c;
+  --accent: #2f7f6d;
+  --muted: #eef1ea;
+  --muted-foreground: #5b6b62;
+  --border: #d7ded4;
+  --destructive: #d14b3a;
+  --surface: #ffffff;
+  --surface-alt: #f3f1ec;
+  --ring: #2f6b4f;
+  --shadow: 0 24px 50px rgba(31, 42, 36, 0.12);
+  --shadow-soft: 0 12px 30px rgba(31, 42, 36, 0.08);
+  --font-sans: "Space Grotesk", "Helvetica Neue", Helvetica, sans-serif;
+  --font-display: "Fraunces", "Times New Roman", serif;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
 }
 
 @theme inline {
@@ -23,21 +35,27 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
   --color-destructive: var(--destructive);
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --font-sans: var(--font-sans);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
-    --border: #334155;
+    --background: #111815;
+    --foreground: #f4f3ed;
+    --muted: #1b251f;
+    --muted-foreground: #a6b2aa;
+    --border: #2a352e;
+    --surface: #16201a;
+    --surface-alt: #111815;
+    --shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+    --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.25);
   }
 }
 
@@ -48,7 +66,10 @@
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(47, 107, 79, 0.18), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, rgba(214, 134, 44, 0.16), transparent 55%),
+    var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   line-height: 1.6;
@@ -56,9 +77,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
 a {
@@ -69,3 +97,40 @@ a {
 button {
   font-family: inherit;
 }
+
+.page-shell {
+  min-height: 100%;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 45%),
+    radial-gradient(900px 600px at 15% 20%, rgba(47, 127, 109, 0.12), transparent 60%);
+}
+
+.section-muted {
+  background: rgba(255, 255, 255, 0.7);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.reveal {
+  animation: rise 700ms ease both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
+}
+
+

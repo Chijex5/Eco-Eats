@@ -19,146 +19,138 @@ export default function Donate() {
   const quickAmounts = [1000, 2500, 5000, 10000, 25000, 50000];
 
   const impact = [
+    { stat: '10,234', label: 'Meals funded' },
+    { stat: '5,127', label: 'People helped' },
+    { stat: '248', label: 'Active donors' },
+  ];
+
+  const trustPoints = [
     {
-      icon: '🍽️',
-      stat: '10,234',
-      label: 'Meals Funded',
+      title: 'Transparent reporting',
+      description: 'Track where every voucher is issued and redeemed.',
     },
     {
-      icon: '❤️',
-      stat: '5,127',
-      label: 'People Helped',
+      title: 'Secure processing',
+      description: 'Payments are handled by vetted providers and partners are verified.',
     },
     {
-      icon: '🤝',
-      stat: '248',
-      label: 'Active Donors',
+      title: 'Fast distribution',
+      description: 'Funds convert to vouchers quickly so meals reach people sooner.',
+    },
+    {
+      title: 'Clear impact',
+      description: 'Receive summaries of meals funded and communities reached.',
     },
   ];
 
-  const whyDonate = [
-    {
-      icon: '💯',
-      title: '100% Transparent',
-      description: 'Track exactly where your donation goes and see real-time impact.',
-    },
-    {
-      icon: '🔒',
-      title: 'Secure & Verified',
-      description: 'All donations are processed securely and beneficiaries are verified.',
-    },
-    {
-      icon: '📊',
-      title: 'See Your Impact',
-      description: 'Get detailed reports on how many meals your donation provided.',
-    },
-    {
-      icon: '⚡',
-      title: 'Immediate Help',
-      description: 'Your donation is converted to vouchers and distributed quickly.',
-    },
-  ];
+  const selectedDisplay = selectedAmount || parseInt(customAmount) || 0;
 
   return (
-    <div className="bg-gradient-to-b from-white to-[var(--muted)] py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-[var(--primary)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-6">
-            <span>💝</span>
-            <span>Make a Difference</span>
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-[var(--foreground)] mb-6">
-            Help End Hunger Today
-          </h1>
-          <p className="text-xl text-[var(--muted-foreground)] max-w-3xl mx-auto">
-            Your donation provides meal vouchers to people in need. Every contribution matters.
+    <div className="page-shell">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="max-w-3xl space-y-6">
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Donate</p>
+          <h1 className="text-4xl sm:text-5xl text-[var(--foreground)]">Help end hunger today.</h1>
+          <p className="text-lg text-[var(--muted-foreground)]">
+            Every contribution funds meal vouchers for people who need immediate support.
           </p>
+          <div className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+            <span className="rounded-full border border-[var(--border)] px-3 py-1">Verified partners</span>
+            <span className="rounded-full border border-[var(--border)] px-3 py-1">Real-time updates</span>
+            <span className="rounded-full border border-[var(--border)] px-3 py-1">Direct impact</span>
+          </div>
         </div>
+      </section>
 
-        {/* Impact Stats */}
-        <section className="mb-16">
-          <div className="grid md:grid-cols-3 gap-8">
-            {impact.map((item, index) => (
-              <Card key={index} className="text-center bg-white">
-                <CardContent className="py-8">
-                  <div className="text-5xl mb-3">{item.icon}</div>
-                  <div className="text-4xl font-bold text-[var(--primary)] mb-2">
-                    {item.stat}
-                  </div>
-                  <div className="text-[var(--muted-foreground)]">{item.label}</div>
-                </CardContent>
-              </Card>
+      <section className="section-muted">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid md:grid-cols-3 gap-6">
+            {impact.map((item) => (
+              <div
+                key={item.label}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-6 py-6"
+              >
+                <div className="text-3xl font-semibold text-[var(--foreground)]">{item.stat}</div>
+                <div className="mt-2 text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+                  {item.label}
+                </div>
+              </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Donation Form */}
-        <section className="mb-16">
-          <Card className="max-w-2xl mx-auto bg-white shadow-xl">
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[1.2fr_0.8fr] gap-10 items-start">
+          <Card className="shadow-[var(--shadow)]">
             <CardHeader>
-              <CardTitle className="text-2xl text-center">Choose Your Donation</CardTitle>
+              <CardTitle className="text-2xl">Choose your donation</CardTitle>
+              <p className="text-sm text-[var(--muted-foreground)]">
+                Pick a meal package or donate a specific amount.
+              </p>
             </CardHeader>
             <CardContent>
-              {/* Donation Type Selector */}
-              <div className="flex gap-4 mb-8">
+              <div className="flex flex-col sm:flex-row gap-3 mb-8">
                 <button
                   onClick={() => setDonationType('meals')}
-                  className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all ${
+                  className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-all border ${
                     donationType === 'meals'
-                      ? 'bg-[var(--primary)] text-white shadow-md'
-                      : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--border)]'
+                      ? 'bg-[var(--primary)] text-white border-[var(--primary)] shadow-sm'
+                      : 'bg-[var(--surface)] text-[var(--muted-foreground)] border-[var(--border)]'
                   }`}
                 >
-                  🍽️ Sponsor Meals
+                  Sponsor meals
                 </button>
                 <button
                   onClick={() => setDonationType('amount')}
-                  className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all ${
+                  className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-all border ${
                     donationType === 'amount'
-                      ? 'bg-[var(--primary)] text-white shadow-md'
-                      : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--border)]'
+                      ? 'bg-[var(--primary)] text-white border-[var(--primary)] shadow-sm'
+                      : 'bg-[var(--surface)] text-[var(--muted-foreground)] border-[var(--border)]'
                   }`}
                 >
-                  💰 Donate Amount
+                  Donate amount
                 </button>
               </div>
 
-              {/* Meal Packages */}
               {donationType === 'meals' && (
                 <div className="space-y-4">
-                  {mealPackages.map((pkg, index) => (
+                  {mealPackages.map((pkg) => (
                     <button
-                      key={index}
-                      onClick={() => setSelectedAmount(pkg.amount)}
-                      className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                      key={pkg.amount}
+                      onClick={() => {
+                        setSelectedAmount(pkg.amount);
+                        setCustomAmount('');
+                      }}
+                      className={`w-full rounded-2xl border p-4 text-left transition-all ${
                         selectedAmount === pkg.amount
                           ? 'border-[var(--primary)] bg-[var(--primary)]/5'
-                          : 'border-[var(--border)] hover:border-[var(--primary)]/50'
-                      } ${pkg.popular ? 'relative' : ''}`}
+                          : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--primary)]/50'
+                      }`}
                     >
-                      {pkg.popular && (
-                        <div className="absolute -top-3 right-4 bg-[var(--secondary)] text-white text-xs px-3 py-1 rounded-full font-bold">
-                          POPULAR
-                        </div>
-                      )}
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <div>
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
+                          <div className="text-lg font-semibold text-[var(--foreground)]">
                             {pkg.meals} Meals
                           </div>
                           <div className="text-sm text-[var(--muted-foreground)]">
                             ₦{pkg.amount.toLocaleString()} (₦{(pkg.amount / pkg.meals).toFixed(0)}/meal)
                           </div>
                         </div>
-                        <div className="text-3xl">🍽️</div>
+                        <div className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
+                          Select
+                        </div>
                       </div>
+                      {pkg.popular && (
+                        <div className="mt-3 inline-flex items-center rounded-full bg-[var(--secondary)]/20 px-3 py-1 text-xs font-semibold text-[var(--foreground)]">
+                          Popular choice
+                        </div>
+                      )}
                     </button>
                   ))}
                 </div>
               )}
 
-              {/* Amount Selection */}
               {donationType === 'amount' && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-3">
@@ -169,10 +161,10 @@ export default function Donate() {
                           setSelectedAmount(amount);
                           setCustomAmount('');
                         }}
-                        className={`p-4 rounded-lg border-2 font-bold transition-all ${
+                        className={`rounded-2xl border px-3 py-3 text-sm font-semibold transition-all ${
                           selectedAmount === amount
                             ? 'border-[var(--primary)] bg-[var(--primary)]/5'
-                            : 'border-[var(--border)] hover:border-[var(--primary)]/50'
+                            : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--primary)]/50'
                         }`}
                       >
                         ₦{(amount / 1000).toFixed(0)}k
@@ -180,8 +172,8 @@ export default function Donate() {
                     ))}
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-[var(--foreground)]">
-                      Or enter custom amount:
+                    <label className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] mb-2">
+                      Or enter a custom amount
                     </label>
                     <input
                       type="number"
@@ -191,79 +183,70 @@ export default function Donate() {
                         setSelectedAmount(0);
                       }}
                       placeholder="Enter amount in Naira"
-                      className="w-full px-4 py-3 border-2 border-[var(--border)] rounded-lg focus:border-[var(--primary)] focus:outline-none transition-colors"
+                      className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm focus:border-[var(--primary)] focus:outline-none"
                     />
                   </div>
                 </div>
               )}
 
-              {/* Donate Button */}
-              <div className="mt-8">
-                <Button
-                  size="lg"
-                  className="w-full"
-                  disabled={!selectedAmount && !customAmount}
-                >
+              <div className="mt-8 space-y-3">
+                <Button size="lg" className="w-full" disabled={!selectedAmount && !customAmount}>
                   {selectedAmount || customAmount
-                    ? `Donate ₦${(selectedAmount || parseInt(customAmount) || 0).toLocaleString()}`
+                    ? `Donate ₦${selectedDisplay.toLocaleString()}`
                     : 'Select an amount to continue'}
                 </Button>
-                <p className="text-center text-sm text-[var(--muted-foreground)] mt-3">
-                  🔒 Secure payment powered by trusted payment providers
+                <p className="text-center text-xs text-[var(--muted-foreground)]">
+                  Secure payment powered by trusted providers.
                 </p>
               </div>
             </CardContent>
           </Card>
-        </section>
 
-        {/* Why Donate */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-[var(--foreground)] mb-8 text-center">
-            Why Donate Through EcoEats?
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {whyDonate.map((reason, index) => (
-              <Card key={index} hover>
-                <CardHeader>
-                  <div className="text-4xl mb-3">{reason.icon}</div>
-                  <CardTitle className="text-lg mb-2">{reason.title}</CardTitle>
-                  <p className="text-[var(--muted-foreground)] text-sm">
-                    {reason.description}
-                  </p>
-                </CardHeader>
-              </Card>
-            ))}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl">Your impact, visible</CardTitle>
+                <p className="text-sm text-[var(--muted-foreground)]">
+                  Clear reporting so you can see the meals you funded.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm text-[var(--muted-foreground)]">
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                  <span>Donation example</span>
+                  <span className="font-semibold text-[var(--foreground)]">₦5,000</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                  <span>Meals provided</span>
+                  <span className="font-semibold text-[var(--foreground)]">10 meals</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Community partners</span>
+                  <span className="font-semibold text-[var(--foreground)]">Verified vendors</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-[var(--surface-alt)] border-none">
+              <CardHeader>
+                <CardTitle className="text-lg">Why donate through EcoEats?</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {trustPoints.map((reason, index) => (
+                  <div key={reason.title} className="flex gap-4">
+                    <div className="text-sm font-semibold text-[var(--primary)]">
+                      {String(index + 1).padStart(2, '0')}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-[var(--foreground)]">{reason.title}</p>
+                      <p className="text-sm text-[var(--muted-foreground)]">{reason.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           </div>
-        </section>
-
-        {/* Donation Impact Example */}
-        <section>
-          <Card className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] text-white border-none shadow-2xl">
-            <CardContent className="py-12">
-              <h2 className="text-3xl font-bold mb-6 text-center">
-                Your Impact Breakdown
-              </h2>
-              <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                <div className="text-center">
-                  <div className="text-5xl mb-3">₦5,000</div>
-                  <div className="text-lg mb-2 font-semibold">Your Donation</div>
-                  <div className="text-sm opacity-90">Provides 10 meals</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-5xl mb-3">→</div>
-                  <div className="text-lg mb-2 font-semibold">Converted to</div>
-                  <div className="text-sm opacity-90">Digital vouchers</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-5xl mb-3">🍽️</div>
-                  <div className="text-lg mb-2 font-semibold">Feeds</div>
-                  <div className="text-sm opacity-90">10 people in need</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

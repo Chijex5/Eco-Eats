@@ -13,19 +13,19 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variants = {
-    primary: 'bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] focus:ring-[var(--primary)] shadow-sm hover:shadow-md',
-    secondary: 'bg-[var(--secondary)] text-white hover:opacity-90 focus:ring-[var(--secondary)] shadow-sm hover:shadow-md',
-    outline: 'border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white focus:ring-[var(--primary)]',
-    ghost: 'text-[var(--foreground)] hover:bg-[var(--muted)] focus:ring-[var(--muted)]',
+    primary: 'bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] shadow-sm hover:shadow-md',
+    secondary: 'bg-[var(--secondary)] text-[var(--foreground)] hover:brightness-95 shadow-sm hover:shadow-md',
+    outline: 'border border-[var(--foreground)]/20 text-[var(--foreground)] hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5',
+    ghost: 'text-[var(--foreground)] hover:bg-[var(--muted)]',
   };
   
   const sizes = {
     sm: 'px-4 py-2 text-sm',
-    md: 'px-6 py-3 text-base',
-    lg: 'px-8 py-4 text-lg',
+    md: 'px-5 py-2.5 text-sm sm:text-base',
+    lg: 'px-6 py-3 text-base sm:text-lg',
   };
   
   return (

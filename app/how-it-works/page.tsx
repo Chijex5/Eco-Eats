@@ -1,16 +1,16 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Link from 'next/link';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 
 export default function HowItWorks() {
   const programs = [
     {
       title: 'Meal Voucher Program',
-      icon: '🎫',
+      summary: 'Donations become vouchers that can be redeemed at verified partners.',
       steps: [
         'Donors fund meal vouchers through the platform',
         'Beneficiaries submit requests for food support',
-        'Admin reviews and approves eligible requests',
+        'Admins review and approve eligible requests',
         'Approved beneficiaries receive digital vouchers',
         'Vouchers are redeemed at partner food locations',
         'Partners confirm redemption via QR code or unique code',
@@ -25,7 +25,7 @@ export default function HowItWorks() {
     },
     {
       title: 'Surplus Food Rescue',
-      icon: '♻️',
+      summary: 'Surplus meals are listed and claimed by people who need them most.',
       steps: [
         'Food partners list available surplus food packs',
         'Beneficiaries can browse and claim available packs',
@@ -46,7 +46,6 @@ export default function HowItWorks() {
   const roles = [
     {
       role: 'Beneficiaries',
-      icon: '👥',
       description: 'People needing food support',
       actions: [
         'Sign up with minimal friction',
@@ -58,7 +57,6 @@ export default function HowItWorks() {
     },
     {
       role: 'Food Partners',
-      icon: '🍽️',
       description: 'Restaurants, cafeterias, community kitchens',
       actions: [
         'Register and get verified',
@@ -70,7 +68,6 @@ export default function HowItWorks() {
     },
     {
       role: 'Donors',
-      icon: '💝',
       description: 'Individuals, organizations, CSR programs',
       actions: [
         'Fund meal vouchers or food packs',
@@ -82,7 +79,6 @@ export default function HowItWorks() {
     },
     {
       role: 'Admins',
-      icon: '🛡️',
       description: 'Schools, NGOs, community organizations',
       actions: [
         'Verify and approve partners',
@@ -94,56 +90,79 @@ export default function HowItWorks() {
     },
   ];
 
+  const flow = [
+    {
+      title: 'Request',
+      description: 'Beneficiaries submit a request and verification begins.',
+    },
+    {
+      title: 'Fund',
+      description: 'Donors contribute to voucher pools in real time.',
+    },
+    {
+      title: 'Approve',
+      description: 'Admins confirm eligibility and issue vouchers.',
+    },
+    {
+      title: 'Issue',
+      description: 'Digital vouchers are delivered to beneficiaries.',
+    },
+    {
+      title: 'Redeem',
+      description: 'Partners serve meals and confirm redemption.',
+    },
+    {
+      title: 'Track',
+      description: 'Impact metrics are recorded and shared.',
+    },
+  ];
+
   return (
-    <div className="bg-gradient-to-b from-white to-[var(--muted)] py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-[var(--primary)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-6">
-            <span>🎯</span>
-            <span>SDG 2: Zero Hunger</span>
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-[var(--foreground)] mb-6">
-            How EcoEats Works
-          </h1>
-          <p className="text-xl text-[var(--muted-foreground)] max-w-3xl mx-auto">
-            A transparent, accountable system connecting people who need food with those who can provide it.
+    <div className="page-shell">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="max-w-3xl space-y-6">
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">How it works</p>
+          <h1 className="text-4xl sm:text-5xl text-[var(--foreground)]">A clear path from need to nourishment.</h1>
+          <p className="text-lg text-[var(--muted-foreground)]">
+            EcoEats is designed for transparency and dignity, connecting beneficiaries, donors, and partners through verified steps.
           </p>
         </div>
+      </section>
 
-        {/* Programs Section */}
-        <section className="mb-20">
-          <h2 className="text-3xl font-bold text-[var(--foreground)] mb-8 text-center">
-            Core Programs
-          </h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            {programs.map((program, index) => (
-              <Card key={index} className="bg-white">
+      <section className="section-muted">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="mb-10">
+            <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">Core programs</h2>
+            <p className="text-[var(--muted-foreground)] mt-2">Two pathways built to reduce hunger and waste.</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {programs.map((program) => (
+              <Card key={program.title}>
                 <CardHeader>
-                  <div className="text-5xl mb-4">{program.icon}</div>
                   <CardTitle className="text-2xl">{program.title}</CardTitle>
+                  <p className="text-sm text-[var(--muted-foreground)] mt-2">
+                    {program.summary}
+                  </p>
                 </CardHeader>
-                <CardContent>
-                  <div className="mb-6">
-                    <h4 className="font-bold text-[var(--foreground)] mb-3">How it works:</h4>
-                    <ol className="space-y-2">
+                <CardContent className="grid gap-6">
+                  <div>
+                    <h4 className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] mb-3">Steps</h4>
+                    <ol className="space-y-2 text-sm text-[var(--muted-foreground)]">
                       {program.steps.map((step, i) => (
-                        <li key={i} className="flex items-start">
-                          <span className="flex-shrink-0 w-6 h-6 bg-[var(--primary)] text-white rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">
-                            {i + 1}
-                          </span>
-                          <span className="text-[var(--muted-foreground)]">{step}</span>
+                        <li key={step} className="flex gap-3">
+                          <span className="text-[var(--primary)] font-semibold">{String(i + 1).padStart(2, '0')}</span>
+                          <span>{step}</span>
                         </li>
                       ))}
                     </ol>
                   </div>
                   <div>
-                    <h4 className="font-bold text-[var(--foreground)] mb-3">Benefits:</h4>
-                    <ul className="space-y-2">
-                      {program.benefits.map((benefit, i) => (
-                        <li key={i} className="flex items-start">
-                          <span className="text-[var(--primary)] mr-2">✓</span>
-                          <span className="text-[var(--muted-foreground)]">{benefit}</span>
+                    <h4 className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] mb-3">Benefits</h4>
+                    <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
+                      {program.benefits.map((benefit) => (
+                        <li key={benefit} className="flex items-start gap-2">
+                          <span className="text-[var(--primary)]">-</span>
+                          <span>{benefit}</span>
                         </li>
                       ))}
                     </ul>
@@ -152,29 +171,30 @@ export default function HowItWorks() {
               </Card>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Roles Section */}
-        <section className="mb-20">
-          <h2 className="text-3xl font-bold text-[var(--foreground)] mb-8 text-center">
-            Who Can Participate
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {roles.map((roleData, index) => (
-              <Card key={index} hover className="text-center">
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Who joins</p>
+            <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">Every role is supported.</h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
+            {roles.map((roleData) => (
+              <Card key={roleData.role}>
                 <CardHeader>
-                  <div className="text-5xl mb-3">{roleData.icon}</div>
                   <CardTitle className="text-lg">{roleData.role}</CardTitle>
                   <p className="text-sm text-[var(--muted-foreground)] mt-2">
                     {roleData.description}
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2 text-left text-sm">
-                    {roleData.actions.map((action, i) => (
-                      <li key={i} className="flex items-start">
-                        <span className="text-[var(--primary)] mr-2 mt-0.5">→</span>
-                        <span className="text-[var(--muted-foreground)]">{action}</span>
+                  <ul className="space-y-2 text-left text-sm text-[var(--muted-foreground)]">
+                    {roleData.actions.map((action) => (
+                      <li key={action} className="flex items-start gap-2">
+                        <span className="text-[var(--primary)]">-</span>
+                        <span>{action}</span>
                       </li>
                     ))}
                   </ul>
@@ -182,63 +202,53 @@ export default function HowItWorks() {
               </Card>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Impact Flow */}
-        <section className="bg-white dark:bg-slate-900 rounded-2xl p-8 md:p-12 shadow-lg mb-20">
-          <h2 className="text-3xl font-bold text-[var(--foreground)] mb-8 text-center">
-            End-to-End Impact Flow
-          </h2>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            {[
-              { icon: '📝', label: 'Request' },
-              { icon: '💰', label: 'Fund' },
-              { icon: '✅', label: 'Approve' },
-              { icon: '🎫', label: 'Issue' },
-              { icon: '🍽️', label: 'Redeem' },
-              { icon: '📊', label: 'Track' },
-            ].map((item, index, array) => (
-              <div key={index} className="flex items-center">
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-3xl mb-2 shadow-lg">
-                    {item.icon}
-                  </div>
-                  <div className="font-semibold text-[var(--foreground)]">{item.label}</div>
+      <section className="section-muted">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">End-to-end impact flow</h2>
+            <p className="text-[var(--muted-foreground)] mt-3">Every step is verified and visible.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {flow.map((item, index) => (
+              <div key={item.title} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+                <div className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
+                  Step {String(index + 1).padStart(2, '0')}
                 </div>
-                {index < array.length - 1 && (
-                  <div className="hidden md:block w-12 h-1 bg-[var(--primary)] mx-4"></div>
-                )}
+                <div className="text-lg font-semibold text-[var(--foreground)] mt-2">{item.title}</div>
+                <p className="text-sm text-[var(--muted-foreground)] mt-2">{item.description}</p>
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* CTA Section */}
-        <section className="text-center">
-          <Card className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] text-white border-none shadow-2xl">
+      <section className="py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
             <CardContent className="py-12">
-              <h2 className="text-3xl font-bold mb-4">
-                Ready to Make a Difference?
-              </h2>
-              <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-                Join EcoEats today and be part of the solution to end hunger in your community.
+              <h2 className="text-3xl sm:text-4xl mb-4">Ready to make a difference?</h2>
+              <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto">
+                Join EcoEats today and take part in a transparent solution to hunger in your community.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
                 <Link href="/auth/signup">
                   <Button size="lg" variant="secondary" className="w-full sm:w-auto">
                     Sign Up Now
                   </Button>
                 </Link>
                 <Link href="/partners/join">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white/10 text-white border-white hover:bg-white hover:text-[var(--primary)]">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white text-[var(--primary)] border-white hover:bg-white/90">
                     Become a Partner
                   </Button>
                 </Link>
               </div>
             </CardContent>
           </Card>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

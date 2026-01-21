@@ -15,34 +15,32 @@ export const Navigation = () => {
   ];
 
   return (
-    <nav className="bg-white dark:bg-[var(--muted)] border-b border-[var(--border)] sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-              <span className="text-white text-xl font-bold">🌱</span>
+    <nav className="bg-[var(--background)]/85 backdrop-blur border-b border-[var(--border)] sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-sm font-semibold shadow-sm group-hover:shadow-md transition-shadow">
+              EE
             </div>
-            <span className="text-xl font-bold text-[var(--foreground)] hidden sm:block">
-              EcoEats
-            </span>
+            <div className="leading-tight">
+              <span className="block text-lg font-semibold">EcoEats</span>
+              <span className="hidden sm:block text-xs text-[var(--muted-foreground)]">Zero hunger, grounded delivery</span>
+            </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-2 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] rounded-lg transition-all duration-200"
+                className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
               >
                 {link.label}
               </Link>
             ))}
           </div>
 
-          {/* Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden md:flex items-center gap-3">
             <Link href="/auth/login">
               <Button variant="ghost" size="sm">
                 Login
@@ -55,14 +53,14 @@ export const Navigation = () => {
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-[var(--muted)] transition-colors"
+            className="md:hidden p-2 rounded-full border border-[var(--border)] bg-[var(--surface)] shadow-sm"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
           >
             <svg
-              className="w-6 h-6"
+              className="w-5 h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -87,23 +85,22 @@ export const Navigation = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[var(--border)] bg-white dark:bg-[var(--muted)]">
-          <div className="px-4 py-4 space-y-2">
+        <div className="md:hidden border-t border-[var(--border)] bg-[var(--surface)] shadow-sm">
+          <div className="px-4 py-4 space-y-3">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block px-4 py-3 text-[var(--foreground)] hover:bg-[var(--muted)] rounded-lg transition-colors"
+                className="block px-3 py-2 rounded-lg text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="pt-4 space-y-2 border-t border-[var(--border)]">
+            <div className="pt-3 space-y-2 border-t border-[var(--border)]">
               <Link href="/auth/login" className="block">
-                <Button variant="ghost" size="sm" className="w-full">
+                <Button variant="outline" size="sm" className="w-full">
                   Login
                 </Button>
               </Link>
