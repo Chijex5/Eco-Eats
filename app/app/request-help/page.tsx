@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
 
@@ -55,7 +54,7 @@ export default function RequestHelpPage() {
               </h2>
               <p className="text-lg text-[var(--muted-foreground)] mb-6">
                 Your support request has been received and is being reviewed by our admin team. 
-                You'll be notified once it's approved.
+                You&apos;ll be notified once it's approved.
               </p>
               <p className="text-sm text-[var(--muted-foreground)]">
                 Redirecting to your vouchers...
@@ -212,7 +211,7 @@ export default function RequestHelpPage() {
               Need Help with Your Request?
             </h3>
             <p className="text-sm text-[var(--muted-foreground)] mb-3">
-              If you have questions or need assistance filling out this form, please don't hesitate to reach out.
+              If you have questions or need assistance filling out this form, please don&apos;t hesitate to reach out.
             </p>
             <div className="flex flex-wrap gap-4 text-sm">
               <div className="flex items-center text-[var(--muted-foreground)]">

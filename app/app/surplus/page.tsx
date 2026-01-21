@@ -9,6 +9,7 @@ import { mockSurplusListings, formatDeadline, formatDate } from '@/lib/mockData'
 export default function SurplusPage() {
   const activeListings = mockSurplusListings.filter(l => l.status === 'ACTIVE');
   const totalAvailable = activeListings.reduce((sum, l) => sum + (l.quantityAvailable - l.quantityClaimed), 0);
+  const now = Date.now();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[var(--muted)] py-12">
@@ -125,7 +126,7 @@ export default function SurplusPage() {
                 const available = listing.quantityAvailable - listing.quantityClaimed;
                 const percentClaimed = (listing.quantityClaimed / listing.quantityAvailable) * 100;
                 const isLowStock = available <= 3;
-                const isExpiringSoon = new Date(listing.pickupDeadline).getTime() - Date.now() < 2 * 60 * 60 * 1000;
+                const isExpiringSoon = new Date(listing.pickupDeadline).getTime() - now < 2 * 60 * 60 * 1000;
 
                 return (
                   <Link key={listing.id} href={`/app/surplus/${listing.id}`}>

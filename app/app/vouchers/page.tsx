@@ -10,6 +10,7 @@ export default function VouchersPage() {
   const activeVouchers = mockVouchers.filter(v => v.status === 'ACTIVE');
   const redeemedVouchers = mockVouchers.filter(v => v.status === 'REDEEMED');
   const totalValue = activeVouchers.reduce((sum, v) => sum + v.valueKobo, 0);
+  const now = Date.now();
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -94,7 +95,10 @@ export default function VouchersPage() {
               Active Vouchers
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {activeVouchers.map((voucher) => (
+              {activeVouchers.map((voucher) => {
+                const isExpiringSoon = new Date(voucher.expiresAt).getTime() - now < 2 * 24 * 60 * 60 * 1000;
+
+                return (
                 <Link key={voucher.id} href={`/app/vouchers/${voucher.id}`}>
                   <Card hover className="h-full transition-all duration-300 border-2 border-transparent hover:border-[var(--primary)]">
                     <CardHeader>
@@ -118,7 +122,7 @@ export default function VouchersPage() {
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-[var(--muted-foreground)]">Expires:</span>
                           <span className={`font-semibold ${
-                            new Date(voucher.expiresAt).getTime() - Date.now() < 2 * 24 * 60 * 60 * 1000
+                            isExpiringSoon
                               ? 'text-[var(--destructive)]'
                               : 'text-[var(--foreground)]'
                           }`}>
@@ -140,7 +144,8 @@ export default function VouchersPage() {
                     </CardContent>
                   </Card>
                 </Link>
-              ))}
+              );
+            })}
             </div>
           </div>
         )}
@@ -154,7 +159,7 @@ export default function VouchersPage() {
                 No Active Vouchers
               </h3>
               <p className="text-[var(--muted-foreground)] mb-6 max-w-md mx-auto">
-                You don't have any active vouchers at the moment. Request support to receive meal vouchers.
+                You don&apos;t have any active vouchers at the moment. Request support to receive meal vouchers.
               </p>
               <Link href="/app/request-help">
                 <Button size="lg">

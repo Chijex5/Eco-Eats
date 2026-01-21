@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { mockHistory, formatDate } from '@/lib/mockData';
 
@@ -209,8 +209,8 @@ export default function HistoryPage() {
                 </h3>
                 <p className="text-[var(--muted-foreground)] mb-6">
                   {filter === 'all' 
-                    ? "You haven't had any activity yet. Start by requesting support or claiming surplus food."
-                    : `You don't have any ${filter} activity yet.`
+                    ? "You haven&apos;t had any activity yet. Start by requesting support or claiming surplus food."
+                    : `You don&apos;t have any ${filter} activity yet.`
                   }
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">

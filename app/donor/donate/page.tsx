@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
 import { formatCurrency } from '@/lib/mockData';
 
 export default function DonatePage() {
@@ -292,7 +291,7 @@ export default function DonatePage() {
                     )}
                     {donationType === 'MONTHLY' && (
                       <p className="text-sm text-[var(--muted-foreground)] text-center">
-                        You'll be charged this amount monthly
+                        You&apos;ll be charged this amount monthly
                       </p>
                     )}
                   </CardContent>
@@ -319,7 +318,7 @@ export default function DonatePage() {
                 </Button>
 
                 <p className="text-xs text-center text-[var(--muted-foreground)]">
-                  🔒 Your payment is secure and encrypted. You'll receive a receipt via email.
+                  🔒 Your payment is secure and encrypted. You&apos;ll receive a receipt via email.
                 </p>
               </CardContent>
             </Card>

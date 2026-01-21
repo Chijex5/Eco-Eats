@@ -11,6 +11,7 @@ export default function VoucherDetailPage({ params }: { params: Promise<{ id: st
   const resolvedParams = use(params);
   const router = useRouter();
   const voucher = mockVouchers.find(v => v.id === resolvedParams.id);
+  const now = Date.now();
 
   if (!voucher) {
     return (
@@ -23,7 +24,7 @@ export default function VoucherDetailPage({ params }: { params: Promise<{ id: st
                 Voucher Not Found
               </h2>
               <p className="text-[var(--muted-foreground)] mb-6">
-                The voucher you're looking for doesn't exist or has been removed.
+                The voucher you're looking for doesn&apos;t exist or has been removed.
               </p>
               <Button onClick={() => router.push('/app/vouchers')}>
                 Back to Vouchers
@@ -49,7 +50,7 @@ export default function VoucherDetailPage({ params }: { params: Promise<{ id: st
   };
 
   const isActive = voucher.status === 'ACTIVE';
-  const isExpiringSoon = new Date(voucher.expiresAt).getTime() - Date.now() < 2 * 24 * 60 * 60 * 1000;
+  const isExpiringSoon = new Date(voucher.expiresAt).getTime() - now < 2 * 24 * 60 * 60 * 1000;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[var(--muted)] py-12">
@@ -121,7 +122,7 @@ export default function VoucherDetailPage({ params }: { params: Promise<{ id: st
               {/* Backup Code */}
               <div className="bg-[var(--muted)] rounded-xl p-6 border border-[var(--border)]">
                 <p className="text-sm text-[var(--muted-foreground)] mb-3 text-center">
-                  <span className="font-semibold">Backup Code:</span> Use this if QR scan doesn't work
+                  <span className="font-semibold">Backup Code:</span> Use this if QR scan doesn&apos;t work
                 </p>
                 <div className="bg-white dark:bg-slate-800 rounded-lg p-4 text-center">
                   <p className="text-3xl font-bold font-mono tracking-wider text-[var(--primary)]">
@@ -222,7 +223,7 @@ export default function VoucherDetailPage({ params }: { params: Promise<{ id: st
                     </h4>
                     <p className="text-sm text-[var(--muted-foreground)]">
                       Present this page to the staff and they will scan the QR code. 
-                      If scanning doesn't work, they can manually enter the backup code.
+                      If scanning doesn&apos;t work, they can manually enter the backup code.
                     </p>
                   </div>
                 </div>

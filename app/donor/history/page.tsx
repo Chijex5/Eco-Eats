@@ -227,8 +227,8 @@ export default function DonationHistoryPage() {
                 </h3>
                 <p className="text-[var(--muted-foreground)] mb-6">
                   {filter === 'all'
-                    ? "You haven't made any donations yet. Start making a difference today!"
-                    : `You don't have any ${getDonationTypeLabel(filter).toLowerCase()} donations yet.`}
+                    ? "You haven&apos;t made any donations yet. Start making a difference today!"
+                    : `You don&apos;t have any ${getDonationTypeLabel(filter).toLowerCase()} donations yet.`}
                 </p>
                 <Button size="lg" onClick={() => window.location.href = '/donor/donate'}>
                   Make a Donation

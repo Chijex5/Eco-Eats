@@ -16,6 +16,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
   const [isClaiming, setIsClaiming] = useState(false);
   const [claimed, setClaimed] = useState(false);
   const [pickupCode, setPickupCode] = useState('');
+  const now = Date.now();
 
   if (!listing) {
     return (
@@ -28,7 +29,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
                 Listing Not Found
               </h2>
               <p className="text-[var(--muted-foreground)] mb-6">
-                This surplus food listing doesn't exist or has been removed.
+                This surplus food listing doesn&apos;t exist or has been removed.
               </p>
               <Button onClick={() => router.push('/app/surplus')}>
                 Back to Listings
@@ -41,7 +42,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
   }
 
   const available = listing.quantityAvailable - listing.quantityClaimed;
-  const isExpiringSoon = new Date(listing.pickupDeadline).getTime() - Date.now() < 2 * 60 * 60 * 1000;
+  const isExpiringSoon = new Date(listing.pickupDeadline).getTime() - now < 2 * 60 * 60 * 1000;
   const maxClaim = Math.min(listing.claimLimit, available);
 
   const handleClaim = async () => {
@@ -121,7 +122,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
                     </li>
                     <li className="flex gap-3">
                       <span className="font-bold text-[var(--foreground)]">4.</span>
-                      <span>If you can't make it, please cancel your claim so others can benefit</span>
+                      <span>If you can&apos;t make it, please cancel your claim so others can benefit</span>
                     </li>
                   </ol>
                 </CardContent>
@@ -263,7 +264,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
             <CardHeader>
               <CardTitle>Claim Your Food Pack</CardTitle>
               <p className="text-sm text-[var(--muted-foreground)] mt-2">
-                Select quantity and confirm your claim. You'll receive a pickup code to collect your food.
+                Select quantity and confirm your claim. You&apos;ll receive a pickup code to collect your food.
               </p>
             </CardHeader>
             <CardContent>
@@ -317,7 +318,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
                       <li>• Can you pick up at {listing.location}?</li>
                       <li>• Can you arrive before {formatDeadline(listing.pickupDeadline)}?</li>
                       <li>• Bring a bag or container for your food</li>
-                      <li>• You'll receive a pickup code after claiming</li>
+                      <li>• You&apos;ll receive a pickup code after claiming</li>
                     </ul>
                   </CardContent>
                 </Card>
