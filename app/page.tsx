@@ -38,10 +38,18 @@ export default function Home() {
   return (
     <div className="page-shell">
       <section className="relative overflow-hidden">
-        <div className="absolute -top-24 right-0 h-64 w-64 rounded-full bg-[var(--secondary)]/20 blur-3xl" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="absolute inset-0">
+          <img
+            src="/images/home-hero.png"
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)]/95 via-[var(--background)]/75 to-transparent" />
+        </div>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-center">
-            <div className="space-y-6">
+            <div className="space-y-6 rounded-3xl border border-[var(--border)] bg-[var(--surface)]/90 p-8 shadow-[var(--shadow-soft)] backdrop-blur">
               <div className="inline-flex items-center gap-3 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
                 SDG 2: Zero Hunger
               </div>
