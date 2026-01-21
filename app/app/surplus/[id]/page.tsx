@@ -2,6 +2,7 @@
 
 import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { MapPin, Clock, Ticket, ClipboardList, Check } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -66,7 +67,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
             <CardContent className="py-12">
               <div className="text-center mb-8">
                 <div className="w-20 h-20 bg-[var(--primary)] text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
-                  ✓
+                  Check
                 </div>
                 <h2 className="text-3xl font-bold text-[var(--foreground)] mb-4">
                   Food Pack Claimed Successfully!
@@ -94,8 +95,8 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
                     </p>
                   </div>
                   <div className="text-sm text-[var(--muted-foreground)] space-y-2">
-                    <p>📍 <strong>Location:</strong> {listing.location}</p>
-                    <p>⏰ <strong>Pickup by:</strong> {formatDeadline(listing.pickupDeadline)}</p>
+                    <p>MapPin <strong>Location:</strong> {listing.location}</p>
+                    <p>Clock <strong>Pickup by:</strong> {formatDeadline(listing.pickupDeadline)}</p>
                     <p>📦 <strong>Quantity:</strong> {quantity} pack{quantity > 1 ? 's' : ''}</p>
                   </div>
                 </CardContent>
@@ -222,7 +223,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
 
               <div className="bg-[var(--muted)] rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">⏰</span>
+                  <span className="text-xl">Clock</span>
                   <span className="text-sm text-[var(--muted-foreground)]">Pickup Deadline</span>
                 </div>
                 <p className={`font-bold text-lg ${
@@ -234,7 +235,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
 
               <div className="bg-[var(--muted)] rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">📍</span>
+                  <span className="text-xl">MapPin</span>
                   <span className="text-sm text-[var(--muted-foreground)]">Location</span>
                 </div>
                 <p className="font-semibold text-[var(--foreground)]">{listing.location}</p>
@@ -242,7 +243,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
 
               <div className="bg-[var(--muted)] rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">🎫</span>
+                  <span className="text-xl">Ticket</span>
                   <span className="text-sm text-[var(--muted-foreground)]">Claim Limit</span>
                 </div>
                 <p className="font-semibold text-[var(--foreground)]">
@@ -311,7 +312,7 @@ export default function SurplusDetailPage({ params }: { params: Promise<{ id: st
                 <Card className="bg-[var(--muted)] border-[var(--border)]">
                   <CardContent className="py-4">
                     <h4 className="font-semibold text-[var(--foreground)] mb-2 flex items-center">
-                      <span className="mr-2">📋</span>
+                      <span className="mr-2">ClipboardList</span>
                       Before You Claim
                     </h4>
                     <ul className="text-sm text-[var(--muted-foreground)] space-y-1 ml-7">

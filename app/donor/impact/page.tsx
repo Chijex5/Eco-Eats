@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { TrendingUp, DollarSign, Users, Store, Check, Lock, Globe, Ticket, Utensils, Share2, Download, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -18,7 +19,7 @@ export default function ImpactPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center space-x-2 bg-[var(--primary)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 shadow-lg">
-            <span>📊</span>
+            <span>BarChart3</span>
             <span>Impact Dashboard</span>
           </div>
           <h1 className="text-4xl font-bold text-[var(--foreground)] mb-4">
@@ -33,7 +34,7 @@ export default function ImpactPage() {
         <Card className="mb-12 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] text-white border-none shadow-2xl">
           <CardContent className="py-12">
             <div className="text-center mb-8">
-              <div className="text-7xl mb-4">🎯</div>
+              <div className="text-7xl mb-4">TrendingUp</div>
               <h2 className="text-5xl font-bold mb-2">{mockImpactMetrics.mealsServed}</h2>
               <p className="text-xl opacity-90">Meals Served Through Your Donations</p>
             </div>
@@ -60,7 +61,7 @@ export default function ImpactPage() {
           <Card>
             <CardContent className="py-8 text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] text-white rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-lg">
-                🍽️
+                Utensils
               </div>
               <p className="text-3xl font-bold text-[var(--foreground)] mb-1">
                 {totalMeals}
@@ -74,7 +75,7 @@ export default function ImpactPage() {
           <Card>
             <CardContent className="py-8 text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-[var(--secondary)] to-[var(--secondary)]/80 text-white rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-lg">
-                ✓
+                Check
               </div>
               <p className="text-3xl font-bold text-[var(--foreground)] mb-1">
                 {mockImpactMetrics.mealsServed}
@@ -126,7 +127,7 @@ export default function ImpactPage() {
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl">🍽️</span>
+                      <span className="text-2xl">Utensils</span>
                       <span className="font-semibold text-[var(--foreground)]">Meals Impact</span>
                     </div>
                     <Badge variant="success">
@@ -148,7 +149,7 @@ export default function ImpactPage() {
                 <div className="grid sm:grid-cols-3 gap-4">
                   <div className="bg-[var(--muted)] rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-2xl">🎫</span>
+                      <span className="text-2xl">Ticket</span>
                       <span className="text-sm text-[var(--muted-foreground)]">Meal Vouchers</span>
                     </div>
                     <p className="text-2xl font-bold text-[var(--foreground)]">
@@ -158,7 +159,7 @@ export default function ImpactPage() {
 
                   <div className="bg-[var(--muted)] rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-2xl">💰</span>
+                      <span className="text-2xl">DollarSign</span>
                       <span className="text-sm text-[var(--muted-foreground)]">One-Time</span>
                     </div>
                     <p className="text-2xl font-bold text-[var(--foreground)]">
@@ -182,9 +183,9 @@ export default function ImpactPage() {
                   <h4 className="font-semibold text-[var(--foreground)] mb-4">Recent Impact</h4>
                   <div className="space-y-3">
                     {[
-                      { icon: '✓', text: '3 meals served at Campus Cafeteria', time: '2 hours ago' },
-                      { icon: '🎫', text: '2 new vouchers issued to beneficiaries', time: '5 hours ago' },
-                      { icon: '✓', text: '5 meals served at Green Kitchen', time: '1 day ago' },
+                      { icon: 'Check', text: '3 meals served at Campus Cafeteria', time: '2 hours ago' },
+                      { icon: 'Ticket', text: '2 new vouchers issued to beneficiaries', time: '5 hours ago' },
+                      { icon: 'Check', text: '5 meals served at Green Kitchen', time: '1 day ago' },
                       { icon: '👥', text: '2 new beneficiaries registered', time: '2 days ago' },
                     ].map((item, index) => (
                       <div key={index} className="flex items-start gap-3 p-3 bg-[var(--muted)] rounded-lg">
@@ -210,26 +211,26 @@ export default function ImpactPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-center mb-4">
-                  <div className="text-6xl mb-3">🎯</div>
+                  <div className="text-6xl mb-3">TrendingUp</div>
                   <p className="text-sm text-[var(--muted-foreground)]">
                     Your donations directly contribute to the UN Sustainable Development Goal 2
                   </p>
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-start gap-2">
-                    <span>✓</span>
+                    <Check className="w-4 h-4" />
                     <span className="text-[var(--muted-foreground)]">
                       Zero hunger by 2030
                     </span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <span>✓</span>
+                    <Check className="w-4 h-4" />
                     <span className="text-[var(--muted-foreground)]">
                       Food security for all
                     </span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <span>✓</span>
+                    <Check className="w-4 h-4" />
                     <span className="text-[var(--muted-foreground)]">
                       End malnutrition
                     </span>
@@ -269,7 +270,7 @@ export default function ImpactPage() {
                 </p>
                 <Link href="/donor/donate">
                   <Button size="lg" className="w-full">
-                    💝 Make Another Donation
+                    HandHeart Make Another Donation
                   </Button>
                 </Link>
               </CardContent>
@@ -281,7 +282,7 @@ export default function ImpactPage() {
         <Card className="bg-gradient-to-br from-[var(--accent)]/5 to-white border-2 border-[var(--accent)]/20">
           <CardContent className="py-8">
             <div className="flex items-start gap-4">
-              <div className="text-5xl">🔒</div>
+              <Lock className="w-8 h-8 text-[var(--primary)]" />
               <div className="flex-1">
                 <h3 className="text-2xl font-bold text-[var(--foreground)] mb-3">
                   100% Transparency Guarantee
@@ -293,15 +294,15 @@ export default function ImpactPage() {
                 </p>
                 <div className="grid sm:grid-cols-3 gap-4">
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-xl">✓</span>
+                    <span className="text-xl">Check</span>
                     <span className="text-[var(--muted-foreground)]">Verified beneficiaries</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-xl">✓</span>
+                    <span className="text-xl">Check</span>
                     <span className="text-[var(--muted-foreground)]">Real-time tracking</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-xl">✓</span>
+                    <span className="text-xl">Check</span>
                     <span className="text-[var(--muted-foreground)]">Accountable partners</span>
                   </div>
                 </div>

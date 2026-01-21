@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
+import { Ticket, UtensilsCrossed, DollarSign, CalendarDays } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
@@ -111,21 +112,21 @@ export default function ProfilePage() {
         <div className="grid md:grid-cols-4 gap-4 mb-8">
           <Card className="text-center">
             <CardContent className="py-6">
-              <div className="text-3xl mb-2">🎫</div>
+              <Ticket className="w-8 h-8 text-[var(--primary)]" />
               <p className="text-2xl font-bold text-[var(--foreground)]">{stats.vouchersReceived}</p>
               <p className="text-sm text-[var(--muted-foreground)]">Vouchers Received</p>
             </CardContent>
           </Card>
           <Card className="text-center">
             <CardContent className="py-6">
-              <div className="text-3xl mb-2">🍱</div>
+              <div className="text-3xl mb-2">UtensilsCrossed</div>
               <p className="text-2xl font-bold text-[var(--foreground)]">{stats.surplusClaimed}</p>
               <p className="text-sm text-[var(--muted-foreground)]">Surplus Claimed</p>
             </CardContent>
           </Card>
           <Card className="text-center">
             <CardContent className="py-6">
-              <div className="text-3xl mb-2">💰</div>
+              <DollarSign className="w-8 h-8 text-[var(--primary)]" />
               <p className="text-2xl font-bold text-[var(--foreground)]">{stats.totalValue}</p>
               <p className="text-sm text-[var(--muted-foreground)]">Total Support</p>
             </CardContent>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { User, Lock, Heart, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
@@ -47,7 +48,7 @@ export default function RequestHelpPage() {
           <Card className="text-center bg-gradient-to-br from-[var(--primary)]/5 to-white border-2 border-[var(--primary)]">
             <CardContent className="py-12">
               <div className="w-20 h-20 bg-[var(--primary)] text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
-                ✓
+                Check
               </div>
               <h2 className="text-3xl font-bold text-[var(--foreground)] mb-4">
                 Request Submitted Successfully!
@@ -72,7 +73,7 @@ export default function RequestHelpPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center space-x-2 bg-[var(--primary)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 shadow-lg">
-            <span>🙋</span>
+            <span>User</span>
             <span>Request Food Support</span>
           </div>
           <h1 className="text-4xl font-bold text-[var(--foreground)] mb-4">
@@ -88,7 +89,7 @@ export default function RequestHelpPage() {
         <div className="grid md:grid-cols-3 gap-4 mb-8">
           <Card className="text-center">
             <CardContent className="py-6">
-              <div className="text-3xl mb-2">🔒</div>
+              <Lock className="w-8 h-8 text-[var(--primary)]" />
               <h3 className="font-semibold text-[var(--foreground)] mb-1">Confidential</h3>
               <p className="text-sm text-[var(--muted-foreground)]">
                 Your privacy is our priority
@@ -97,7 +98,7 @@ export default function RequestHelpPage() {
           </Card>
           <Card className="text-center">
             <CardContent className="py-6">
-              <div className="text-3xl mb-2">⚡</div>
+              <div className="text-3xl mb-2">Zap</div>
               <h3 className="font-semibold text-[var(--foreground)] mb-1">Fast Review</h3>
               <p className="text-sm text-[var(--muted-foreground)]">
                 Usually reviewed within 24 hours
@@ -106,7 +107,7 @@ export default function RequestHelpPage() {
           </Card>
           <Card className="text-center">
             <CardContent className="py-6">
-              <div className="text-3xl mb-2">❤️</div>
+              <Heart className="w-8 h-8 text-[var(--primary)]" />
               <h3 className="font-semibold text-[var(--foreground)] mb-1">With Dignity</h3>
               <p className="text-sm text-[var(--muted-foreground)]">
                 Respectful, judgment-free support
@@ -162,7 +163,7 @@ export default function RequestHelpPage() {
               {/* Privacy Notice */}
               <div className="bg-[var(--muted)] rounded-lg p-4 border border-[var(--border)]">
                 <h4 className="font-semibold text-[var(--foreground)] mb-2 flex items-center">
-                  <span className="mr-2">🔒</span>
+                  <span className="mr-2">Lock</span>
                   Privacy Notice
                 </h4>
                 <p className="text-sm text-[var(--muted-foreground)] mb-2">

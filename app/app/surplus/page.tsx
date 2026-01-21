@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { UtensilsCrossed, ClipboardList, Store, Utensils, MapPin, Clock, Ticket, Lightbulb, Recycle, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -17,7 +18,7 @@ export default function SurplusPage() {
         {/* Header */}
         <div className="mb-12">
           <div className="inline-flex items-center space-x-2 bg-[var(--secondary)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 shadow-lg">
-            <span>🍱</span>
+            <UtensilsCrossed className="w-4 h-4" />
             <span>Surplus Food Rescue</span>
           </div>
           <h1 className="text-4xl font-bold text-[var(--foreground)] mb-4">
@@ -38,7 +39,8 @@ export default function SurplusPage() {
                   <p className="text-sm opacity-90 mb-1">Available Today</p>
                   <p className="text-3xl font-bold">{totalAvailable} Packs</p>
                 </div>
-                <div className="text-5xl opacity-80">🍱</div>
+                <div className="w-12 h-12 opacity-80">
+                <UtensilsCrossed className="w-full h-full" /></div>
               </div>
             </CardContent>
           </Card>
@@ -50,7 +52,8 @@ export default function SurplusPage() {
                   <p className="text-sm opacity-90 mb-1">Active Listings</p>
                   <p className="text-3xl font-bold">{activeListings.length}</p>
                 </div>
-                <div className="text-5xl opacity-80">📋</div>
+                <div className="w-12 h-12 opacity-80">
+                <ClipboardList className="w-full h-full" /></div>
               </div>
             </CardContent>
           </Card>
@@ -62,7 +65,8 @@ export default function SurplusPage() {
                   <p className="text-sm opacity-90 mb-1">Partner Locations</p>
                   <p className="text-3xl font-bold">{new Set(activeListings.map(l => l.partnerId)).size}</p>
                 </div>
-                <div className="text-5xl opacity-80">🏪</div>
+                <div className="w-12 h-12 opacity-80">
+                <Store className="w-full h-full" /></div>
               </div>
             </CardContent>
           </Card>
@@ -135,7 +139,8 @@ export default function SurplusPage() {
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <div className="text-3xl">{listing.partnerLogo}</div>
+                              <div className="w-8 h-8 text-[var(--primary)]">
+                          <Utensils className="w-full h-full" /></div>
                               <div>
                                 <CardTitle className="text-lg leading-tight mb-1">
                                   {listing.title}
@@ -185,11 +190,11 @@ export default function SurplusPage() {
                         {/* Details */}
                         <div className="space-y-2">
                           <div className="flex items-center gap-2 text-sm">
-                            <span>📍</span>
+                            <span>MapPin</span>
                             <span className="text-[var(--muted-foreground)]">{listing.location}</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm">
-                            <span>⏰</span>
+                            <span>Clock</span>
                             <span className={`font-medium ${
                               isExpiringSoon
                                 ? 'text-[var(--destructive)]'
@@ -199,7 +204,7 @@ export default function SurplusPage() {
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-sm">
-                            <span>🎫</span>
+                            <span>Ticket</span>
                             <span className="text-[var(--muted-foreground)]">
                               Max {listing.claimLimit} per person
                             </span>
@@ -232,7 +237,7 @@ export default function SurplusPage() {
         ) : (
           <Card className="text-center bg-gradient-to-br from-[var(--muted)] to-white border-2 border-dashed border-[var(--border)]">
             <CardContent className="py-16">
-              <div className="text-6xl mb-4">🍱</div>
+              <UtensilsCrossed className="w-16 h-16 mb-4 text-[var(--muted-foreground)]" />
               <h3 className="text-2xl font-bold text-[var(--foreground)] mb-3">
                 No Listings Available
               </h3>
@@ -251,7 +256,8 @@ export default function SurplusPage() {
         <Card className="mt-12 bg-gradient-to-br from-[var(--primary)]/5 to-white border-[var(--primary)]/20">
           <CardContent className="py-6">
             <div className="flex items-start gap-4">
-              <div className="text-4xl">💡</div>
+              <div className="w-10 h-10 text-[var(--accent)]">
+              <Lightbulb className="w-full h-full" /></div>
               <div className="flex-1">
                 <h3 className="font-semibold text-[var(--foreground)] mb-2">
                   Reducing Food Waste, Fighting Hunger
@@ -263,15 +269,18 @@ export default function SurplusPage() {
                 </p>
                 <div className="grid sm:grid-cols-3 gap-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">♻️</span>
+                    <span className="text-lg text-[var(--primary)]">
+                  <Recycle className="w-5 h-5" /></span>
                     <span className="text-[var(--muted-foreground)]">Reduce waste</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">🌍</span>
+                    <span className="text-lg text-[var(--accent)]">
+                  <Globe className="w-5 h-5" /></span>
                     <span className="text-[var(--muted-foreground)]">Help environment</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">🍽️</span>
+                    <span className="text-lg text-[var(--primary)]">
+                  <Utensils className="w-5 h-5" /></span>
                     <span className="text-[var(--muted-foreground)]">Fresh, safe food</span>
                   </div>
                 </div>

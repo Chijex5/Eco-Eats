@@ -2,6 +2,7 @@
 
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
+import { Ticket, AlertCircle, Check } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -67,7 +68,7 @@ export default function VoucherDetailPage({ params }: { params: Promise<{ id: st
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center space-x-2 bg-[var(--primary)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 shadow-lg">
-            <span>🎫</span>
+            <Ticket className="w-4 h-4" />
             <span>Voucher Details</span>
           </div>
           <h1 className="text-4xl font-bold text-[var(--foreground)] mb-2">

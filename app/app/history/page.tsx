@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FileText, Ticket, UtensilsCrossed, Check } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -18,13 +19,13 @@ export default function HistoryPage() {
       case 'request':
         return '📝';
       case 'voucher':
-        return '🎫';
+        return 'Ticket';
       case 'surplus':
-        return '🍱';
+        return 'UtensilsCrossed';
       case 'redemption':
-        return '✓';
+        return 'Check';
       default:
-        return '📋';
+        return 'ClipboardList';
     }
   };
 
@@ -70,7 +71,7 @@ export default function HistoryPage() {
         {/* Header */}
         <div className="mb-12">
           <div className="inline-flex items-center space-x-2 bg-[var(--accent)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 shadow-lg">
-            <span>📜</span>
+            <span>FileText</span>
             <span>Activity History</span>
           </div>
           <h1 className="text-4xl font-bold text-[var(--foreground)] mb-4">
@@ -85,7 +86,7 @@ export default function HistoryPage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <Card className="bg-gradient-to-br from-[var(--muted)] to-white">
             <CardContent className="py-4 text-center">
-              <div className="text-3xl mb-1">📋</div>
+              <div className="text-3xl mb-1">ClipboardList</div>
               <p className="text-2xl font-bold text-[var(--foreground)]">{stats.total}</p>
               <p className="text-xs text-[var(--muted-foreground)]">Total</p>
             </CardContent>
@@ -99,21 +100,21 @@ export default function HistoryPage() {
           </Card>
           <Card className="bg-gradient-to-br from-[var(--primary)]/10 to-white">
             <CardContent className="py-4 text-center">
-              <div className="text-3xl mb-1">🎫</div>
+              <Ticket className="w-8 h-8 text-[var(--primary)]" />
               <p className="text-2xl font-bold text-[var(--foreground)]">{stats.vouchers}</p>
               <p className="text-xs text-[var(--muted-foreground)]">Vouchers</p>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-br from-[var(--secondary)]/10 to-white">
             <CardContent className="py-4 text-center">
-              <div className="text-3xl mb-1">🍱</div>
+              <div className="text-3xl mb-1">UtensilsCrossed</div>
               <p className="text-2xl font-bold text-[var(--foreground)]">{stats.surplus}</p>
               <p className="text-xs text-[var(--muted-foreground)]">Surplus</p>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-br from-green-100 to-white dark:from-green-900/20">
             <CardContent className="py-4 text-center">
-              <div className="text-3xl mb-1">✓</div>
+              <Check className="w-6 h-6 text-[var(--primary)]" />
               <p className="text-2xl font-bold text-[var(--foreground)]">{stats.redemptions}</p>
               <p className="text-xs text-[var(--muted-foreground)]">Redeemed</p>
             </CardContent>
@@ -143,21 +144,21 @@ export default function HistoryPage() {
                 size="sm"
                 onClick={() => setFilter('voucher')}
               >
-                🎫 Vouchers
+                Ticket Vouchers
               </Button>
               <Button
                 variant={filter === 'surplus' ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => setFilter('surplus')}
               >
-                🍱 Surplus
+                UtensilsCrossed Surplus
               </Button>
               <Button
                 variant={filter === 'redemption' ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => setFilter('redemption')}
               >
-                ✓ Redemptions
+                Check Redemptions
               </Button>
             </div>
           </CardContent>
@@ -203,7 +204,7 @@ export default function HistoryPage() {
           ) : (
             <Card className="text-center bg-gradient-to-br from-[var(--muted)] to-white border-2 border-dashed border-[var(--border)]">
               <CardContent className="py-16">
-                <div className="text-6xl mb-4">📋</div>
+                <div className="text-6xl mb-4">ClipboardList</div>
                 <h3 className="text-2xl font-bold text-[var(--foreground)] mb-3">
                   No {filter !== 'all' ? filter : ''} Activity
                 </h3>

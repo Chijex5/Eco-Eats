@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Ticket, DollarSign, RefreshCcw, Utensils, HandHeart, TrendingUp, Check, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -48,7 +49,7 @@ export default function DonatePage() {
           <Card className="bg-gradient-to-br from-[var(--primary)]/5 to-white border-2 border-[var(--primary)]">
             <CardContent className="py-12 text-center">
               <div className="w-24 h-24 bg-[var(--primary)] text-white rounded-full flex items-center justify-center text-5xl mx-auto mb-6">
-                ✓
+                Check
               </div>
               <h2 className="text-3xl font-bold text-[var(--foreground)] mb-4">
                 Thank You for Your Donation!
@@ -67,7 +68,7 @@ export default function DonatePage() {
                     📧 A receipt has been sent to your email
                   </p>
                   <p className="text-sm text-[var(--muted-foreground)]">
-                    📊 View your impact in the donor dashboard
+                    BarChart3 View your impact in the donor dashboard
                   </p>
                 </div>
                 <p className="text-xs text-[var(--muted-foreground)]">
@@ -87,7 +88,7 @@ export default function DonatePage() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center space-x-2 bg-[var(--secondary)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 shadow-lg">
-            <span>💝</span>
+            <span>HandHeart</span>
             <span>Make a Donation</span>
           </div>
           <h1 className="text-4xl font-bold text-[var(--foreground)] mb-4">
@@ -110,7 +111,8 @@ export default function DonatePage() {
             onClick={() => setDonationType('MEAL_VOUCHER')}
           >
             <CardContent className="py-8 text-center">
-              <div className="text-5xl mb-4">🎫</div>
+              <div className="w-12 h-12 mb-4 text-[var(--primary)]">
+                <Ticket className="w-full h-full" /></div>
               <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">
                 Fund Meal Vouchers
               </h3>
@@ -120,7 +122,7 @@ export default function DonatePage() {
               {donationType === 'MEAL_VOUCHER' && (
                 <div className="mt-4 pt-4 border-t border-[var(--border)]">
                   <p className="text-xs text-[var(--primary)] font-semibold">
-                    ✓ Selected
+                    Check Selected
                   </p>
                 </div>
               )}
@@ -137,7 +139,8 @@ export default function DonatePage() {
             onClick={() => setDonationType('ONE_TIME')}
           >
             <CardContent className="py-8 text-center">
-              <div className="text-5xl mb-4">💰</div>
+              <div className="w-12 h-12 mb-4 text-[var(--secondary)]">
+                <DollarSign className="w-full h-full" /></div>
               <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">
                 One-Time Gift
               </h3>
@@ -147,7 +150,7 @@ export default function DonatePage() {
               {donationType === 'ONE_TIME' && (
                 <div className="mt-4 pt-4 border-t border-[var(--border)]">
                   <p className="text-xs text-[var(--secondary)] font-semibold">
-                    ✓ Selected
+                    Check Selected
                   </p>
                 </div>
               )}
@@ -164,7 +167,8 @@ export default function DonatePage() {
             onClick={() => setDonationType('MONTHLY')}
           >
             <CardContent className="py-8 text-center">
-              <div className="text-5xl mb-4">🔄</div>
+              <div className="w-12 h-12 mb-4 text-[var(--accent)]">
+                <RefreshCcw className="w-full h-full" /></div>
               <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">
                 Monthly Support
               </h3>
@@ -174,7 +178,7 @@ export default function DonatePage() {
               {donationType === 'MONTHLY' && (
                 <div className="mt-4 pt-4 border-t border-[var(--border)]">
                   <p className="text-xs text-[var(--accent)] font-semibold">
-                    ✓ Selected
+                    Check Selected
                   </p>
                 </div>
               )}
@@ -208,7 +212,8 @@ export default function DonatePage() {
                               : 'border-[var(--border)] hover:border-[var(--primary)]/50'
                           }`}
                         >
-                          <div className="text-3xl mb-2">🍽️</div>
+                          <div className="w-8 h-8 mb-2 text-[var(--primary)]">
+                          <Utensils className="w-full h-full" /></div>
                           <p className="text-2xl font-bold text-[var(--foreground)]">{count}</p>
                           <p className="text-xs text-[var(--muted-foreground)]">meals</p>
                           <p className="text-sm font-semibold text-[var(--primary)] mt-2">
@@ -251,7 +256,8 @@ export default function DonatePage() {
                               : 'border-[var(--border)] hover:border-[var(--primary)]/50'
                           }`}
                         >
-                          <div className="text-3xl mb-2">💝</div>
+                          <div className="w-8 h-8 mb-2 text-[var(--primary)]">
+                          <HandHeart className="w-full h-full" /></div>
                           <p className="text-xl font-bold text-[var(--primary)]">
                             {formatCurrency(amount)}
                           </p>
@@ -318,7 +324,7 @@ export default function DonatePage() {
                 </Button>
 
                 <p className="text-xs text-center text-[var(--muted-foreground)]">
-                  🔒 Your payment is secure and encrypted. You&apos;ll receive a receipt via email.
+                  Lock Your payment is secure and encrypted. You&apos;ll receive a receipt via email.
                 </p>
               </CardContent>
             </Card>
@@ -333,7 +339,8 @@ export default function DonatePage() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="text-center py-4">
-                    <div className="text-5xl mb-3">🎯</div>
+                    <div className="w-12 h-12 mb-3 text-[var(--accent)]">
+                    <TrendingUp className="w-full h-full" /></div>
                     <p className="text-3xl font-bold text-[var(--accent)] mb-1">
                       {donationType === 'MEAL_VOUCHER' ? mealCount : Math.floor(calculateAmount() / MEAL_PRICE)}
                     </p>
@@ -344,19 +351,19 @@ export default function DonatePage() {
 
                   <div className="border-t border-[var(--border)] pt-4 space-y-3 text-sm">
                     <div className="flex items-start gap-2">
-                      <span>✓</span>
+                      <span>Check</span>
                       <span className="text-[var(--muted-foreground)]">
                         100% of your donation goes to feeding people
                       </span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span>✓</span>
+                      <span>Check</span>
                       <span className="text-[var(--muted-foreground)]">
                         Track your impact in real-time
                       </span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span>✓</span>
+                      <span>Check</span>
                       <span className="text-[var(--muted-foreground)]">
                         Tax-deductible receipt provided
                       </span>

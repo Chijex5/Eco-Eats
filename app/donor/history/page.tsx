@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Ticket, DollarSign, RefreshCcw, FileText, Download, BarChart3, Utensils, Check } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -39,13 +40,13 @@ export default function DonationHistoryPage() {
   const getDonationTypeIcon = (type: string) => {
     switch (type) {
       case 'MEAL_VOUCHER':
-        return '🎫';
+        return 'Ticket';
       case 'ONE_TIME':
-        return '💰';
+        return 'DollarSign';
       case 'MONTHLY':
         return '🔄';
       default:
-        return '💝';
+        return 'HandHeart';
     }
   };
 
@@ -68,7 +69,7 @@ export default function DonationHistoryPage() {
         {/* Header */}
         <div className="mb-12">
           <div className="inline-flex items-center space-x-2 bg-[var(--secondary)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 shadow-lg">
-            <span>📜</span>
+            <span>FileText</span>
             <span>Donation History</span>
           </div>
           <h1 className="text-4xl font-bold text-[var(--foreground)] mb-4">
@@ -84,7 +85,7 @@ export default function DonationHistoryPage() {
           <Card className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] text-white border-none shadow-lg">
             <CardContent className="py-6">
               <div className="text-center">
-                <div className="text-4xl mb-2">💰</div>
+                <DollarSign className="w-8 h-8 text-[var(--primary)]" />
                 <p className="text-2xl font-bold">{formatCurrency(totalDonated)}</p>
                 <p className="text-sm opacity-90">Total Donated</p>
               </div>
@@ -94,7 +95,7 @@ export default function DonationHistoryPage() {
           <Card className="bg-gradient-to-br from-[var(--secondary)] to-[var(--secondary)]/80 text-white border-none shadow-lg">
             <CardContent className="py-6">
               <div className="text-center">
-                <div className="text-4xl mb-2">🍽️</div>
+                <Utensils className="w-8 h-8 text-[var(--primary)]" />
                 <p className="text-2xl font-bold">{totalMeals}</p>
                 <p className="text-sm opacity-90">Meals Funded</p>
               </div>
@@ -114,7 +115,7 @@ export default function DonationHistoryPage() {
           <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-none shadow-lg">
             <CardContent className="py-6">
               <div className="text-center">
-                <div className="text-4xl mb-2">✓</div>
+                <Check className="w-6 h-6 text-[var(--primary)]" />
                 <p className="text-2xl font-bold">{mockDonations.filter(d => d.status === 'COMPLETED').length}</p>
                 <p className="text-sm opacity-90">Successful</p>
               </div>
@@ -138,14 +139,14 @@ export default function DonationHistoryPage() {
                 size="sm"
                 onClick={() => setFilter('MEAL_VOUCHER')}
               >
-                🎫 Meal Vouchers ({stats.mealVouchers})
+                Ticket Meal Vouchers ({stats.mealVouchers})
               </Button>
               <Button
                 variant={filter === 'ONE_TIME' ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => setFilter('ONE_TIME')}
               >
-                💰 One-Time ({stats.oneTime})
+                DollarSign One-Time ({stats.oneTime})
               </Button>
               <Button
                 variant={filter === 'MONTHLY' ? 'primary' : 'outline'}
@@ -221,7 +222,7 @@ export default function DonationHistoryPage() {
           ) : (
             <Card className="text-center bg-gradient-to-br from-[var(--muted)] to-white border-2 border-dashed border-[var(--border)]">
               <CardContent className="py-16">
-                <div className="text-6xl mb-4">💝</div>
+                <div className="text-6xl mb-4">HandHeart</div>
                 <h3 className="text-2xl font-bold text-[var(--foreground)] mb-3">
                   No {filter !== 'all' && getDonationTypeLabel(filter)} Donations
                 </h3>
@@ -256,7 +257,7 @@ export default function DonationHistoryPage() {
                     📥 Download PDF
                   </Button>
                   <Button variant="outline" size="lg">
-                    📊 Download CSV
+                    BarChart3 Download CSV
                   </Button>
                 </div>
               </div>

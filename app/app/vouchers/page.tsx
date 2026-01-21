@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { CreditCard, Plus, DollarSign, Ticket, Check } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -33,7 +34,7 @@ export default function VouchersPage() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <div>
               <div className="inline-flex items-center space-x-2 bg-[var(--primary)] text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 shadow-lg">
-                <span>💳</span>
+                <CreditCard className="w-4 h-4" />
                 <span>My Vouchers</span>
               </div>
               <h1 className="text-4xl font-bold text-[var(--foreground)]">
@@ -42,7 +43,7 @@ export default function VouchersPage() {
             </div>
             <Link href="/app/request-help">
               <Button size="lg">
-                <span className="mr-2">➕</span>
+                <Plus className="w-4 h-4 mr-2" />
                 Request Support
               </Button>
             </Link>
@@ -57,7 +58,7 @@ export default function VouchersPage() {
                     <p className="text-sm opacity-90 mb-1">Total Available</p>
                     <p className="text-3xl font-bold">{formatCurrency(totalValue)}</p>
                   </div>
-                  <div className="text-5xl opacity-80">💰</div>
+                  <DollarSign className="w-12 h-12 opacity-80" />
                 </div>
               </CardContent>
             </Card>
@@ -69,7 +70,7 @@ export default function VouchersPage() {
                     <p className="text-sm opacity-90 mb-1">Active Vouchers</p>
                     <p className="text-3xl font-bold">{activeVouchers.length}</p>
                   </div>
-                  <div className="text-5xl opacity-80">🎫</div>
+                  <Ticket className="w-12 h-12 opacity-80" />
                 </div>
               </CardContent>
             </Card>
@@ -81,7 +82,7 @@ export default function VouchersPage() {
                     <p className="text-sm opacity-90 mb-1">Used This Month</p>
                     <p className="text-3xl font-bold">{redeemedVouchers.length}</p>
                   </div>
-                  <div className="text-5xl opacity-80">✓</div>
+                  <Check className="w-12 h-12 opacity-80" />
                 </div>
               </CardContent>
             </Card>
@@ -114,7 +115,7 @@ export default function VouchersPage() {
                             Code: <span className="font-mono font-semibold text-[var(--foreground)]">{voucher.code}</span>
                           </p>
                         </div>
-                        <div className="text-5xl">🎫</div>
+                        <Ticket className="w-12 h-12 text-[var(--primary)]" />
                       </div>
                     </CardHeader>
                     <CardContent>
@@ -154,7 +155,7 @@ export default function VouchersPage() {
         {activeVouchers.length === 0 && (
           <Card className="text-center bg-gradient-to-br from-[var(--muted)] to-white border-2 border-dashed border-[var(--border)]">
             <CardContent className="py-16">
-              <div className="text-6xl mb-4">🎫</div>
+              <Ticket className="w-16 h-16 text-[var(--muted-foreground)] mb-4" />
               <h3 className="text-2xl font-bold text-[var(--foreground)] mb-3">
                 No Active Vouchers
               </h3>
@@ -182,8 +183,8 @@ export default function VouchersPage() {
                   <CardContent className="py-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-white dark:bg-slate-700 rounded-lg flex items-center justify-center text-2xl shadow-sm">
-                          ✓
+                        <div className="w-12 h-12 bg-white dark:bg-slate-700 rounded-lg flex items-center justify-center shadow-sm">
+                          <Check className="w-6 h-6 text-[var(--primary)]" />
                         </div>
                         <div>
                           <p className="font-semibold text-[var(--foreground)]">
