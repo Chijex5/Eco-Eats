@@ -1,9 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/Card';
 
 export default function Login() {
   const [email, setEmail] = useState('');
