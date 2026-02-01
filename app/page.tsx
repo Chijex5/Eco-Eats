@@ -41,7 +41,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/images/home-hero.png"
+            src="/images/home-hero.webp"
             alt=""
             aria-hidden="true"
             className="h-full w-full object-cover"
@@ -91,7 +91,7 @@ export default function Home() {
       </section>
 
       <section className="section-muted">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="bg-[var(--muted-foreground)] max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
@@ -106,6 +106,15 @@ export default function Home() {
       </section>
 
       <section className="py-24">
+        <div className="absolute inset-0">
+          <img
+            src="/images/donor-image.webp"
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)]/95 via-[var(--background)]/75 to-transparent" />
+        </div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">How you can help</p>
@@ -137,13 +146,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-muted">
+      <section className="section-muted bg-[var(--muted-foreground)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
             <div className="max-w-xl">
-              <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Simple flow</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Simple flow</p>
               <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">A transparent journey from donation to meal.</h2>
-              <p className="text-[var(--muted-foreground)] mt-4">
+              <p className="text-[var(--muted)] mt-4">
                 Every step is verified so supporters can trust their contributions and beneficiaries feel respected.
               </p>
             </div>
@@ -166,7 +175,7 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 rounded-full border border-[var(--primary)] bg-[var(--primary)]/10 px-4 py-2 text-sm font-medium text-[var(--primary)] mb-4">
               ✨ Community Spotlight
             </div>
-            <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">Meet this week's hero</h2>
+            <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">Meet this week&apos;s hero</h2>
             <p className="text-[var(--muted-foreground)] mt-3">
               Celebrating community members making extraordinary impact.
             </p>
@@ -190,7 +199,7 @@ export default function Home() {
                   </p>
                 </div>
                 <p className="text-sm text-[var(--muted-foreground)] mb-6">
-                  "{currentSpotlight.quote}"
+                  &quot;{currentSpotlight.quote}&quot;
                 </p>
                 <Link href="/spotlight">
                   <Button variant="outline" size="sm">
