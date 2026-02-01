@@ -96,7 +96,7 @@ export default function Signup() {
       <div className="min-h-screen grid lg:grid-cols-[1.1fr_0.9fr]">
         <div className="relative hidden lg:block">
           <img
-            src="/image/login.webp"
+            src="/images/login.webp"
             alt=""
             aria-hidden="true"
             className="h-full w-full object-cover"
