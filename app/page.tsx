@@ -105,7 +105,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-24">
+      <section className="relative overflow-hidden py-24">
         <div className="absolute inset-0">
           <img
             src="/images/donor-image.webp"
