@@ -282,7 +282,7 @@ export default function Home() {
 
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Card className="bg-[var(--primary)] text-[var(--surface)] border-none shadow-[var(--shadow)]">
+          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
             <CardContent className="py-12">
               <h2 className="text-3xl sm:text-4xl mb-4">Join the fight against hunger.</h2>
               <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto">
