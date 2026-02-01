@@ -160,6 +160,115 @@ export default function Home() {
       </section>
 
       <section className="py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--primary)] bg-[var(--primary)]/10 px-4 py-2 text-sm font-medium text-[var(--primary)] mb-4">
+              ✨ Community Spotlight
+            </div>
+            <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">Meet this week's hero</h2>
+            <p className="text-[var(--muted-foreground)] mt-3">
+              Celebrating community members making extraordinary impact.
+            </p>
+          </div>
+
+          <Card hover className="max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-[240px_1fr] gap-6">
+              <div className="bg-gradient-to-br from-[var(--primary)]/10 to-[var(--primary)]/5 flex items-center justify-center p-8 rounded-l-xl">
+                <div className="text-center">
+                  <div className="text-8xl mb-4">👩‍🌾</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">This Week</div>
+                </div>
+              </div>
+              <CardContent className="py-6 pr-6">
+                <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-2">Amara Okafor</h3>
+                <p className="text-[var(--primary)] font-medium mb-1">Community Food Partner</p>
+                <p className="text-sm text-[var(--muted-foreground)] mb-4">📍 Lagos, Nigeria</p>
+                <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-alt)] p-4 mb-4">
+                  <p className="text-sm font-semibold text-[var(--foreground)]">
+                    Rescued and redistributed 2,500 meals in one month
+                  </p>
+                </div>
+                <p className="text-sm text-[var(--muted-foreground)] mb-6">
+                  "Every meal saved is a meal that can feed someone. No food should go to waste when people are hungry."
+                </p>
+                <Link href="/spotlight">
+                  <Button variant="outline" size="sm">
+                    Read Full Story →
+                  </Button>
+                </Link>
+              </CardContent>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      <section className="section-muted">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-2xl">
+            <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Education & Awareness</p>
+            <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">Learn about food waste and how you can help.</h2>
+            <p className="text-[var(--muted-foreground)] mt-4">
+              Understanding the problem is the first step toward solving it. Discover the impact of food waste 
+              and practical ways you can make a difference in your community.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mt-10">
+            <Card hover>
+              <CardHeader>
+                <div className="text-4xl mb-3">📚</div>
+                <CardTitle>The Problem</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-[var(--muted-foreground)] mb-6">
+                  Learn about global food waste statistics, environmental impact, and the connection to hunger.
+                </p>
+                <Link href="/learn">
+                  <Button variant="outline" size="sm" className="w-full">
+                    Learn More
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card hover>
+              <CardHeader>
+                <div className="text-4xl mb-3">💡</div>
+                <CardTitle>How You Can Help</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-[var(--muted-foreground)] mb-6">
+                  Practical tips and actions for reducing food waste at home, work, and in your community.
+                </p>
+                <Link href="/learn">
+                  <Button variant="outline" size="sm" className="w-full">
+                    Get Tips
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card hover>
+              <CardHeader>
+                <div className="text-4xl mb-3">🤝</div>
+                <CardTitle>Get Involved</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-[var(--muted-foreground)] mb-6">
+                  Report food waste, volunteer, partner with us, or donate to support the mission.
+                </p>
+                <Link href="/contact">
+                  <Button variant="outline" size="sm" className="w-full">
+                    Contact Us
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
             <CardContent className="py-12">

@@ -131,10 +131,15 @@ That’s SDG 2 impact in motion.
 
 
 ```
-● Landing (mission + SDG 2 story)
+● Landing (mission + SDG 2 story + spotlight preview)
 ● How it works
+● Learn (food waste education hub) NEW
+● Spotlight (weekly hero features) NEW
 ● Partners page (how providers join)
 ● Donate page (donors)
+● Contact/Get Involved NEW
+● Login / Signup
+```
 ● Login / Signup
 ```
 ### Beneficiary
@@ -174,8 +179,30 @@ That’s SDG 2 impact in motion.
 ```
 ## 6) Why this helps SDG 2 (in one sentence judges love)
 
-EcoEats reduces hunger by **turning donations and surplus food into verified meals** , tracked
-transparently from funding → distribution → redemption.
+EcoEats reduces hunger by **educating communities about food waste, celebrating impact heroes weekly, and turning donations and surplus food into verified meals** , tracked transparently from funding → distribution → redemption.
+
+## 7) Educational Components (New Focus)
+
+### A) Food Waste Education Hub (/learn)
+- **The Problem**: Global and local food waste statistics
+- **Environmental Impact**: How food waste affects climate and resources
+- **Social Impact**: Connection between waste and hunger
+- **What You Can Do**: Practical tips for individuals, families, and businesses
+- **Success Stories**: Real examples of waste reduction
+
+### B) Community Spotlight (/spotlight)
+- **Weekly Features**: Farmer/Donor/Volunteer of the Week
+- **Impact Stories**: Detailed narratives of community heroes
+- **Measurable Impact**: Stats showing their contributions
+- **How They Did It**: Educational breakdown of their approach
+- **Call to Action**: How others can replicate their success
+
+### C) Get Involved / Contact
+- **Report Food Waste**: Form to alert about wastage in community
+- **Volunteer Opportunities**: Ways to actively participate
+- **Educational Resources**: Downloadable guides and materials
+- **Contact Form**: Direct line to EcoEats team for questions/partnerships
+- **Newsletter**: Stay informed about food sustainability
 
 # PART 2 — TECHNICAL (DEV-ONLY,
 

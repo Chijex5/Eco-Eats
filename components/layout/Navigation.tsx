@@ -10,8 +10,11 @@ export const Navigation = () => {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/how-it-works', label: 'How It Works' },
+    { href: '/learn', label: 'Learn' },
+    { href: '/spotlight', label: 'Spotlight' },
     { href: '/partners/join', label: 'Become a Partner' },
     { href: '/donate', label: 'Donate' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   return (
