@@ -40,18 +40,19 @@ export default function Home() {
     <div className="page-shell">
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)] via-[var(--surface-alt)] to-[var(--muted)] md:hidden" />
           <img
             src="/images/home-hero.webp"
             alt=""
             aria-hidden="true"
-            className="h-full w-full object-cover"
+            className="hidden h-full w-full object-cover md:block"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)]/95 via-[var(--background)]/75 to-transparent" />
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-[var(--background)]/95 via-[var(--background)]/75 to-transparent md:block" />
         </div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-center">
             <div className="space-y-6 rounded-3xl border border-[var(--border)] bg-[var(--surface)]/90 p-8 shadow-[var(--shadow-soft)] backdrop-blur">
-              <div className="inline-flex items-center gap-3 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
+              <div className="inline-flex items-center gap-3 rounded-full border border-[var(--primary)]/20 bg-[var(--primary)]/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-[var(--primary-dark)]">
                 SDG 2: Zero Hunger
               </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl text-[var(--foreground)]">
@@ -80,7 +81,7 @@ export default function Home() {
               <CardContent className="grid grid-cols-2 gap-4">
                 {stats.map((stat) => (
                   <div key={stat.label} className="rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] px-4 py-4">
-                    <div className="text-2xl font-semibold text-[var(--foreground)]">{stat.number}</div>
+                    <div className="text-2xl font-semibold text-[var(--primary-dark)]">{stat.number}</div>
                     <div className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)] mt-2">{stat.label}</div>
                   </div>
                 ))}
@@ -91,11 +92,11 @@ export default function Home() {
       </section>
 
       <section className="section-muted">
-        <div className="bg-[var(--muted-foreground)] max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <div className="text-2xl font-semibold text-[var(--foreground)]">{stat.number}</div>
+                <div className="text-2xl font-semibold text-[var(--primary-dark)]">{stat.number}</div>
                 <div className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)] mt-2">
                   {stat.label}
                 </div>
@@ -107,13 +108,14 @@ export default function Home() {
 
       <section className="relative overflow-hidden py-24">
         <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--surface)] via-[var(--surface-alt)] to-[var(--muted)] md:hidden" />
           <img
             src="/images/donor-image.webp"
             alt=""
             aria-hidden="true"
-            className="h-full w-full object-cover"
+            className="hidden h-full w-full object-cover md:block"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)]/95 via-[var(--background)]/75 to-transparent" />
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-[var(--background)]/95 via-[var(--background)]/75 to-transparent md:block" />
         </div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
@@ -146,13 +148,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-muted bg-[var(--muted-foreground)]">
+      <section className="section-muted bg-[var(--surface-alt)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
             <div className="max-w-xl">
-              <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Simple flow</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--primary)]">Simple flow</p>
               <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">A transparent journey from donation to meal.</h2>
-              <p className="text-[var(--muted)] mt-4">
+              <p className="text-[var(--muted-foreground)] mt-4">
                 Every step is verified so supporters can trust their contributions and beneficiaries feel respected.
               </p>
             </div>
@@ -280,7 +282,7 @@ export default function Home() {
 
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
+          <Card className="bg-[var(--primary)] text-[var(--surface)] border-none shadow-[var(--shadow)]">
             <CardContent className="py-12">
               <h2 className="text-3xl sm:text-4xl mb-4">Join the fight against hunger.</h2>
               <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto">
@@ -293,7 +295,11 @@ export default function Home() {
                   </Button>
                 </Link>
                 <Link href="/donate">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white text-[var(--primary)] border-white hover:bg-white/90">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto bg-[var(--surface)] text-[var(--primary)] border-[var(--surface)] hover:bg-[var(--surface)]/90"
+                  >
                     Donate Today
                   </Button>
                 </Link>
