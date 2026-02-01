@@ -15,24 +15,70 @@ export default function Signup() {
       title: 'Beneficiary',
       description: 'I need food support',
       details: 'Request help, receive vouchers, access meals with dignity',
+      formFields: [
+        {
+          id: 'community',
+          label: 'Community / City',
+          type: 'text',
+          placeholder: 'e.g. Ikeja, Lagos',
+          required: true,
+        },
+        {
+          id: 'household',
+          label: 'Household Size (Optional)',
+          type: 'number',
+          placeholder: 'e.g. 4',
+        },
+      ],
     },
     {
       id: 'donor',
       title: 'Donor',
       description: 'I want to donate',
       details: 'Fund meal vouchers and track your impact',
+      formFields: [
+        {
+          id: 'donor-type',
+          label: 'Donor Type',
+          type: 'select',
+          required: true,
+          options: ['Individual', 'Business', 'Foundation'],
+        },
+        {
+          id: 'impact-focus',
+          label: 'Impact Focus (Optional)',
+          type: 'text',
+          placeholder: 'e.g. school meals, emergencies',
+        },
+      ],
     },
     {
       id: 'partner',
       title: 'Food Partner',
       description: 'I can provide food',
       details: 'List meals, accept vouchers, help your community',
-    },
-    {
-      id: 'admin',
-      title: 'Admin',
-      description: 'I manage a program',
-      details: 'Verify users, approve requests, track impact',
+      formFields: [
+        {
+          id: 'organization',
+          label: 'Organization Name',
+          type: 'text',
+          placeholder: 'e.g. Green Cafe',
+          required: true,
+        },
+        {
+          id: 'service-area',
+          label: 'Service Area',
+          type: 'text',
+          placeholder: 'e.g. Yaba, Lagos',
+          required: true,
+        },
+        {
+          id: 'daily-capacity',
+          label: 'Meals Per Day (Optional)',
+          type: 'number',
+          placeholder: 'e.g. 50',
+        },
+      ],
     },
   ];
 
@@ -41,7 +87,9 @@ export default function Signup() {
     setStep('form');
   };
 
-  const selectedRoleLabel = roles.find((role) => role.id === selectedRole)?.title;
+  const selectedRoleConfig = roles.find((role) => role.id === selectedRole);
+  const selectedRoleLabel = selectedRoleConfig?.title;
+  const roleFields = selectedRoleConfig?.formFields ?? [];
 
   return (
     <div className="page-shell">
@@ -121,92 +169,135 @@ export default function Signup() {
                     Change role
                   </button>
 
-                  <form className="space-y-5">
+                  <form className="space-y-6">
                     <div>
-                      <label
-                        htmlFor="name"
-                        className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
-                      >
-                        Full Name
-                      </label>
-                      <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        required
-                        className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
-                        placeholder="John Doe"
-                      />
+                      <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-3">
+                        Account details
+                      </p>
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div>
+                          <label
+                            htmlFor="name"
+                            className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
+                          >
+                            Full Name
+                          </label>
+                          <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            required
+                            className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
+                            placeholder="John Doe"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="email"
+                            className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
+                          >
+                            Email Address
+                          </label>
+                          <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            required
+                            className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
+                            placeholder="you@example.com"
+                          />
+                        </div>
+                      </div>
                     </div>
 
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
-                      >
-                        Email Address
-                      </label>
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
-                        placeholder="you@example.com"
-                      />
-                    </div>
+                    {roleFields.length > 0 && (
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-3">
+                          Role details
+                        </p>
+                        <div className="grid gap-4 md:grid-cols-2">
+                          {roleFields.map((field) => (
+                            <div key={field.id} className={field.type === 'select' ? 'md:col-span-2' : ''}>
+                              <label
+                                htmlFor={field.id}
+                                className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
+                              >
+                                {field.label}
+                              </label>
+                              {field.type === 'select' ? (
+                                <select
+                                  id={field.id}
+                                  name={field.id}
+                                  required={field.required}
+                                  defaultValue=""
+                                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none"
+                                >
+                                  <option value="" disabled>
+                                    Select one
+                                  </option>
+                                  {field.options?.map((option) => (
+                                    <option key={option} value={option}>
+                                      {option}
+                                    </option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <input
+                                  id={field.id}
+                                  name={field.id}
+                                  type={field.type}
+                                  required={field.required}
+                                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
+                                  placeholder={field.placeholder}
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     <div>
-                      <label
-                        htmlFor="phone"
-                        className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
-                      >
-                        Phone Number (Optional)
-                      </label>
-                      <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
-                        placeholder="+234 XXX XXX XXXX"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="password"
-                        className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
-                      >
-                        Password
-                      </label>
-                      <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
-                        placeholder="••••••••"
-                      />
+                      <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-3">
+                        Security
+                      </p>
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div>
+                          <label
+                            htmlFor="password"
+                            className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
+                          >
+                            Password
+                          </label>
+                          <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            required
+                            className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
+                            placeholder="••••••••"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="confirm-password"
+                            className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
+                          >
+                            Confirm Password
+                          </label>
+                          <input
+                            id="confirm-password"
+                            name="confirm-password"
+                            type="password"
+                            required
+                            className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
+                            placeholder="••••••••"
+                          />
+                        </div>
+                      </div>
                       <p className="text-xs text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mt-2">
                         Must be at least 8 characters.
                       </p>
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="confirm-password"
-                        className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
-                      >
-                        Confirm Password
-                      </label>
-                      <input
-                        id="confirm-password"
-                        name="confirm-password"
-                        type="password"
-                        required
-                        className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
-                        placeholder="••••••••"
-                      />
                     </div>
 
                     <label className="flex items-start gap-3 text-sm text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-80">

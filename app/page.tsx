@@ -91,7 +91,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-muted">
+      <section className="">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((stat) => (
@@ -148,7 +148,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-muted bg-[var(--surface-alt)]">
+      <section className=" bg-[var(--surface-alt)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
             <div className="max-w-xl">
@@ -214,7 +214,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-muted">
+      <section className="">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-2xl">
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Education & Awareness</p>
