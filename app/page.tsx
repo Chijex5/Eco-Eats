@@ -117,7 +117,7 @@ export default function Home() {
           />
           <div className="absolute inset-0 hidden bg-gradient-to-r from-[var(--background)]/95 via-[var(--background)]/75 to-transparent md:block" />
         </div>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">How you can help</p>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">Choose your path to impact.</h2>
