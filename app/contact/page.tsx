@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
@@ -14,6 +13,8 @@ export default function Contact() {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +29,24 @@ export default function Contact() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+    // In production, this would send to an API
+    console.log('Newsletter subscription:', newsletterEmail);
+    setNewsletterSubmitted(true);
+    setTimeout(() => {
+      setNewsletterSubmitted(false);
+      setNewsletterEmail('');
+    }, 3000);
+  };
+
+  const handleDownload = (resourceName: string) => {
+    // In production, this would trigger actual download
+    console.log('Downloading:', resourceName);
+    alert(`Download for "${resourceName}" will be available soon. We're preparing these resources for you!`);
   };
 
   const ways = [
@@ -318,7 +337,11 @@ export default function Contact() {
                             <span>{resource.size}</span>
                           </div>
                         </div>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleDownload(resource.title)}
+                        >
                           Download
                         </Button>
                       </div>
@@ -340,16 +363,31 @@ export default function Contact() {
               <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto mb-8">
                 Subscribe to our newsletter for monthly updates, success stories, and tips on reducing food waste.
               </p>
-              <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-3 rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-white"
-                />
-                <Button size="lg" variant="secondary" className="whitespace-nowrap">
-                  Subscribe
-                </Button>
-              </div>
+              {newsletterSubmitted ? (
+                <div className="max-w-md mx-auto">
+                  <div className="text-lg font-semibold mb-2">✅ Thank you for subscribing!</div>
+                  <p className="text-sm opacity-90">Check your email for confirmation.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleNewsletterSubmit} className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
+                  <label htmlFor="newsletter-email" className="sr-only">
+                    Email address for newsletter
+                  </label>
+                  <input
+                    type="email"
+                    id="newsletter-email"
+                    name="newsletter-email"
+                    required
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="flex-1 px-4 py-3 rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-white"
+                  />
+                  <Button type="submit" size="lg" variant="secondary" className="whitespace-nowrap">
+                    Subscribe
+                  </Button>
+                </form>
+              )}
             </CardContent>
           </Card>
         </div>

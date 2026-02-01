@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { currentSpotlight } from '@/data/spotlightData';
 
 export default function Home() {
   const stats = [
@@ -175,21 +176,21 @@ export default function Home() {
             <div className="grid md:grid-cols-[240px_1fr] gap-6">
               <div className="bg-gradient-to-br from-[var(--primary)]/10 to-[var(--primary)]/5 flex items-center justify-center p-8 rounded-l-xl">
                 <div className="text-center">
-                  <div className="text-8xl mb-4">👩‍🌾</div>
+                  <div className="text-8xl mb-4">{currentSpotlight.image}</div>
                   <div className="text-sm font-medium text-[var(--foreground)]">This Week</div>
                 </div>
               </div>
               <CardContent className="py-6 pr-6">
-                <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-2">Amara Okafor</h3>
-                <p className="text-[var(--primary)] font-medium mb-1">Community Food Partner</p>
-                <p className="text-sm text-[var(--muted-foreground)] mb-4">📍 Lagos, Nigeria</p>
+                <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-2">{currentSpotlight.name}</h3>
+                <p className="text-[var(--primary)] font-medium mb-1">{currentSpotlight.role}</p>
+                <p className="text-sm text-[var(--muted-foreground)] mb-4">📍 {currentSpotlight.location}</p>
                 <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-alt)] p-4 mb-4">
                   <p className="text-sm font-semibold text-[var(--foreground)]">
-                    Rescued and redistributed 2,500 meals in one month
+                    {currentSpotlight.achievement}
                   </p>
                 </div>
                 <p className="text-sm text-[var(--muted-foreground)] mb-6">
-                  "Every meal saved is a meal that can feed someone. No food should go to waste when people are hungry."
+                  "{currentSpotlight.quote}"
                 </p>
                 <Link href="/spotlight">
                   <Button variant="outline" size="sm">

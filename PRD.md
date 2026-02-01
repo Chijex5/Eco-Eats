@@ -140,8 +140,6 @@ That’s SDG 2 impact in motion.
 ● Contact/Get Involved NEW
 ● Login / Signup
 ```
-● Login / Signup
-```
 ### Beneficiary
 
 ```
