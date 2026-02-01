@@ -5,11 +5,28 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { useState } from 'react';
 
+type FormField = {
+  id: string;
+  label: string;
+  type: 'text' | 'number' | 'select';
+  placeholder?: string;
+  required?: boolean;
+  options?: string[];
+};
+
+type RoleConfig = {
+  id: string;
+  title: string;
+  description: string;
+  details: string;
+  formFields: FormField[];
+};
+
 export default function Signup() {
   const [step, setStep] = useState<'role' | 'form'>('role');
   const [selectedRole, setSelectedRole] = useState<string>('');
 
-  const roles = [
+  const roles: RoleConfig[] = [
     {
       id: 'beneficiary',
       title: 'Beneficiary',
@@ -233,12 +250,12 @@ export default function Signup() {
                                   className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none"
                                 >
                                   <option value="" disabled>
-                                    Select one
+                                  Select one
                                   </option>
-                                  {field.options?.map((option) => (
-                                    <option key={option} value={option}>
-                                      {option}
-                                    </option>
+                                  {field.options?.map((option: string) => (
+                                  <option key={option} value={option}>
+                                    {option}
+                                  </option>
                                   ))}
                                 </select>
                               ) : (
