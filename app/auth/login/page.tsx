@@ -3,16 +3,49 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [formError, setFormError] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const accessError = searchParams.get('error');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // This is a prototype - actual authentication will be implemented in Phase B
-    console.log('Login attempt:', { email, password });
+    setFormError('');
+
+    if (!email || !password) {
+      setFormError('Please enter your email and password.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        setFormError(data?.error || 'Unable to sign in.');
+        return;
+      }
+
+      const redirect = searchParams.get('redirect');
+      router.push(redirect || data?.redirect || '/');
+    } catch (error) {
+      console.error(error);
+      setFormError('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -55,6 +88,11 @@ export default function Login() {
             <Card className="shadow-[var(--shadow)] bg-[var(--surface)] lg:bg-[var(--primary-dark)]/85 lg:border-[var(--surface)]/15 lg:text-[var(--surface)]">
               <CardContent className="pt-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
+                  {accessError === 'forbidden' && (
+                    <p className="text-sm text-amber-600">
+                      You don&apos;t have access to that page. Please sign in with a different role.
+                    </p>
+                  )}
                   <div>
                     <label
                       htmlFor="email"
@@ -112,9 +150,10 @@ export default function Login() {
                     </a>
                   </div>
 
-                  <Button type="submit" size="lg" className="w-full">
-                    Sign In
+                  <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? 'Signing in…' : 'Sign In'}
                   </Button>
+                  {formError && <p className="text-sm text-red-500">{formError}</p>}
                 </form>
 
                 <div className="mt-6 text-center text-sm text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-80">
@@ -135,7 +174,7 @@ export default function Login() {
             </Card>
 
             <p className="mt-6 text-center text-xs text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70">
-              This is a Phase A prototype. Full authentication arrives in Phase B.
+              Secure sign-in powered by EcoEats.
             </p>
           </div>
         </div>

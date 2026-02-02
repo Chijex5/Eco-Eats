@@ -35,34 +35,34 @@ Building **EcoEats** - Zero Hunger (SDG 2) Platform
 
 ## 🚧 IN PROGRESS: Core Application Features
 
-### STEP 3: Database & Backend Setup
-- [ ] Set up MySQL database (PlanetScale/AWS RDS/Railway)
-- [ ] Create database schema and migrations (all 11 tables from PRD)
-  - [ ] users table
-  - [ ] beneficiary_profiles table
-  - [ ] food_partners table
-  - [ ] partner_staff table
-  - [ ] support_requests table
-  - [ ] donations table
-  - [ ] vouchers table (with QR code generation)
-  - [ ] voucher_redemptions table
-  - [ ] surplus_listings table
-  - [ ] surplus_claims table
-  - [ ] impact_events table
-- [ ] Set up database connection and ORM (Prisma/Drizzle)
-- [ ] Create seed data for testing
+### STEP 3: Database & Backend Setup (DONE)
+- [x] Set up MySQL database (PlanetScale/AWS RDS/Railway)
+- [x] Create database schema and migrations (all 11 tables from PRD)
+  - [x] users table
+  - [x] beneficiary_profiles table
+  - [x] food_partners table
+  - [x] partner_staff table
+  - [x] support_requests table
+  - [x] donations table
+  - [x] vouchers table (with QR code generation)
+  - [x] voucher_redemptions table
+  - [x] surplus_listings table
+  - [x] surplus_claims table
+  - [x] impact_events table
+- [x] Set up database connection and ORM (Prisma/Drizzle)
+- [x] Create seed data for testing
 
 ### STEP 4: Authentication & Authorization
-- [ ] Implement user authentication system (NextAuth.js or similar)
-- [ ] Set up role-based access control (RBAC)
-  - [ ] BENEFICIARY role permissions
-  - [ ] DONOR role permissions
-  - [ ] PARTNER_OWNER role permissions
-  - [ ] PARTNER_STAFF role permissions
-  - [ ] ADMIN role permissions
+- [x] Implement user authentication system (NextAuth.js or similar)
+- [x] Set up role-based access control (RBAC)
+  - [x] BENEFICIARY role permissions
+  - [x] DONOR role permissions
+  - [x] PARTNER_OWNER role permissions
+  - [x] PARTNER_STAFF role permissions
+  - [x] ADMIN role permissions
 - [ ] Implement email verification flow
-- [ ] Create protected route middleware
-- [ ] Build registration flows for each role type
+- [x] Create protected route middleware
+- [x] Build registration flows for each role type
 
 ### STEP 5: API Routes - Auth & Core
 - [ ] POST /api/auth/register - User registration
