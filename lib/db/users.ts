@@ -32,7 +32,7 @@ export async function createUser(data: {
   await query(
     `INSERT INTO users (id, full_name, email, password_hash, role, phone)
      VALUES (?, ?, ?, ?, ?, ?)`,
-    [id, data.full_name, data.email, data.password_hash, data.role, data.phone]
+    [id, data.full_name, data.email, data.password_hash, data.role, data.phone ?? null]
   );
   const result = await query('SELECT * FROM users WHERE id = ?', [id]);
   return result.rows[0] as User;
