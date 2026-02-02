@@ -4,7 +4,8 @@ import { SESSION_COOKIE_NAME } from '@/lib/auth/constants';
 import { verifySessionToken } from '@/lib/auth/jwt';
 
 export async function GET() {
-  const token = cookies().get(SESSION_COOKIE_NAME)?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
   if (!token) {
     return NextResponse.json({ authenticated: false }, { status: 200 });
   }
