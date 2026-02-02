@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 
 type FormField = {
   id: string;
@@ -25,6 +26,10 @@ type RoleConfig = {
 export default function Signup() {
   const [step, setStep] = useState<'role' | 'form'>('role');
   const [selectedRole, setSelectedRole] = useState<string>('');
+  const [formError, setFormError] = useState<string>('');
+  const [formSuccess, setFormSuccess] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const roles: RoleConfig[] = [
     {
@@ -102,11 +107,74 @@ export default function Signup() {
   const handleRoleSelect = (roleId: string) => {
     setSelectedRole(roleId);
     setStep('form');
+    setFormError('');
+    setFormSuccess('');
   };
 
   const selectedRoleConfig = roles.find((role) => role.id === selectedRole);
   const selectedRoleLabel = selectedRoleConfig?.title;
   const roleFields = selectedRoleConfig?.formFields ?? [];
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFormError('');
+    setFormSuccess('');
+
+    if (!selectedRole) {
+      setFormError('Select a role to continue.');
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+    const fullName = String(formData.get('name') || '').trim();
+    const email = String(formData.get('email') || '').trim();
+    const password = String(formData.get('password') || '');
+    const confirmPassword = String(formData.get('confirm-password') || '');
+
+    if (!fullName || !email || !password || !confirmPassword) {
+      setFormError('Please fill in all required fields.');
+      return;
+    }
+
+    if (password.length < 8) {
+      setFormError('Password must be at least 8 characters.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setFormError('Passwords do not match.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: fullName,
+          email,
+          password,
+          role: selectedRole,
+        }),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        setFormError(data?.error || 'Unable to create account.');
+        return;
+      }
+
+      setFormSuccess('Account created. Redirecting…');
+      router.push(data?.redirect || '/');
+    } catch (error) {
+      console.error(error);
+      setFormError('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="page-shell">
@@ -186,7 +254,7 @@ export default function Signup() {
                     Change role
                   </button>
 
-                  <form className="space-y-6">
+                  <form className="space-y-6" onSubmit={handleSubmit}>
                     <div>
                       <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-3">
                         Account details
@@ -250,7 +318,7 @@ export default function Signup() {
                                   className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none"
                                 >
                                   <option value="" disabled>
-                                  Select one
+                                    Select one
                                   </option>
                                   {field.options?.map((option: string) => (
                                   <option key={option} value={option}>
@@ -343,8 +411,15 @@ export default function Signup() {
                       </span>
                     </label>
 
-                    <Button type="submit" size="lg" className="w-full">
-                      Create Account
+                    {formError && (
+                      <p className="text-sm text-red-500">{formError}</p>
+                    )}
+                    {formSuccess && (
+                      <p className="text-sm text-emerald-600">{formSuccess}</p>
+                    )}
+
+                    <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                      {isSubmitting ? 'Creating account…' : 'Create Account'}
                     </Button>
                   </form>
 
@@ -367,7 +442,7 @@ export default function Signup() {
             )}
 
             <p className="mt-8 text-center text-xs text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70">
-              This is a Phase A prototype. Full authentication arrives in Phase B.
+              By creating an account, you agree to our Terms and Privacy Policy.
             </p>
           </div>
         </div>
