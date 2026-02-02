@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 
@@ -107,10 +108,14 @@ export default function JoinPartners() {
     },
   ];
 
+  const heroDelay = { '--delay': '120ms' } as CSSProperties;
+  const sectionDelay = { '--delay': '160ms' } as CSSProperties;
+  const cardDelay = { '--delay': '220ms' } as CSSProperties;
+
   return (
     <div className="page-shell">
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="max-w-3xl space-y-6">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 soft-divider">
+        <div className="max-w-3xl space-y-6 reveal" style={heroDelay}>
           <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Partners</p>
           <h1 className="text-4xl sm:text-5xl text-[var(--foreground)]">Become a food partner.</h1>
           <p className="text-lg text-[var(--muted-foreground)]">
@@ -119,12 +124,14 @@ export default function JoinPartners() {
         </div>
       </section>
 
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mb-8">Who can partner?</h2>
+          <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mb-8 reveal" style={sectionDelay}>
+            Who can partner?
+          </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {partnerTypes.map((partner) => (
-              <Card key={partner.type} className="text-center">
+              <Card key={partner.type} className="text-center reveal" style={cardDelay}>
                 <CardHeader>
                   <CardTitle className="text-lg">{partner.type}</CardTitle>
                 </CardHeader>
@@ -137,15 +144,15 @@ export default function JoinPartners() {
         </div>
       </section>
 
-      <section className="py-24">
+      <section className="py-24 soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl reveal" style={sectionDelay}>
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Benefits</p>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">Why partner with EcoEats?</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
             {benefits.map((benefit, index) => (
-              <Card key={benefit.title}>
+              <Card key={benefit.title} className="reveal" style={cardDelay}>
                 <CardHeader>
                   <div className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Benefit {String(index + 1).padStart(2, '0')}</div>
                   <CardTitle className="text-lg mt-3">{benefit.title}</CardTitle>
@@ -157,12 +164,14 @@ export default function JoinPartners() {
         </div>
       </section>
 
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mb-10">Getting started is easy</h2>
+          <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mb-10 reveal" style={sectionDelay}>
+            Getting started is easy
+          </h2>
           <div className="grid md:grid-cols-4 gap-6">
             {howItWorks.map((item) => (
-              <div key={item.step} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+              <div key={item.step} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 reveal" style={cardDelay}>
                 <div className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Step {item.step}</div>
                 <h3 className="text-lg font-semibold text-[var(--foreground)] mt-3">{item.title}</h3>
                 <p className="text-sm text-[var(--muted-foreground)] mt-2">{item.description}</p>
@@ -172,9 +181,9 @@ export default function JoinPartners() {
         </div>
       </section>
 
-      <section className="py-24">
+      <section className="py-24 soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="bg-[var(--surface-alt)] border-none">
+          <Card className="bg-[var(--surface-alt)] border-none reveal" style={cardDelay}>
             <CardHeader>
               <CardTitle className="text-3xl">Partner dashboard features</CardTitle>
               <p className="text-sm text-[var(--muted-foreground)]">
@@ -183,7 +192,7 @@ export default function JoinPartners() {
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 gap-6">
               {dashboardFeatures.map((feature, index) => (
-                <div key={feature.title} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+                <div key={feature.title} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 reveal" style={cardDelay}>
                   <div className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Area {String(index + 1).padStart(2, '0')}</div>
                   <h3 className="text-lg font-semibold text-[var(--foreground)] mt-3">{feature.title}</h3>
                   <ul className="mt-3 space-y-2 text-sm text-[var(--muted-foreground)]">
@@ -203,7 +212,7 @@ export default function JoinPartners() {
 
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
+          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)] reveal" style={sectionDelay}>
             <CardContent className="py-12">
               <h2 className="text-3xl sm:text-4xl mb-4">Ready to join our partner network?</h2>
               <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto">

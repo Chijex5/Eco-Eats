@@ -1,5 +1,6 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
@@ -122,10 +123,14 @@ export default function Contact() {
     { label: 'Hours', value: 'Mon-Fri: 9AM - 6PM WAT', icon: '⏰' },
   ];
 
+  const heroDelay = { '--delay': '120ms' } as CSSProperties;
+  const sectionDelay = { '--delay': '160ms' } as CSSProperties;
+  const cardDelay = { '--delay': '220ms' } as CSSProperties;
+
   return (
     <div className="page-shell">
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="max-w-3xl space-y-6">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 soft-divider">
+        <div className="max-w-3xl space-y-6 reveal" style={heroDelay}>
           <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Get Involved</p>
           <h1 className="text-4xl sm:text-5xl text-[var(--foreground)]">
             Join the movement to end hunger and reduce food waste.
@@ -138,16 +143,16 @@ export default function Contact() {
       </section>
 
       {/* Ways to Get Involved */}
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="mb-12">
+          <div className="mb-12 reveal" style={sectionDelay}>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">Ways to get involved</h2>
             <p className="text-[var(--muted-foreground)] mt-3">Choose how you want to make an impact.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ways.map((way) => (
-              <Card key={way.title} hover>
+              <Card key={way.title} hover className="reveal" style={cardDelay}>
                 <CardHeader>
                   <div className="text-4xl mb-3">{way.icon}</div>
                   <CardTitle className="text-lg">{way.title}</CardTitle>
@@ -173,16 +178,16 @@ export default function Contact() {
       </section>
 
       {/* Contact Form */}
-      <section className="py-24" id="contact-form">
+      <section className="py-24 soft-divider" id="contact-form">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center">
+          <div className="mb-12 text-center reveal" style={sectionDelay}>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">Send us a message</h2>
             <p className="text-[var(--muted-foreground)] mt-3">
               Fill out the form below and we'll get back to you within 24 hours.
             </p>
           </div>
 
-          <Card>
+          <Card className="reveal" style={cardDelay}>
             <CardContent className="pt-8">
               {submitted ? (
                 <div className="text-center py-12">
@@ -297,13 +302,15 @@ export default function Contact() {
       </section>
 
       {/* Contact Info & Resources */}
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid md:grid-cols-2 gap-8">
             {/* Contact Information */}
             <div>
-              <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-6">Contact Information</h3>
-              <Card>
+              <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-6 reveal" style={sectionDelay}>
+                Contact Information
+              </h3>
+              <Card className="reveal" style={cardDelay}>
                 <CardContent className="pt-6 space-y-4">
                   {contactInfo.map((info) => (
                     <div key={info.label} className="flex items-start gap-3">
@@ -320,10 +327,12 @@ export default function Contact() {
 
             {/* Educational Resources */}
             <div>
-              <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-6">Educational Resources</h3>
+              <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-6 reveal" style={sectionDelay}>
+                Educational Resources
+              </h3>
               <div className="space-y-4">
                 {resources.map((resource) => (
-                  <Card key={resource.title}>
+                  <Card key={resource.title} className="reveal" style={cardDelay}>
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
@@ -357,7 +366,7 @@ export default function Contact() {
       {/* Newsletter Signup */}
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
+          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)] reveal" style={sectionDelay}>
             <CardContent className="py-12">
               <h2 className="text-3xl sm:text-4xl mb-4">Stay updated on our mission</h2>
               <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto mb-8">

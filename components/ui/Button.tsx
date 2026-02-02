@@ -13,12 +13,12 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0';
   
   const variants = {
     primary: 'bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] shadow-sm hover:shadow-md',
     secondary: 'bg-[var(--secondary)] text-[var(--foreground)] hover:brightness-95 shadow-sm hover:shadow-md',
-    outline: 'border border-[var(--foreground)]/20 text-[var(--foreground)] hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5',
+    outline: 'border border-[var(--foreground)]/20 text-[var(--foreground)] hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--surface-alt)]',
     ghost: 'text-[var(--foreground)] hover:bg-[var(--muted)]',
   };
   

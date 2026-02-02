@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { currentSpotlight } from '@/data/spotlightData';
@@ -36,9 +37,13 @@ export default function Home() {
     { step: '4', title: 'Redeem meals', desc: 'Partners serve meals and confirm redemption.' },
   ];
 
+  const heroDelay = { '--delay': '120ms' } as CSSProperties;
+  const cardDelay = { '--delay': '240ms' } as CSSProperties;
+  const sectionDelay = { '--delay': '160ms' } as CSSProperties;
+
   return (
     <div className="page-shell">
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden soft-divider">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)] via-[var(--surface-alt)] to-[var(--muted)] md:hidden" />
           <img
@@ -51,7 +56,10 @@ export default function Home() {
         </div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-center">
-            <div className="space-y-6 rounded-3xl border border-[var(--border)] bg-[var(--surface)]/90 p-8 shadow-[var(--shadow-soft)] backdrop-blur">
+            <div
+              className="space-y-6 rounded-3xl border border-[var(--border)] bg-[var(--surface)]/90 p-8 shadow-[var(--shadow-soft)] backdrop-blur reveal"
+              style={heroDelay}
+            >
               <div className="inline-flex items-center gap-3 rounded-full border border-[var(--primary)]/20 bg-[var(--primary)]/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-[var(--primary-dark)]">
                 SDG 2: Zero Hunger
               </div>
@@ -71,7 +79,7 @@ export default function Home() {
               </div>
             </div>
 
-            <Card className="bg-[var(--surface)]/90 backdrop-blur" hover>
+            <Card className="bg-[var(--surface)]/90 backdrop-blur reveal" hover style={cardDelay}>
               <CardHeader className="mb-6">
                 <CardTitle className="text-2xl">Impact snapshot</CardTitle>
                 <p className="text-sm text-[var(--muted-foreground)]">
@@ -91,9 +99,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="">
+      <section className="soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 reveal" style={sectionDelay}>
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="text-2xl font-semibold text-[var(--primary-dark)]">{stat.number}</div>
@@ -106,7 +114,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden py-24">
+      <section className="relative overflow-hidden py-24 soft-divider">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-b from-[var(--surface)] via-[var(--surface-alt)] to-[var(--muted)] md:hidden" />
           <img
@@ -118,7 +126,7 @@ export default function Home() {
           <div className="absolute inset-0 hidden bg-gradient-to-r from-[var(--background)]/95 via-[var(--background)]/75 to-transparent md:block" />
         </div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl reveal" style={sectionDelay}>
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">How you can help</p>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">Choose your path to impact.</h2>
             <p className="text-[var(--muted-foreground)] mt-4">
@@ -128,7 +136,7 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-6 mt-10">
             {features.map((feature) => (
-              <Card key={feature.title} hover>
+              <Card key={feature.title} hover className="reveal" style={cardDelay}>
                 <CardHeader>
                   <CardTitle>{feature.title}</CardTitle>
                 </CardHeader>
@@ -148,10 +156,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className=" bg-[var(--surface-alt)]">
+      <section className="bg-[var(--surface-alt)] soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
-            <div className="max-w-xl">
+            <div className="max-w-xl reveal" style={sectionDelay}>
               <p className="text-xs uppercase tracking-[0.2em] text-[var(--primary)]">Simple flow</p>
               <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">A transparent journey from donation to meal.</h2>
               <p className="text-[var(--muted-foreground)] mt-4">
@@ -160,7 +168,11 @@ export default function Home() {
             </div>
             <div className="grid sm:grid-cols-2 gap-4 w-full lg:max-w-xl">
               {steps.map((step) => (
-                <div key={step.step} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                <div
+                  key={step.step}
+                  className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 reveal"
+                  style={cardDelay}
+                >
                   <div className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Step {step.step}</div>
                   <div className="text-lg font-semibold text-[var(--foreground)] mt-2">{step.title}</div>
                   <p className="text-sm text-[var(--muted-foreground)] mt-2">{step.desc}</p>
@@ -171,9 +183,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-24">
+      <section className="py-24 soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 reveal" style={sectionDelay}>
             <div className="inline-flex items-center gap-2 rounded-full border border-[var(--primary)] bg-[var(--primary)]/10 px-4 py-2 text-sm font-medium text-[var(--primary)] mb-4">
               ✨ Community Spotlight
             </div>
@@ -183,7 +195,7 @@ export default function Home() {
             </p>
           </div>
 
-          <Card hover className="max-w-4xl mx-auto">
+          <Card hover className="max-w-4xl mx-auto reveal" style={cardDelay}>
             <div className="grid md:grid-cols-[240px_1fr] gap-6">
               <div className="bg-gradient-to-br from-[var(--primary)]/10 to-[var(--primary)]/5 flex items-center justify-center p-8 rounded-l-xl">
                 <div className="text-center">
@@ -214,9 +226,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="">
+      <section className="soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl reveal" style={sectionDelay}>
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Education & Awareness</p>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">Learn about food waste and how you can help.</h2>
             <p className="text-[var(--muted-foreground)] mt-4">
@@ -226,7 +238,7 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mt-10">
-            <Card hover>
+            <Card hover className="reveal" style={cardDelay}>
               <CardHeader>
                 <div className="text-4xl mb-3">📚</div>
                 <CardTitle>The Problem</CardTitle>
@@ -243,7 +255,7 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card hover>
+            <Card hover className="reveal" style={cardDelay}>
               <CardHeader>
                 <div className="text-4xl mb-3">💡</div>
                 <CardTitle>How You Can Help</CardTitle>
@@ -260,7 +272,7 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card hover>
+            <Card hover className="reveal" style={cardDelay}>
               <CardHeader>
                 <div className="text-4xl mb-3">🤝</div>
                 <CardTitle>Get Involved</CardTitle>
@@ -282,7 +294,7 @@ export default function Home() {
 
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
+          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)] reveal" style={sectionDelay}>
             <CardContent className="py-12">
               <h2 className="text-3xl sm:text-4xl mb-4">Join the fight against hunger.</h2>
               <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto">

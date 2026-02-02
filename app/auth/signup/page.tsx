@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { useState } from 'react';
@@ -107,6 +108,8 @@ export default function Signup() {
   const selectedRoleConfig = roles.find((role) => role.id === selectedRole);
   const selectedRoleLabel = selectedRoleConfig?.title;
   const roleFields = selectedRoleConfig?.formFields ?? [];
+  const heroDelay = { '--delay': '120ms' } as CSSProperties;
+  const cardDelay = { '--delay': '200ms' } as CSSProperties;
 
   return (
     <div className="page-shell">
@@ -125,7 +128,7 @@ export default function Signup() {
           <div className="absolute inset-0 hidden lg:block bg-gradient-to-b from-[var(--primary-dark)]/60 via-[var(--primary-dark)]/80 to-[var(--primary-dark)]/60" />
 
           <div className="relative max-w-4xl mx-auto">
-            <div className="text-center mb-10">
+            <div className="text-center mb-10 reveal" style={heroDelay}>
               <Link href="/" className="inline-flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-full bg-[var(--secondary)] text-[var(--foreground)] flex items-center justify-center text-sm font-semibold shadow-sm">
                   EE
@@ -153,7 +156,8 @@ export default function Signup() {
                   <Card
                     key={role.id}
                     hover
-                    className="cursor-pointer transition-all"
+                    className="cursor-pointer transition-all reveal"
+                    style={cardDelay}
                     onClick={() => handleRoleSelect(role.id)}
                   >
                     <CardHeader>
@@ -176,7 +180,10 @@ export default function Signup() {
             )}
 
             {step === 'form' && (
-              <Card className="shadow-[var(--shadow)] max-w-2xl mx-auto bg-[var(--surface)] lg:bg-[var(--primary-dark)]/85 lg:border-[var(--surface)]/15 lg:text-[var(--surface)]">
+              <Card
+                className="shadow-[var(--shadow)] max-w-2xl mx-auto bg-[var(--surface)] lg:bg-[var(--primary-dark)]/85 lg:border-[var(--surface)]/15 lg:text-[var(--surface)] reveal"
+                style={cardDelay}
+              >
                 <CardContent className="pt-6">
                   <button
                     onClick={() => setStep('role')}

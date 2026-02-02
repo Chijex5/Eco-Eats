@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { useState } from 'react';
@@ -14,6 +15,9 @@ export default function Login() {
     // This is a prototype - actual authentication will be implemented in Phase B
     console.log('Login attempt:', { email, password });
   };
+
+  const heroDelay = { '--delay': '120ms' } as CSSProperties;
+  const cardDelay = { '--delay': '200ms' } as CSSProperties;
 
   return (
     <div className="page-shell">
@@ -32,7 +36,7 @@ export default function Login() {
           <div className="absolute inset-0 hidden lg:block bg-gradient-to-b from-[var(--primary-dark)]/60 via-[var(--primary-dark)]/80 to-[var(--primary-dark)]/60" />
 
           <div className="relative w-full max-w-md">
-            <div className="text-center lg:text-left mb-8">
+            <div className="text-center lg:text-left mb-8 reveal" style={heroDelay}>
               <Link href="/" className="inline-flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-full bg-[var(--secondary)] text-[var(--foreground)] flex items-center justify-center text-sm font-semibold shadow-sm">
                   EE
@@ -52,7 +56,10 @@ export default function Login() {
               </p>
             </div>
 
-            <Card className="shadow-[var(--shadow)] bg-[var(--surface)] lg:bg-[var(--primary-dark)]/85 lg:border-[var(--surface)]/15 lg:text-[var(--surface)]">
+            <Card
+              className="shadow-[var(--shadow)] bg-[var(--surface)] lg:bg-[var(--primary-dark)]/85 lg:border-[var(--surface)]/15 lg:text-[var(--surface)] reveal"
+              style={cardDelay}
+            >
               <CardContent className="pt-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>

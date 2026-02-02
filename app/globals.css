@@ -2,15 +2,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f4ef;
-  --foreground: #1f2a24;
+  --background: #f6f2ec;
+  --foreground: #1c2721;
   --primary: #2f6b4f;
-  --primary-dark: #234e3a;
-  --secondary: #d6862c;
+  --primary-dark: #1f4a36;
+  --secondary: #d98a2d;
   --accent: #2f7f6d;
-  --muted: #eef1ea;
-  --muted-foreground: #5b6b62;
-  --border: #d7ded4;
+  --muted: #e7ece4;
+  --muted-foreground: #4a5c52;
+  --border: #cfd8ce;
   --destructive: #d14b3a;
   --surface: #ffffff;
   --surface-alt: #f3f1ec;
@@ -53,13 +53,15 @@
     --muted-foreground: #a6b2aa;
     --border: #2a352e;
     --surface: #16201a;
-    --surface-alt: #111815;
+    --surface-alt: #121a16;
     --shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
     --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.25);
   }
 }
 
-
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   background:
@@ -71,6 +73,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 300ms ease, color 300ms ease;
 }
 
 h1,
@@ -99,6 +102,12 @@ button {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 45%),
     radial-gradient(900px 600px at 15% 20%, rgba(47, 127, 109, 0.12), transparent 60%);
+  scroll-snap-type: y proximity;
+}
+
+.page-shell > section {
+  scroll-snap-align: start;
+  scroll-margin-top: 4.5rem;
 }
 
 .section-muted {
@@ -110,6 +119,7 @@ button {
 .reveal {
   animation: rise 700ms ease both;
   animation-delay: var(--delay, 0ms);
+  will-change: transform, opacity;
 }
 
 @keyframes rise {
@@ -123,10 +133,38 @@ button {
   }
 }
 
+@keyframes shimmer {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.soft-divider {
+  position: relative;
+}
+
+.soft-divider::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  width: min(760px, 90%);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(47, 107, 79, 0.35), transparent);
+  transform: translateX(-50%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     animation: none;
   }
+  html {
+    scroll-behavior: auto;
+  }
 }
-
 
