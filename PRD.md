@@ -209,13 +209,13 @@ EcoEats reduces hunger by **educating communities about food waste, celebrating 
 ## 1) System architecture (full-stack)
 
 ● **Next.js (App Router)** frontend + backend API routes
-● **PostgreSQL** database
+● **MySQL** database
 ● Auth + role-based access
 ● Payment integration (optional but recommended for donors)
 ● QR/code based redemption system (core proof)
 Deployment:
 ● Vercel for app
-● Neon/Supabase/Railway for Postgres
+● PlanetScale/AWS RDS/Railway for MySQL
 
 
 ## 2) Roles & permissions (strict)
@@ -537,5 +537,4 @@ Track and display:
 ● Average time to fulfill request
 ● Demand hotspots (by location_text group)
 Make a dashboard that shows this, even if small numbers.
-
 

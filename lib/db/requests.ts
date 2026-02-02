@@ -4,6 +4,7 @@
  */
 
 import { query } from './connection';
+import { generateId } from './ids';
 
 export interface SupportRequest {
   id: string;
@@ -26,12 +27,13 @@ export async function createSupportRequest(data: {
   message?: string;
   urgency: 'LOW' | 'MED' | 'HIGH';
 }) {
-  const result = await query(
-    `INSERT INTO support_requests (beneficiary_user_id, request_type, message, urgency)
-     VALUES ($1, $2, $3, $4)
-     RETURNING *`,
-    [data.beneficiary_user_id, data.request_type, data.message, data.urgency]
+  const id = generateId();
+  await query(
+    `INSERT INTO support_requests (id, beneficiary_user_id, request_type, message, urgency)
+     VALUES (?, ?, ?, ?, ?)`,
+    [id, data.beneficiary_user_id, data.request_type, data.message, data.urgency]
   );
+  const result = await query('SELECT * FROM support_requests WHERE id = ?', [id]);
   return result.rows[0] as SupportRequest;
 }
 
@@ -40,7 +42,7 @@ export async function createSupportRequest(data: {
  */
 export async function getRequestsByBeneficiary(userId: string) {
   const result = await query(
-    'SELECT * FROM support_requests WHERE beneficiary_user_id = $1 ORDER BY created_at DESC',
+    'SELECT * FROM support_requests WHERE beneficiary_user_id = ? ORDER BY created_at DESC',
     [userId]
   );
   return result.rows as SupportRequest[];
@@ -68,12 +70,12 @@ export async function updateRequestStatus(
   status: SupportRequest['status'],
   reviewedBy: string
 ) {
-  const result = await query(
+  await query(
     `UPDATE support_requests 
-     SET status = $1, reviewed_by = $2, reviewed_at = NOW()
-     WHERE id = $3
-     RETURNING *`,
+     SET status = ?, reviewed_by = ?, reviewed_at = NOW()
+     WHERE id = ?`,
     [status, reviewedBy, requestId]
   );
+  const result = await query('SELECT * FROM support_requests WHERE id = ?', [requestId]);
   return result.rows[0] as SupportRequest;
 }

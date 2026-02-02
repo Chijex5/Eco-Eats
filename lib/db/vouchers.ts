@@ -3,7 +3,9 @@
  * Database operations for vouchers table
  */
 
-import { query } from './connection';
+import { query, getConnection } from './connection';
+import { generateId } from './ids';
+import type { RowDataPacket } from 'mysql2/promise';
 
 export interface Voucher {
   id: string;
@@ -47,13 +49,14 @@ export async function createVoucher(data: {
 }) {
   const code = generateVoucherCode();
   const qr_token = generateQRToken();
+  const id = generateId();
   
-  const result = await query(
-    `INSERT INTO vouchers (code, qr_token, value_kobo, beneficiary_user_id, issued_by_admin_id, expires_at)
-     VALUES ($1, $2, $3, $4, $5, $6)
-     RETURNING *`,
-    [code, qr_token, data.value_kobo, data.beneficiary_user_id, data.issued_by_admin_id, data.expires_at]
+  await query(
+    `INSERT INTO vouchers (id, code, qr_token, value_kobo, beneficiary_user_id, issued_by_admin_id, expires_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [id, code, qr_token, data.value_kobo, data.beneficiary_user_id, data.issued_by_admin_id, data.expires_at]
   );
+  const result = await query('SELECT * FROM vouchers WHERE id = ?', [id]);
   return result.rows[0] as Voucher;
 }
 
@@ -62,7 +65,7 @@ export async function createVoucher(data: {
  */
 export async function getVouchersByBeneficiary(userId: string) {
   const result = await query(
-    'SELECT * FROM vouchers WHERE beneficiary_user_id = $1 ORDER BY created_at DESC',
+    'SELECT * FROM vouchers WHERE beneficiary_user_id = ? ORDER BY created_at DESC',
     [userId]
   );
   return result.rows as Voucher[];
@@ -73,7 +76,7 @@ export async function getVouchersByBeneficiary(userId: string) {
  */
 export async function findVoucherByCode(code: string) {
   const result = await query(
-    'SELECT * FROM vouchers WHERE code = $1',
+    'SELECT * FROM vouchers WHERE code = ?',
     [code]
   );
   return result.rows[0] as Voucher | undefined;
@@ -84,7 +87,7 @@ export async function findVoucherByCode(code: string) {
  */
 export async function findVoucherByQRToken(qr_token: string) {
   const result = await query(
-    'SELECT * FROM vouchers WHERE qr_token = $1',
+    'SELECT * FROM vouchers WHERE qr_token = ?',
     [qr_token]
   );
   return result.rows[0] as Voucher | undefined;
@@ -100,16 +103,17 @@ export async function redeemVoucher(
   confirmedByStaffId: string,
   mealDescription?: string
 ) {
-  // Start transaction
-  const client = await query('BEGIN', []);
-  
+  const connection = await getConnection();
+
   try {
+    await connection.beginTransaction();
+
     // Get voucher
-    const voucherResult = await query(
-      'SELECT * FROM vouchers WHERE id = $1 FOR UPDATE',
+    const [voucherRows] = await connection.execute<RowDataPacket[]>(
+      'SELECT * FROM vouchers WHERE id = ? FOR UPDATE',
       [voucherId]
     );
-    const voucher = voucherResult.rows[0] as Voucher;
+    const voucher = voucherRows[0] as Voucher | undefined;
 
     if (!voucher) {
       throw new Error('Voucher not found');
@@ -124,32 +128,40 @@ export async function redeemVoucher(
     }
 
     // Update voucher status
-    await query(
-      'UPDATE vouchers SET status = $1 WHERE id = $2',
+    await connection.execute(
+      'UPDATE vouchers SET status = ? WHERE id = ?',
       ['REDEEMED', voucherId]
     );
 
     // Create redemption record
-    const redemptionResult = await query(
+    const redemptionId = generateId();
+    await connection.execute(
       `INSERT INTO voucher_redemptions 
-       (voucher_id, partner_id, redeemed_by_user_id, confirmed_by_staff_id, meal_description, value_kobo)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING *`,
-      [voucherId, partnerId, redeemedByUserId, confirmedByStaffId, mealDescription, voucher.value_kobo]
+       (id, voucher_id, partner_id, redeemed_by_user_id, confirmed_by_staff_id, meal_description, value_kobo)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [redemptionId, voucherId, partnerId, redeemedByUserId, confirmedByStaffId, mealDescription, voucher.value_kobo]
     );
 
     // Log impact event
-    await query(
-      `INSERT INTO impact_events (event_type, related_id)
-       VALUES ('MEAL_SERVED', $1)`,
-      [redemptionResult.rows[0].id]
+    const impactId = generateId();
+    await connection.execute(
+      `INSERT INTO impact_events (id, event_type, related_id)
+       VALUES (?, 'MEAL_SERVED', ?)`,
+      [impactId, redemptionId]
     );
 
-    await query('COMMIT', []);
-    
-    return redemptionResult.rows[0];
+    const [redemptionRows] = await connection.execute<RowDataPacket[]>(
+      'SELECT * FROM voucher_redemptions WHERE id = ?',
+      [redemptionId]
+    );
+
+    await connection.commit();
+
+    return redemptionRows[0];
   } catch (error) {
-    await query('ROLLBACK', []);
+    await connection.rollback();
     throw error;
+  } finally {
+    connection.release();
   }
 }

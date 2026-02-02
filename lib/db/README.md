@@ -7,7 +7,7 @@ This directory contains all database-related code for the EcoEats application.
 ```
 lib/db/
 ├── index.ts          # Central export point for all database operations
-├── connection.ts     # PostgreSQL connection pool management
+├── connection.ts     # MySQL connection pool management
 ├── schema.ts         # Database table creation and migrations
 ├── users.ts          # User-related queries
 ├── requests.ts       # Support request queries
@@ -19,10 +19,10 @@ lib/db/
 
 ### 1. Set up environment variables
 
-Copy `.env.example` to `.env.local` and configure your PostgreSQL connection:
+Copy `.env.example` to `.env.local` and configure your MySQL connection:
 
 ```bash
-DATABASE_URL=postgresql://username:password@localhost:5432/ecoeats_db
+DATABASE_URL=mysql://username:password@localhost:3306/ecoeats_db
 ```
 
 ### 2. Initialize database tables
@@ -100,13 +100,12 @@ All 11 tables from PRD.md are defined in `schema.ts`:
 The database connection uses a singleton pattern with connection pooling:
 
 - Maximum 20 connections
-- 30-second idle timeout
-- 2-second connection timeout
+- Waits for available connections
 - Automatic SSL for production
 
 ## Best Practices
 
-1. **Always use parameterized queries** - All query functions use `$1, $2` placeholders
+1. **Always use parameterized queries** - All query functions use `?` placeholders
 2. **Use transactions for multi-step operations** - See `redeemVoucher()` example
 3. **Close connections in tests** - Call `closePool()` after tests
 4. **Log queries in development** - Enabled automatically via `NODE_ENV`

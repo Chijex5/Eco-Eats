@@ -4,6 +4,7 @@
  */
 
 import { query } from './connection';
+import { generateId } from './ids';
 
 export interface User {
   id: string;
@@ -27,12 +28,13 @@ export async function createUser(data: {
   role: User['role'];
   phone?: string;
 }) {
-  const result = await query(
-    `INSERT INTO users (full_name, email, password_hash, role, phone)
-     VALUES ($1, $2, $3, $4, $5)
-     RETURNING *`,
-    [data.full_name, data.email, data.password_hash, data.role, data.phone]
+  const id = generateId();
+  await query(
+    `INSERT INTO users (id, full_name, email, password_hash, role, phone)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [id, data.full_name, data.email, data.password_hash, data.role, data.phone]
   );
+  const result = await query('SELECT * FROM users WHERE id = ?', [id]);
   return result.rows[0] as User;
 }
 
@@ -41,7 +43,7 @@ export async function createUser(data: {
  */
 export async function findUserByEmail(email: string) {
   const result = await query(
-    'SELECT * FROM users WHERE email = $1',
+    'SELECT * FROM users WHERE email = ?',
     [email]
   );
   return result.rows[0] as User | undefined;
@@ -52,7 +54,7 @@ export async function findUserByEmail(email: string) {
  */
 export async function findUserById(id: string) {
   const result = await query(
-    'SELECT * FROM users WHERE id = $1',
+    'SELECT * FROM users WHERE id = ?',
     [id]
   );
   return result.rows[0] as User | undefined;
@@ -62,13 +64,13 @@ export async function findUserById(id: string) {
  * Update user email verification status
  */
 export async function verifyUserEmail(userId: string) {
-  const result = await query(
+  await query(
     `UPDATE users 
      SET is_email_verified = TRUE, updated_at = NOW()
-     WHERE id = $1
-     RETURNING *`,
+     WHERE id = ?`,
     [userId]
   );
+  const result = await query('SELECT * FROM users WHERE id = ?', [userId]);
   return result.rows[0] as User;
 }
 
@@ -78,13 +80,11 @@ export async function verifyUserEmail(userId: string) {
 export async function updateUser(userId: string, data: Partial<User>) {
   const fields: string[] = [];
   const values: any[] = [];
-  let paramCount = 1;
 
   Object.entries(data).forEach(([key, value]) => {
     if (key !== 'id' && value !== undefined) {
-      fields.push(`${key} = $${paramCount}`);
+      fields.push(`${key} = ?`);
       values.push(value);
-      paramCount++;
     }
   });
 
@@ -95,9 +95,10 @@ export async function updateUser(userId: string, data: Partial<User>) {
   fields.push(`updated_at = NOW()`);
   values.push(userId);
 
-  const result = await query(
-    `UPDATE users SET ${fields.join(', ')} WHERE id = $${paramCount} RETURNING *`,
+  await query(
+    `UPDATE users SET ${fields.join(', ')} WHERE id = ?`,
     values
   );
+  const result = await query('SELECT * FROM users WHERE id = ?', [userId]);
   return result.rows[0] as User;
 }

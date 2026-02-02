@@ -28,7 +28,7 @@ Building **EcoEats** - Zero Hunger (SDG 2) Platform
 ## 🚧 IN PROGRESS: Core Application Features
 
 ### STEP 3: Database & Backend Setup
-- [ ] Set up PostgreSQL database (Neon/Supabase/Railway)
+- [ ] Set up MySQL database (PlanetScale/AWS RDS/Railway)
 - [ ] Create database schema and migrations (all 11 tables from PRD)
   - [ ] users table
   - [ ] beneficiary_profiles table
