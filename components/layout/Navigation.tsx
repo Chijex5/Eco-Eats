@@ -77,15 +77,15 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
 
     if (isMobileMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      // Prevent body scroll when menu is open
-      document.body.style.overflow = 'hidden';
+      // Prevent body scroll when menu is open using CSS class
+      document.body.classList.add('overflow-hidden');
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.classList.remove('overflow-hidden');
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = 'unset';
+      document.body.classList.remove('overflow-hidden');
     };
   }, [isMobileMenuOpen]);
 
@@ -161,6 +161,7 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
       {/* Mobile menu */}
       <div
         id="mobile-menu"
+        aria-hidden={!isMobileMenuOpen}
         className={`md:hidden border-t border-[var(--border)] bg-[var(--surface)] shadow-lg transition-all duration-300 ease-in-out ${
           isMobileMenuOpen 
             ? 'max-h-screen opacity-100' 

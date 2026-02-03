@@ -90,7 +90,7 @@ export default function DonorDashboard() {
           {/* Impact Highlights */}
           <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {impactHighlights.map((item) => (
-              <Card key={item.label} className="shadow-[var(--shadow)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow)]">
+              <Card key={item.label} className="shadow-[var(--shadow)] transition-all duration-300 hover:shadow-[var(--shadow)] focus-within:shadow-[var(--shadow)] hover:scale-[1.02] focus-within:scale-[1.02]">
                 <CardContent className="pt-6 pb-6">
                   <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-foreground)] font-semibold">
                     {item.label}

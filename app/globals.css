@@ -75,6 +75,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.overflow-hidden {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
 h1,
 h2,
 h3,
