@@ -175,6 +175,49 @@ That’s SDG 2 impact in motion.
 ● Fraud flags & reports
 ● Impact analytics (meals served, packs distributed)
 ```
+
+## 5.1) After-login experience (role navigation + first view)
+
+**Goal:** Immediately show each role the actions that directly reduce hunger and the proof of impact.
+
+### Global navigation (after login)
+- Replace public marketing links with role-specific links.
+- Show the signed-in name/initials in the nav.
+- Role-specific link sets:
+  - **Beneficiary:** Dashboard, Request help, Vouchers, Surplus packs, History
+  - **Donor:** Dashboard, Donate, History, Impact
+  - **Partner:** Dashboard, Surplus, Redeem, History, Settings
+  - **Admin:** Dashboard, Requests, Partners, Vouchers, Impact
+
+### Landing page after login (per role)
+- **Beneficiary:** Dashboard showing request status, vouchers, surplus pickup codes, and next steps.
+- **Donor:** Dashboard showing meals funded, active vouchers, and suggested funding needs.
+- **Partner:** Dashboard showing pending redemptions, surplus listings, and today’s pickup load.
+- **Admin:** Dashboard showing requests awaiting review and aggregate impact.
+
+## 5.2) Role actions (what each role can do)
+
+**Beneficiary**
+- Submit a request for support (voucher or food pack).
+- View active vouchers and redeem using QR/code.
+- Claim surplus packs and receive pickup codes.
+- View history and leave feedback.
+
+**Donor**
+- Fund vouchers or food packs.
+- View donation history and receipts.
+- View aggregate impact (meals funded/served, packs supported).
+
+**Food Partner**
+- Publish surplus packs and manage quantities.
+- Redeem vouchers and confirm pickups.
+- View redemption history and meals served.
+
+**Admin**
+- Review and approve/decline beneficiary requests.
+- Issue vouchers and assign packs.
+- Approve partners and monitor fraud flags.
+- View impact analytics.
 ## 6) Why this helps SDG 2 (in one sentence judges love)
 
 EcoEats reduces hunger by **educating communities about food waste, celebrating impact heroes weekly, and turning donations and surplus food into verified meals** , tracked transparently from funding → distribution → redemption.
@@ -537,4 +580,3 @@ Track and display:
 ● Average time to fulfill request
 ● Demand hotspots (by location_text group)
 Make a dashboard that shows this, even if small numbers.
-
