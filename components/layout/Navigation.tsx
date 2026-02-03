@@ -1,11 +1,12 @@
+'use client';
+
 import Link from 'next/link';
-import { cookies } from 'next/headers';
+import { useState, useEffect } from 'react';
+import { Menu, X } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { verifySessionToken } from '@/lib/auth/jwt';
-import type { SessionPayload } from '@/lib/auth/jwt';
-import { SESSION_COOKIE_NAME } from '@/lib/auth/constants';
 
 type NavLink = { href: string; label: string };
+type Session = { role: string; name: string } | null;
 
 const publicLinks: NavLink[] = [
   { href: '/', label: 'Home' },
@@ -55,28 +56,42 @@ const roleLinks: Record<string, NavLink[]> = {
   ],
 };
 
-async function getSession(): Promise<SessionPayload | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (!token) return null;
-  return verifySessionToken(token);
+interface NavigationClientProps {
+  session: Session;
+  navLinks: NavLink[];
+  initials: string;
 }
 
-export const Navigation = async () => {
-  const session = await getSession();
-  const navLinks = session ? roleLinks[session.role] ?? publicLinks : publicLinks;
-  const initials = session?.name
-    ? session.name
-        .split(' ')
-        .map((part) => part[0])
-        .join('')
-        .slice(0, 2)
-        .toUpperCase()
-    : 'EE';
+export function NavigationClient({ session, navLinks, initials }: NavigationClientProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const nav = document.getElementById('mobile-menu');
+      const button = document.getElementById('mobile-menu-button');
+      if (nav && button && !nav.contains(event.target as Node) && !button.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      // Prevent body scroll when menu is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   return (
-    <nav className="bg-[var(--background)]/85 backdrop-blur border-b border-[var(--border)] sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="bg-[var(--background)]/90 backdrop-blur-md border-b border-[var(--border)] sticky top-0 z-50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href={session ? navLinks[0]?.href ?? '/' : '/'} className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-sm font-semibold shadow-sm group-hover:shadow-md transition-shadow">
@@ -124,35 +139,60 @@ export const Navigation = async () => {
               </>
             )}
           </div>
+
+          {/* Mobile menu button */}
+          <button
+            id="mobile-menu-button"
+            type="button"
+            className="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-[var(--foreground)] hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--primary)] transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-expanded={isMobileMenuOpen}
+            aria-label="Toggle mobile menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="block h-6 w-6" aria-hidden="true" />
+            ) : (
+              <Menu className="block h-6 w-6" aria-hidden="true" />
+            )}
+          </button>
         </div>
       </div>
 
-      <div className="md:hidden border-t border-[var(--border)] bg-[var(--surface)] shadow-sm">
-        <div className="px-4 py-4 space-y-3">
+      {/* Mobile menu */}
+      <div
+        id="mobile-menu"
+        className={`md:hidden border-t border-[var(--border)] bg-[var(--surface)] shadow-lg transition-all duration-300 ease-in-out ${
+          isMobileMenuOpen 
+            ? 'max-h-screen opacity-100' 
+            : 'max-h-0 opacity-0 overflow-hidden'
+        }`}
+      >
+        <div className="px-4 py-4 space-y-2">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="block px-3 py-2 rounded-lg text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+              className="block px-4 py-3 rounded-lg text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               {link.label}
             </Link>
           ))}
-          <div className="pt-3 space-y-2 border-t border-[var(--border)]">
+          <div className="pt-3 space-y-2 border-t border-[var(--border)] mt-3">
             {session ? (
-              <Link href="/auth/login" className="block">
+              <Link href="/auth/login" className="block" onClick={() => setIsMobileMenuOpen(false)}>
                 <Button variant="outline" size="sm" className="w-full">
                   Switch account
                 </Button>
               </Link>
             ) : (
               <>
-                <Link href="/auth/login" className="block">
+                <Link href="/auth/login" className="block" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="outline" size="sm" className="w-full">
                     Login
                   </Button>
                 </Link>
-                <Link href="/auth/signup" className="block">
+                <Link href="/auth/signup" className="block" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="primary" size="sm" className="w-full">
                     Sign Up
                   </Button>
@@ -164,4 +204,6 @@ export const Navigation = async () => {
       </div>
     </nav>
   );
-};
+}
+
+export { publicLinks, roleLinks };

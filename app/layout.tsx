@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Navigation } from "@/components/layout/Navigation";
+import { Navigation } from "@/components/layout/NavigationWrapper";
 import { Footer } from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
