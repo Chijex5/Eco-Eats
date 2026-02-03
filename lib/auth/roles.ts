@@ -34,7 +34,7 @@ export function normalizeRole(input: string | null | undefined): UserRole | null
 export function roleHomePath(role: UserRole) {
   switch (role) {
     case 'BENEFICIARY':
-      return '/app';
+      return '/app/profile';
     case 'DONOR':
       return '/donor/dashboard';
     case 'PARTNER_OWNER':
