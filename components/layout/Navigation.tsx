@@ -26,6 +26,7 @@ const roleLinks: Record<string, NavLink[]> = {
     { href: '/app/vouchers', label: 'Vouchers' },
     { href: '/app/surplus', label: 'Surplus packs' },
     { href: '/app/history', label: 'History' },
+    { href: '/app/profile', label: 'Profile' },
   ],
   DONOR: [
     { href: '/donor/dashboard', label: 'Dashboard' },
@@ -65,6 +66,20 @@ interface NavigationClientProps {
 
 export function NavigationClient({ session, navLinks, initials }: NavigationClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout failed:', error);
+      setIsLoggingOut(false);
+    }
+  };
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -120,11 +135,14 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
 
           <div className="hidden md:flex items-center gap-3">
             {session ? (
-              <Link href="/auth/login">
-                <Button variant="ghost" size="sm">
-                  Switch account
-                </Button>
-              </Link>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
+              </Button>
             ) : (
               <>
                 <Link href="/auth/login">
@@ -182,11 +200,15 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
           ))}
           <div className="pt-3 space-y-2 border-t border-[var(--border)] mt-3">
             {session ? (
-              <Link href="/auth/login" className="block" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button variant="outline" size="sm" className="w-full">
-                  Switch account
-                </Button>
-              </Link>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
+              </Button>
             ) : (
               <>
                 <Link href="/auth/login" className="block" onClick={() => setIsMobileMenuOpen(false)}>
