@@ -112,7 +112,7 @@ export default function RequestHelpPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {requestQueue.map((item) => (
-                  <div key={item.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-[var(--border)] px-4 py-4">
+                  <div key={item.title} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-[var(--border)] px-4 py-4">
                     <div>
                       <p className="font-semibold text-[var(--foreground)]">{item.title}</p>
                       <p className="text-sm text-[var(--muted-foreground)]">{item.time}</p>
