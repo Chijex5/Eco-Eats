@@ -162,6 +162,8 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     animation: none;
+    opacity: 1;
+    transform: translateY(0);
   }
   html {
     scroll-behavior: auto;
