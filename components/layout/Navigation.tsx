@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 
@@ -67,14 +68,21 @@ interface NavigationClientProps {
 export function NavigationClient({ session, navLinks, initials }: NavigationClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      await fetch('/api/auth/logout', {
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
       });
-      window.location.href = '/';
+      
+      if (!response.ok) {
+        throw new Error('Logout failed');
+      }
+      
+      router.push('/');
+      router.refresh();
     } catch (error) {
       console.error('Logout failed:', error);
       setIsLoggingOut(false);
