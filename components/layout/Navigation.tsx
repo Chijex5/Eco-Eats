@@ -10,6 +10,7 @@ type NavLink = { href: string; label: string };
 const publicLinks: NavLink[] = [
   { href: '/', label: 'Home' },
   { href: '/how-it-works', label: 'How It Works' },
+  { href: '/beneficiaries', label: 'Beneficiaries' },
   { href: '/learn', label: 'Learn' },
   { href: '/spotlight', label: 'Spotlight' },
   { href: '/partners/join', label: 'Become a Partner' },

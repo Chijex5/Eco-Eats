@@ -15,7 +15,7 @@ export default function Home() {
     {
       title: 'For beneficiaries',
       description: 'Request food support discreetly, receive vouchers, and access meals with dignity.',
-      link: '/auth/signup',
+      link: '/beneficiaries',
     },
     {
       title: 'For food partners',
