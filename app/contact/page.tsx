@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
+import { HeartHandshake, Handshake, Building2, FlagOff, GraduationCap, Megaphone } from 'lucide-react';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -54,42 +55,42 @@ export default function Contact() {
     {
       title: 'Report Food Waste',
       description: 'See food being wasted in your community? Let us know and we\'ll work to rescue it.',
-      icon: '🚨',
+      icon: FlagOff,
       action: 'Report Now',
       category: 'report-waste',
     },
     {
       title: 'Volunteer',
       description: 'Help with food pickup, distribution events, or community outreach programs.',
-      icon: '🤝',
+      icon: Handshake,
       action: 'Sign Up to Volunteer',
       category: 'volunteer',
     },
     {
       title: 'Become a Partner',
       description: 'Restaurants, farms, or businesses? Join as a food partner and list your surplus.',
-      icon: '🏪',
+      icon: Building2,
       action: 'Partner With Us',
       category: 'partner',
     },
     {
       title: 'Donate',
       description: 'Fund meal vouchers, sponsor food packs, or support our operations.',
-      icon: '💝',
+      icon: HeartHandshake,
       action: 'Make a Donation',
       category: 'donate',
     },
     {
       title: 'Educational Partnership',
       description: 'Schools and organizations can partner with us for food security programs.',
-      icon: '🎓',
+      icon: GraduationCap,
       action: 'Explore Partnership',
       category: 'education-partner',
     },
     {
       title: 'Spread Awareness',
       description: 'Share our mission, educate others, and help grow the movement.',
-      icon: '📢',
+      icon: Megaphone,
       action: 'Get Resources',
       category: 'awareness',
     },
@@ -137,7 +138,7 @@ export default function Contact() {
           </h1>
           <p className="text-lg text-[var(--muted-foreground)]">
             There are many ways to get involved with EcoEats. Whether you want to report waste, volunteer, 
-            partner with us, or simply learn more—we'd love to hear from you.
+            partner with us, or simply learn more—we&apos;d love to hear from you.
           </p>
         </div>
       </section>
@@ -151,10 +152,13 @@ export default function Contact() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ways.map((way) => (
-              <Card key={way.title} hover className="reveal" style={cardDelay}>
+
+            {ways.map((way) => { 
+              const Icon = way.icon;
+              return (
+              <Card key={way.title} hover>
                 <CardHeader>
-                  <div className="text-4xl mb-3">{way.icon}</div>
+                  <Icon className="text-[var(--primary)]" size={24} />
                   <CardTitle className="text-lg">{way.title}</CardTitle>
                   <p className="text-sm text-[var(--muted-foreground)] mt-2">{way.description}</p>
                 </CardHeader>
@@ -172,7 +176,7 @@ export default function Contact() {
                   </Button>
                 </CardContent>
               </Card>
-            ))}
+            )})}
           </div>
         </div>
       </section>
@@ -183,7 +187,7 @@ export default function Contact() {
           <div className="mb-12 text-center reveal" style={sectionDelay}>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">Send us a message</h2>
             <p className="text-[var(--muted-foreground)] mt-3">
-              Fill out the form below and we'll get back to you within 24 hours.
+              Fill out the form below and we&apos;ll get back to you within 24 hours.
             </p>
           </div>
 
@@ -196,7 +200,7 @@ export default function Contact() {
                     Thank you for reaching out!
                   </h3>
                   <p className="text-[var(--muted-foreground)]">
-                    We've received your message and will respond shortly.
+                    We&apos;ve received your message and will respond shortly.
                   </p>
                 </div>
               ) : (
