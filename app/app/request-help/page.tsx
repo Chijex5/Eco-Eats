@@ -47,9 +47,9 @@ export default function RequestHelpPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="text-sm text-[var(--muted-foreground)]">
+                  <label htmlFor="request-type" className="text-sm text-[var(--muted-foreground)]">
                     Request type
-                    <select className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm">
+                    <select id="request-type" className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm">
                       <option>Meal voucher</option>
                       <option>Surplus pack</option>
                       <option>Emergency meal</option>
