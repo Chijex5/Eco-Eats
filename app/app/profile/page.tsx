@@ -14,7 +14,7 @@ export default function BeneficiaryProfileSetup() {
   const [formError, setFormError] = useState('');
   const router = useRouter();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormError('');
 
@@ -22,6 +22,9 @@ export default function BeneficiaryProfileSetup() {
     const affiliation = String(formData.get('affiliation') || '');
     const location = String(formData.get('location') || '').trim();
     const needLevel = String(formData.get('need-level') || '');
+    const phone = String(formData.get('phone') || '').trim();
+    const household = String(formData.get('household') || '').trim();
+    const notes = String(formData.get('notes') || '').trim();
 
     if (!affiliation || !location || !needLevel) {
       setFormError('Please complete all required fields.');
@@ -29,10 +32,35 @@ export default function BeneficiaryProfileSetup() {
     }
 
     setFormStatus('saving');
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/beneficiary/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          affiliation,
+          location,
+          needLevel,
+          phone,
+          household,
+          notes,
+        }),
+      });
+
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        setFormError(data?.error || 'Unable to save your profile.');
+        setFormStatus('idle');
+        return;
+      }
+
       setFormStatus('saved');
+      router.refresh();
       router.push('/app');
-    }, 500);
+    } catch (error) {
+      console.error(error);
+      setFormError('Unable to save your profile.');
+      setFormStatus('idle');
+    }
   };
 
   return (

@@ -31,10 +31,10 @@ export function normalizeRole(input: string | null | undefined): UserRole | null
   return mapped ?? null;
 }
 
-export function roleHomePath(role: UserRole) {
+export function roleHomePath(role: UserRole, options: { hasProfile?: boolean } = {}) {
   switch (role) {
     case 'BENEFICIARY':
-      return '/app/profile';
+      return options.hasProfile ? '/app' : '/app/profile';
     case 'DONOR':
       return '/donor/dashboard';
     case 'PARTNER_OWNER':

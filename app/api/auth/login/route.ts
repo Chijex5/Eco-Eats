@@ -4,6 +4,7 @@ import { verifyPassword } from '@/lib/auth/password';
 import { applySessionCookie } from '@/lib/auth/cookies';
 import { roleHomePath } from '@/lib/auth/roles';
 import { signSessionToken } from '@/lib/auth/jwt';
+import { hasBeneficiaryProfile } from '@/lib/db/beneficiaryProfiles';
 
 export async function POST(request: Request) {
   try {
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
       name: user.full_name,
     });
 
+    const hasProfile = user.role === 'BENEFICIARY' ? await hasBeneficiaryProfile(user.id) : undefined;
     const response = NextResponse.json({
       user: {
         id: user.id,
@@ -39,7 +41,7 @@ export async function POST(request: Request) {
         email: user.email,
         role: user.role,
       },
-      redirect: roleHomePath(user.role),
+      redirect: roleHomePath(user.role, { hasProfile }),
     });
     applySessionCookie(response, token);
     return response;
