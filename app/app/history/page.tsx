@@ -54,7 +54,7 @@ export default function BeneficiaryHistoryPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {historyItems.map((item) => (
-                  <div key={item.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-dashed border-[var(--border)] pb-4 last:border-b-0 last:pb-0">
+                  <div key={item.title} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-dashed border-[var(--border)] pb-4 last:border-b-0 last:pb-0">
                     <div>
                       <p className="font-semibold text-[var(--foreground)]">{item.title}</p>
                       <p className="text-sm text-[var(--muted-foreground)]">{item.detail}</p>
