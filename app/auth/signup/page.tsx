@@ -170,7 +170,9 @@ export default function Signup() {
       }
 
       setFormSuccess('Account created. Redirecting…');
-      router.push(data?.redirect || '/');
+      const destination = data?.redirect || '/';
+      router.replace(destination);
+      router.refresh();
     } catch (error) {
       console.error(error);
       setFormError('Something went wrong. Please try again.');
