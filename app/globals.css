@@ -119,7 +119,6 @@ button {
 .reveal {
   animation: rise 700ms ease both;
   animation-delay: var(--delay, 0ms);
-  will-change: transform, opacity;
 }
 
 @keyframes rise {
