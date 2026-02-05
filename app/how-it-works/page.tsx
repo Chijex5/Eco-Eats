@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 
@@ -117,10 +118,14 @@ export default function HowItWorks() {
     },
   ];
 
+  const heroDelay = { '--delay': '120ms' } as CSSProperties;
+  const sectionDelay = { '--delay': '160ms' } as CSSProperties;
+  const cardDelay = { '--delay': '220ms' } as CSSProperties;
+
   return (
     <div className="page-shell">
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="max-w-3xl space-y-6">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 soft-divider">
+        <div className="max-w-3xl space-y-6 reveal" style={heroDelay}>
           <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">How it works</p>
           <h1 className="text-4xl sm:text-5xl text-[var(--foreground)]">A clear path from need to nourishment.</h1>
           <p className="text-lg text-[var(--muted-foreground)]">
@@ -129,15 +134,15 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="mb-10">
+          <div className="mb-10 reveal" style={sectionDelay}>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">Core programs</h2>
             <p className="text-[var(--muted-foreground)] mt-2">Two pathways built to reduce hunger and waste.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             {programs.map((program) => (
-              <Card key={program.title}>
+              <Card key={program.title} className="reveal" style={cardDelay}>
                 <CardHeader>
                   <CardTitle className="text-2xl">{program.title}</CardTitle>
                   <p className="text-sm text-[var(--muted-foreground)] mt-2">
@@ -174,15 +179,15 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      <section className="py-24">
+      <section className="py-24 soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl reveal" style={sectionDelay}>
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Who joins</p>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">Every role is supported.</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
             {roles.map((roleData) => (
-              <Card key={roleData.role}>
+              <Card key={roleData.role} className="reveal" style={cardDelay}>
                 <CardHeader>
                   <CardTitle className="text-lg">{roleData.role}</CardTitle>
                   <p className="text-sm text-[var(--muted-foreground)] mt-2">
@@ -205,15 +210,15 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center mb-10">
+          <div className="text-center mb-10 reveal" style={sectionDelay}>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">End-to-end impact flow</h2>
             <p className="text-[var(--muted-foreground)] mt-3">Every step is verified and visible.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {flow.map((item, index) => (
-              <div key={item.title} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+              <div key={item.title} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 reveal" style={cardDelay}>
                 <div className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
                   Step {String(index + 1).padStart(2, '0')}
                 </div>
@@ -227,7 +232,7 @@ export default function HowItWorks() {
 
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
+          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)] reveal" style={sectionDelay}>
             <CardContent className="py-12">
               <h2 className="text-3xl sm:text-4xl mb-4">Ready to make a difference?</h2>
               <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto">

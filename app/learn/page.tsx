@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 
@@ -93,10 +94,14 @@ export default function Learn() {
     },
   ];
 
+  const heroDelay = { '--delay': '120ms' } as CSSProperties;
+  const sectionDelay = { '--delay': '160ms' } as CSSProperties;
+  const cardDelay = { '--delay': '220ms' } as CSSProperties;
+
   return (
     <div className="page-shell">
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="max-w-3xl space-y-6">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 soft-divider">
+        <div className="max-w-3xl space-y-6 reveal" style={heroDelay}>
           <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Education Hub</p>
           <h1 className="text-4xl sm:text-5xl text-[var(--foreground)]">
             Understanding food waste: The problem we can solve together.
@@ -108,9 +113,9 @@ export default function Learn() {
         </div>
       </section>
 
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="mb-12">
+          <div className="mb-12 reveal" style={sectionDelay}>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">The scale of the problem</h2>
             <p className="text-[var(--muted-foreground)] mt-3">
               Understanding the magnitude helps us appreciate the urgency of action.
@@ -118,7 +123,7 @@ export default function Learn() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {problems.map((problem) => (
-              <Card key={problem.title}>
+              <Card key={problem.title} className="reveal" style={cardDelay}>
                 <CardHeader>
                   <CardTitle className="text-xl">{problem.title}</CardTitle>
                 </CardHeader>
@@ -139,9 +144,9 @@ export default function Learn() {
         </div>
       </section>
 
-      <section className="py-24">
+      <section className="py-24 soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 max-w-2xl">
+          <div className="mb-12 max-w-2xl reveal" style={sectionDelay}>
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Take Action</p>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">
               How you can help reduce food waste
@@ -153,7 +158,7 @@ export default function Learn() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {solutions.map((solution) => (
-              <Card key={solution.category} hover>
+              <Card key={solution.category} hover className="reveal" style={cardDelay}>
                 <CardHeader>
                   <div className="text-4xl mb-3">{solution.icon}</div>
                   <CardTitle className="text-xl">{solution.category}</CardTitle>
@@ -174,9 +179,9 @@ export default function Learn() {
         </div>
       </section>
 
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="mb-12">
+          <div className="mb-12 reveal" style={sectionDelay}>
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Inspiration</p>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">
               Success stories from around the world
@@ -188,7 +193,7 @@ export default function Learn() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {successStories.map((story) => (
-              <Card key={story.location}>
+              <Card key={story.location} className="reveal" style={cardDelay}>
                 <CardHeader>
                   <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-alt)] px-3 py-1 text-xs font-medium text-[var(--primary)] mb-3">
                     📍 {story.location}
@@ -213,7 +218,7 @@ export default function Learn() {
 
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
+          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)] reveal" style={sectionDelay}>
             <CardContent className="py-12">
               <h2 className="text-3xl sm:text-4xl mb-4">Ready to make a difference?</h2>
               <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto mb-8">

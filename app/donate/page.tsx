@@ -1,5 +1,6 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
@@ -44,11 +45,14 @@ export default function Donate() {
   ];
 
   const selectedDisplay = selectedAmount || parseInt(customAmount) || 0;
+  const heroDelay = { '--delay': '120ms' } as CSSProperties;
+  const sectionDelay = { '--delay': '160ms' } as CSSProperties;
+  const cardDelay = { '--delay': '220ms' } as CSSProperties;
 
   return (
     <div className="page-shell">
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="max-w-3xl space-y-6">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 soft-divider">
+        <div className="max-w-3xl space-y-6 reveal" style={heroDelay}>
           <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Donate</p>
           <h1 className="text-4xl sm:text-5xl text-[var(--foreground)]">Help end hunger today.</h1>
           <p className="text-lg text-[var(--muted-foreground)]">
@@ -62,9 +66,9 @@ export default function Donate() {
         </div>
       </section>
 
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-6 reveal" style={sectionDelay}>
             {impact.map((item) => (
               <div
                 key={item.label}
@@ -82,7 +86,7 @@ export default function Donate() {
 
       <section className="py-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[1.2fr_0.8fr] gap-10 items-start">
-          <Card className="shadow-[var(--shadow)]">
+          <Card className="shadow-[var(--shadow)] reveal" style={cardDelay}>
             <CardHeader>
               <CardTitle className="text-2xl">Choose your donation</CardTitle>
               <p className="text-sm text-[var(--muted-foreground)]">
@@ -203,7 +207,7 @@ export default function Donate() {
           </Card>
 
           <div className="space-y-6">
-            <Card>
+            <Card className="reveal" style={cardDelay}>
               <CardHeader>
                 <CardTitle className="text-2xl">Your impact, visible</CardTitle>
                 <p className="text-sm text-[var(--muted-foreground)]">
@@ -226,7 +230,7 @@ export default function Donate() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[var(--surface-alt)] border-none">
+            <Card className="bg-[var(--surface-alt)] border-none reveal" style={cardDelay}>
               <CardHeader>
                 <CardTitle className="text-lg">Why donate through EcoEats?</CardTitle>
               </CardHeader>

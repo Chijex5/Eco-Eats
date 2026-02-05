@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { currentSpotlight, pastSpotlights } from '@/data/spotlightData';
@@ -27,10 +28,14 @@ export default function Spotlight() {
     },
   ];
 
+  const heroDelay = { '--delay': '120ms' } as CSSProperties;
+  const sectionDelay = { '--delay': '160ms' } as CSSProperties;
+  const cardDelay = { '--delay': '220ms' } as CSSProperties;
+
   return (
     <div className="page-shell">
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="max-w-3xl space-y-6">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 soft-divider">
+        <div className="max-w-3xl space-y-6 reveal" style={heroDelay}>
           <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Community Spotlight</p>
           <h1 className="text-4xl sm:text-5xl text-[var(--foreground)]">
             Celebrating the heroes making food security a reality.
@@ -43,9 +48,9 @@ export default function Spotlight() {
       </section>
 
       {/* Current Spotlight */}
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="mb-8">
+          <div className="mb-8 reveal" style={sectionDelay}>
             <div className="inline-flex items-center gap-2 rounded-full border border-[var(--primary)] bg-[var(--primary)]/10 px-4 py-2 text-sm font-medium text-[var(--primary)]">
               ✨ Spotlight of the Week
             </div>
@@ -53,7 +58,7 @@ export default function Spotlight() {
           </div>
 
           <div className="grid lg:grid-cols-[1fr_1.2fr] gap-8">
-            <Card className="h-fit">
+            <Card className="h-fit reveal" style={cardDelay}>
               <CardContent className="pt-8 text-center">
                 <div className="text-8xl mb-6">{currentSpotlight.image}</div>
                 <h2 className="text-3xl font-semibold text-[var(--foreground)] mb-2">{currentSpotlight.name}</h2>
@@ -67,7 +72,7 @@ export default function Spotlight() {
             </Card>
 
             <div className="space-y-6">
-              <Card>
+              <Card className="reveal" style={cardDelay}>
                 <CardHeader>
                   <CardTitle>Impact This Month</CardTitle>
                 </CardHeader>
@@ -83,7 +88,7 @@ export default function Spotlight() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="reveal" style={cardDelay}>
                 <CardHeader>
                   <CardTitle>Their Story</CardTitle>
                 </CardHeader>
@@ -98,7 +103,7 @@ export default function Spotlight() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="reveal" style={cardDelay}>
                 <CardHeader>
                   <CardTitle>How They Did It</CardTitle>
                 </CardHeader>
@@ -129,9 +134,9 @@ export default function Spotlight() {
       </section>
 
       {/* Past Spotlights */}
-      <section className="py-24">
+      <section className="py-24 soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-12">
+          <div className="mb-12 reveal" style={sectionDelay}>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">Past heroes</h2>
             <p className="text-[var(--muted-foreground)] mt-3">
               More amazing people who have made a difference in their communities.
@@ -140,7 +145,7 @@ export default function Spotlight() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {pastSpotlights.map((person) => (
-              <Card key={person.name} hover>
+              <Card key={person.name} hover className="reveal" style={cardDelay}>
                 <CardContent className="pt-6 text-center">
                   <div className="text-5xl mb-4">{person.image}</div>
                   <h3 className="text-lg font-semibold text-[var(--foreground)] mb-1">{person.name}</h3>
@@ -165,9 +170,9 @@ export default function Spotlight() {
       </section>
 
       {/* How to Be Featured */}
-      <section className="section-muted">
+      <section className="section-muted soft-divider">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="mb-12 text-center max-w-2xl mx-auto">
+          <div className="mb-12 text-center max-w-2xl mx-auto reveal" style={sectionDelay}>
             <h2 className="text-3xl sm:text-4xl text-[var(--foreground)]">Want to be featured?</h2>
             <p className="text-[var(--muted-foreground)] mt-3">
               We're always looking for inspiring stories from our community. Here's how you can be spotlighted.
@@ -176,7 +181,7 @@ export default function Spotlight() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {howToBeSpotlighted.map((item) => (
-              <Card key={item.title}>
+              <Card key={item.title} className="reveal" style={cardDelay}>
                 <CardContent className="pt-6 text-center">
                   <div className="text-4xl mb-4">{item.icon}</div>
                   <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">{item.title}</h3>
@@ -191,7 +196,7 @@ export default function Spotlight() {
       {/* CTA Section */}
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)]">
+          <Card className="bg-[var(--primary)] text-white border-none shadow-[var(--shadow)] reveal" style={sectionDelay}>
             <CardContent className="py-12">
               <h2 className="text-3xl sm:text-4xl mb-4">Be the next spotlight hero</h2>
               <p className="text-base sm:text-lg opacity-90 max-w-2xl mx-auto mb-8">
