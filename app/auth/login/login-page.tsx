@@ -39,7 +39,9 @@ export default function LoginPage() {
       }
 
       const redirect = searchParams.get('redirect');
-      router.push(redirect || data?.redirect || '/');
+      const destination = redirect || data?.redirect || '/';
+      router.replace(destination);
+      router.refresh();
     } catch (error) {
       console.error(error);
       setFormError('Something went wrong. Please try again.');
