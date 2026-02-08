@@ -1,32 +1,127 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
-const requestQueue = [
-  {
-    title: 'Meal voucher request',
-    status: 'Pending review',
-    time: 'Submitted today, 09:12',
-  },
-  {
-    title: 'Surplus pack request',
-    status: 'Approved',
-    time: 'Approved yesterday, 16:30',
-  },
-  {
-    title: 'Emergency meal support',
-    status: 'More info needed',
-    time: 'Updated Monday, 11:10',
-  },
-];
-
 const helpfulTips = [
   'Provide a preferred pickup window so partners can prepare meals for you.',
-  'Upload any supporting documents to shorten review time.',
-  'Share a backup phone number in case your primary contact is unreachable.',
+  'Share any supporting details that help the team verify your request quickly.',
+  'Keep your phone on in case the support team needs clarification.',
 ];
 
+type SupportRequest = {
+  id: string;
+  request_type: 'VOUCHER' | 'FOOD_PACK';
+  urgency: 'LOW' | 'MED' | 'HIGH';
+  status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'FULFILLED';
+  message?: string;
+  created_at: string;
+};
+
+const STATUS_LABELS: Record<SupportRequest['status'], string> = {
+  PENDING: 'Pending review',
+  APPROVED: 'Approved',
+  DECLINED: 'Declined',
+  FULFILLED: 'Fulfilled',
+};
+
+const REQUEST_TYPE_LABELS: Record<SupportRequest['request_type'], string> = {
+  VOUCHER: 'Meal voucher',
+  FOOD_PACK: 'Food pack',
+};
+
+const URGENCY_LABELS: Record<SupportRequest['urgency'], string> = {
+  LOW: 'Low urgency',
+  MED: 'Medium urgency',
+  HIGH: 'High urgency',
+};
+
+const formatDate = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return 'Recently';
+  }
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+
 export default function RequestHelpPage() {
+  const router = useRouter();
+  const [requestType, setRequestType] = useState<'VOUCHER' | 'FOOD_PACK'>('VOUCHER');
+  const [urgency, setUrgency] = useState<'LOW' | 'MED' | 'HIGH'>('MED');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const [requests, setRequests] = useState<SupportRequest[]>([]);
+  const [requestsError, setRequestsError] = useState('');
+  const [isLoadingRequests, setIsLoadingRequests] = useState(true);
+
+  useEffect(() => {
+    const loadRequests = async () => {
+      setIsLoadingRequests(true);
+      setRequestsError('');
+      try {
+        const response = await fetch('/api/requests/me');
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload.error || 'Unable to load requests.');
+        }
+        const data = (await response.json()) as { requests: SupportRequest[] };
+        setRequests(data.requests || []);
+      } catch (error) {
+        setRequestsError(error instanceof Error ? error.message : 'Unable to load requests.');
+      } finally {
+        setIsLoadingRequests(false);
+      }
+    };
+
+    loadRequests();
+  }, []);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError('');
+    setSubmitSuccess(false);
+
+    try {
+      const response = await fetch('/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requestType,
+          message,
+          urgency,
+        }),
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.error || 'Something went wrong.');
+      }
+
+      setSubmitSuccess(true);
+      setMessage('');
+      setTimeout(() => {
+        router.push('/app');
+      }, 1200);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Unable to submit your request.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const recentRequests = requests.slice(0, 3);
+
   return (
     <div className="page-shell">
       <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-10">
@@ -35,8 +130,8 @@ export default function RequestHelpPage() {
             <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-foreground)]">Request help</p>
             <h1 className="text-3xl sm:text-4xl text-[var(--foreground)]">Submit a new support request.</h1>
             <p className="text-sm text-[var(--muted-foreground)] max-w-2xl">
-              Tell us the type of support you need and when you are available for pickup. We keep you updated at every
-              step.
+              Tell us what support you need and how urgent it is. We&apos;ll keep you updated after you submit the
+              request.
             </p>
           </section>
 
@@ -45,48 +140,60 @@ export default function RequestHelpPage() {
               <CardHeader>
                 <CardTitle>New request form</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label htmlFor="request-type" className="text-sm text-[var(--muted-foreground)]">
-                    Request type
-                    <select id="request-type" className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm">
-                      <option>Meal voucher</option>
-                      <option>Surplus pack</option>
-                      <option>Emergency meal</option>
-                    </select>
-                  </label>
+              <CardContent>
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <label htmlFor="request-type" className="text-sm text-[var(--muted-foreground)]">
+                      Request type
+                      <select
+                        id="request-type"
+                        className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
+                        value={requestType}
+                        onChange={(event) => setRequestType(event.target.value as 'VOUCHER' | 'FOOD_PACK')}
+                      >
+                        <option value="VOUCHER">Meal voucher</option>
+                        <option value="FOOD_PACK">Food pack</option>
+                      </select>
+                    </label>
+                    <label htmlFor="urgency" className="text-sm text-[var(--muted-foreground)]">
+                      Urgency
+                      <select
+                        id="urgency"
+                        className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
+                        value={urgency}
+                        onChange={(event) => setUrgency(event.target.value as 'LOW' | 'MED' | 'HIGH')}
+                      >
+                        <option value="LOW">Low</option>
+                        <option value="MED">Medium</option>
+                        <option value="HIGH">High</option>
+                      </select>
+                    </label>
+                  </div>
                   <label className="text-sm text-[var(--muted-foreground)]">
-                    Household size
-                    <input
-                      type="number"
-                      min={1}
+                    Short message
+                    <textarea
+                      rows={4}
                       className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                      placeholder="e.g. 4"
+                      placeholder="Share any details that help us support you."
+                      value={message}
+                      onChange={(event) => setMessage(event.target.value)}
                     />
                   </label>
-                </div>
-                <label className="text-sm text-[var(--muted-foreground)]">
-                  Preferred pickup window
-                  <input
-                    type="text"
-                    className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                    placeholder="e.g. Mon - Wed, 3-5 PM"
-                  />
-                </label>
-                <label className="text-sm text-[var(--muted-foreground)]">
-                  Short message
-                  <textarea
-                    rows={4}
-                    className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                    placeholder="Share any details that help us support you."
-                  />
-                </label>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button size="lg">Submit request</Button>
-                  <Link href="/beneficiaries/apply">
-                    <Button variant="outline" size="lg">Eligibility guide</Button>
-                  </Link>
-                </div>
+                  {submitError ? (
+                    <p className="text-sm text-rose-600">{submitError}</p>
+                  ) : null}
+                  {submitSuccess ? (
+                    <p className="text-sm text-emerald-600">Request submitted! Redirecting to your dashboard...</p>
+                  ) : null}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button size="lg" type="submit" disabled={isSubmitting}>
+                      {isSubmitting ? 'Submitting...' : 'Submit request'}
+                    </Button>
+                    <Link href="/beneficiaries/apply">
+                      <Button variant="outline" size="lg" type="button">Eligibility guide</Button>
+                    </Link>
+                  </div>
+                </form>
               </CardContent>
             </Card>
 
@@ -108,18 +215,33 @@ export default function RequestHelpPage() {
           <section>
             <Card className="shadow-[var(--shadow)]">
               <CardHeader>
-                <CardTitle>Your request queue</CardTitle>
+                <CardTitle>Your recent requests</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {requestQueue.map((item) => (
-                  <div key={item.title} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-[var(--border)] px-4 py-4">
-                    <div>
-                      <p className="font-semibold text-[var(--foreground)]">{item.title}</p>
-                      <p className="text-sm text-[var(--muted-foreground)]">{item.time}</p>
+                {isLoadingRequests ? (
+                  <p className="text-sm text-[var(--muted-foreground)]">Loading requests...</p>
+                ) : requestsError ? (
+                  <p className="text-sm text-rose-600">{requestsError}</p>
+                ) : recentRequests.length === 0 ? (
+                  <p className="text-sm text-[var(--muted-foreground)]">No requests yet. Submit one above!</p>
+                ) : (
+                  recentRequests.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-[var(--border)] px-4 py-4"
+                    >
+                      <div>
+                        <p className="font-semibold text-[var(--foreground)]">
+                          {REQUEST_TYPE_LABELS[item.request_type]} · {URGENCY_LABELS[item.urgency]}
+                        </p>
+                        <p className="text-sm text-[var(--muted-foreground)]">Submitted {formatDate(item.created_at)}</p>
+                      </div>
+                      <span className="text-xs uppercase tracking-[0.3em] text-[var(--primary)]">
+                        {STATUS_LABELS[item.status]}
+                      </span>
                     </div>
-                    <span className="text-xs uppercase tracking-[0.3em] text-[var(--primary)]">{item.status}</span>
-                  </div>
-                ))}
+                  ))
+                )}
               </CardContent>
             </Card>
           </section>

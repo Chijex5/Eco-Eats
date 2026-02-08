@@ -1,6 +1,18 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+
+type SupportRequest = {
+  id: string;
+  request_type: 'VOUCHER' | 'FOOD_PACK';
+  urgency: 'LOW' | 'MED' | 'HIGH';
+  status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'FULFILLED';
+  message?: string;
+  created_at: string;
+};
 
 const quickActions = [
   {
@@ -20,13 +32,6 @@ const quickActions = [
   },
 ];
 
-const summaryStats = [
-  { label: 'Active requests', value: '1', detail: 'Awaiting admin review' },
-  { label: 'Available vouchers', value: '2', detail: 'Redeemable this week' },
-  { label: 'Surplus packs claimed', value: '3', detail: 'Pickup codes issued' },
-  { label: 'Meals received', value: '6', detail: 'Total impact so far' },
-];
-
 const nextSteps = [
   {
     title: 'Complete verification',
@@ -42,25 +47,80 @@ const nextSteps = [
   },
 ];
 
-const recentActivity = [
-  {
-    title: 'Voucher request submitted',
-    detail: 'Needs review within 24 hours.',
-    time: 'Today, 09:12',
-  },
-  {
-    title: 'Surplus pack claimed at Green Cafe',
-    detail: 'Pickup code: EAT-0421',
-    time: 'Yesterday, 17:45',
-  },
-  {
-    title: 'Voucher redeemed',
-    detail: 'Meal served at Campus Kitchen.',
-    time: 'Mon, 11:20',
-  },
-];
+const STATUS_STYLES: Record<SupportRequest['status'], string> = {
+  PENDING: 'bg-amber-100 text-amber-700',
+  APPROVED: 'bg-emerald-100 text-emerald-700',
+  DECLINED: 'bg-rose-100 text-rose-700',
+  FULFILLED: 'bg-[var(--primary)]/10 text-[var(--primary)]',
+};
+
+const STATUS_LABELS: Record<SupportRequest['status'], string> = {
+  PENDING: 'Pending review',
+  APPROVED: 'Approved',
+  DECLINED: 'Declined',
+  FULFILLED: 'Fulfilled',
+};
+
+const REQUEST_TYPE_LABELS: Record<SupportRequest['request_type'], string> = {
+  VOUCHER: 'Voucher request',
+  FOOD_PACK: 'Food pack request',
+};
+
+const formatDate = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return 'Recently';
+  }
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+};
 
 export default function BeneficiaryDashboard() {
+  const [requests, setRequests] = useState<SupportRequest[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadRequests = async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const response = await fetch('/api/requests/me');
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload.error || 'Unable to fetch requests.');
+        }
+        const data = (await response.json()) as { requests: SupportRequest[] };
+        setRequests(data.requests || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unable to fetch requests.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadRequests();
+  }, []);
+
+  const summaryStats = useMemo(() => {
+    const pending = requests.filter((request) => request.status === 'PENDING').length;
+    const approved = requests.filter((request) => request.status === 'APPROVED').length;
+    const declined = requests.filter((request) => request.status === 'DECLINED').length;
+    const fulfilled = requests.filter((request) => request.status === 'FULFILLED').length;
+
+    return [
+      { label: 'Pending requests', value: pending, detail: 'Awaiting admin review' },
+      { label: 'Approved requests', value: approved, detail: 'Ready for next steps' },
+      { label: 'Declined requests', value: declined, detail: 'Review feedback in messages' },
+      { label: 'Fulfilled requests', value: fulfilled, detail: 'Vouchers issued or packs ready' },
+    ];
+  }, [requests]);
+
+  const latestRequest = requests[0];
+  const pendingRequests = requests.filter((request) => request.status === 'PENDING');
+
   return (
     <div className="page-shell">
       <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-10">
@@ -68,7 +128,7 @@ export default function BeneficiaryDashboard() {
           <section className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-foreground)]">Beneficiary dashboard</p>
-              <h1 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">Welcome back, Amina</h1>
+              <h1 className="text-3xl sm:text-4xl text-[var(--foreground)] mt-3">Welcome back</h1>
               <p className="text-sm text-[var(--muted-foreground)] mt-2">
                 Here&apos;s your support overview and next steps for the week.
               </p>
@@ -123,20 +183,45 @@ export default function BeneficiaryDashboard() {
 
               <Card className="shadow-[var(--shadow)]">
                 <CardHeader>
-                  <CardTitle className="text-2xl">Recent activity</CardTitle>
+                  <CardTitle className="text-2xl">Request status</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {recentActivity.map((activity) => (
-                    <div key={activity.title} className="border-b border-dashed border-[var(--border)] pb-4 last:border-b-0 last:pb-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <p className="font-semibold text-[var(--foreground)]">{activity.title}</p>
-                          <p className="text-sm text-[var(--muted-foreground)]">{activity.detail}</p>
-                        </div>
-                        <span className="text-xs text-[var(--muted-foreground)]">{activity.time}</span>
-                      </div>
+                  {isLoading ? (
+                    <p className="text-sm text-[var(--muted-foreground)]">Loading your requests...</p>
+                  ) : error ? (
+                    <p className="text-sm text-rose-600">{error}</p>
+                  ) : requests.length === 0 ? (
+                    <div className="space-y-3 text-sm text-[var(--muted-foreground)]">
+                      <p>You have no requests yet.</p>
+                      <Link href="/app/request-help">
+                        <Button size="sm">Request support</Button>
+                      </Link>
                     </div>
-                  ))}
+                  ) : (
+                    requests.slice(0, 4).map((request) => (
+                      <div
+                        key={request.id}
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-[var(--border)] px-4 py-4"
+                      >
+                        <div>
+                          <p className="font-semibold text-[var(--foreground)]">
+                            {REQUEST_TYPE_LABELS[request.request_type]}
+                          </p>
+                          <p className="text-sm text-[var(--muted-foreground)]">Submitted {formatDate(request.created_at)}</p>
+                        </div>
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${STATUS_STYLES[request.status]}`}
+                        >
+                          {STATUS_LABELS[request.status]}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                  {!isLoading && !error && pendingRequests.length === 0 && requests.length > 0 ? (
+                    <Link href="/app/request-help">
+                      <Button variant="outline" size="sm">Start a new request</Button>
+                    </Link>
+                  ) : null}
                 </CardContent>
               </Card>
             </div>
@@ -147,12 +232,33 @@ export default function BeneficiaryDashboard() {
                   <CardTitle className="text-xl">Current request status</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-white/80">Meal voucher request</p>
-                  <p className="text-2xl font-semibold mt-2">Pending review</p>
-                  <p className="text-sm text-white/70 mt-2">Expected decision in 24 hours.</p>
-                  <Button variant="outline" size="sm" className="mt-4 text-white border-white/40 hover:border-white">
-                    View request
-                  </Button>
+                  {isLoading ? (
+                    <p className="text-sm text-white/70">Loading status...</p>
+                  ) : error ? (
+                    <p className="text-sm text-white/70">Unable to load status.</p>
+                  ) : latestRequest ? (
+                    <>
+                      <p className="text-sm text-white/80">{REQUEST_TYPE_LABELS[latestRequest.request_type]}</p>
+                      <p className="text-2xl font-semibold mt-2">{STATUS_LABELS[latestRequest.status]}</p>
+                      <p className="text-sm text-white/70 mt-2">Submitted {formatDate(latestRequest.created_at)}</p>
+                      <Link href="/app/request-help">
+                        <Button variant="outline" size="sm" className="mt-4 text-white border-white/40 hover:border-white">
+                          View request
+                        </Button>
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm text-white/80">No requests yet</p>
+                      <p className="text-2xl font-semibold mt-2">Start a request</p>
+                      <p className="text-sm text-white/70 mt-2">Submit a request to receive support updates.</p>
+                      <Link href="/app/request-help">
+                        <Button variant="outline" size="sm" className="mt-4 text-white border-white/40 hover:border-white">
+                          New request
+                        </Button>
+                      </Link>
+                    </>
+                  )}
                 </CardContent>
               </Card>
 
