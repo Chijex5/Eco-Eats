@@ -2,8 +2,15 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { VoucherCard } from '@/components/VoucherCard';
+import { VoucherStatus } from '@/components/VoucherCard';
 
-const vouchers = [
+const vouchers: Array<{
+  code: string;
+  location: string;
+  status: VoucherStatus;
+  expiryLabel: string;
+  valueLabel: string;
+}> = [
   {
     code: 'EAT-4821',
     location: 'Campus Kitchen',

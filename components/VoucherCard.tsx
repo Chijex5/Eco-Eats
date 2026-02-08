@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
-type VoucherStatus = 'ACTIVE' | 'REDEEMED' | 'EXPIRED' | 'REVOKED';
+export type VoucherStatus = 'ACTIVE' | 'REDEEMED' | 'EXPIRED' | 'REVOKED';
 
 type VoucherCardProps = {
   code: string;
