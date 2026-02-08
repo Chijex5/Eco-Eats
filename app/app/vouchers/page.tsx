@@ -1,38 +1,20 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { VoucherCard } from '@/components/VoucherCard';
-import { VoucherStatus } from '@/components/VoucherCard';
+import { VoucherCard, type VoucherStatus } from '@/components/VoucherCard';
 
-const vouchers: Array<{
+type Voucher = {
+  id: string;
   code: string;
-  location: string;
+  qr_token: string;
+  value_kobo: number;
   status: VoucherStatus;
-  expiryLabel: string;
-  valueLabel: string;
-}> = [
-  {
-    code: 'EAT-4821',
-    location: 'Campus Kitchen',
-    status: 'ACTIVE',
-    expiryLabel: 'Valid until Oct 14, 2024',
-    valueLabel: '₦2,500 meal credit',
-  },
-  {
-    code: 'EAT-4903',
-    location: 'Green Cafe',
-    status: 'ACTIVE',
-    expiryLabel: 'Valid until Oct 18, 2024',
-    valueLabel: '₦1,500 meal credit',
-  },
-  {
-    code: 'EAT-4669',
-    location: 'Community Hub',
-    status: 'REDEEMED',
-    expiryLabel: 'Redeemed Oct 01, 2024',
-    valueLabel: '₦2,000 meal credit',
-  },
-];
+  expires_at?: string;
+  created_at: string;
+};
 
 const reminders = [
   'Show the QR code at the partner counter.',
@@ -40,7 +22,58 @@ const reminders = [
   'Let us know if a voucher is about to expire.',
 ];
 
+const formatCurrency = (valueKobo: number) => {
+  const value = valueKobo / 100;
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+
+const formatDate = (value?: string) => {
+  if (!value) return 'No expiry date';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'No expiry date';
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+
 export default function VoucherWalletPage() {
+  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadVouchers = async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const response = await fetch('/api/vouchers/me');
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload.error || 'Unable to load vouchers.');
+        }
+        const data = (await response.json()) as { vouchers: Voucher[] };
+        setVouchers(data.vouchers || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unable to load vouchers.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadVouchers();
+  }, []);
+
+  const activeCount = useMemo(
+    () => vouchers.filter((voucher) => voucher.status === 'ACTIVE').length,
+    [vouchers]
+  );
+
   return (
     <div className="page-shell">
       <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-10">
@@ -51,6 +84,9 @@ export default function VoucherWalletPage() {
             <p className="text-sm text-[var(--muted-foreground)] max-w-2xl">
               Keep track of every voucher, redemption code, and pickup location. Tap a voucher to view the QR code when
               you are ready to redeem.
+            </p>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
+              Active vouchers: {activeCount}
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/beneficiaries/use-voucher">
@@ -63,20 +99,42 @@ export default function VoucherWalletPage() {
           </section>
 
           <section className="grid gap-4">
-            {vouchers.map((voucher) => (
-              <div key={voucher.code} className="flex flex-col gap-3">
-                <VoucherCard
-                  code={voucher.code}
-                  location={voucher.location}
-                  status={voucher.status}
-                  valueLabel={voucher.valueLabel}
-                  expiryLabel={voucher.expiryLabel}
-                />
-                <div className="flex justify-end">
-                  <Button variant="outline" size="sm">View QR code</Button>
+            {isLoading ? (
+              <Card className="shadow-[var(--shadow)]">
+                <CardContent className="py-8 text-sm text-[var(--muted-foreground)]">
+                  Loading your vouchers...
+                </CardContent>
+              </Card>
+            ) : error ? (
+              <Card className="shadow-[var(--shadow)]">
+                <CardContent className="py-8 text-sm text-rose-600">{error}</CardContent>
+              </Card>
+            ) : vouchers.length === 0 ? (
+              <Card className="shadow-[var(--shadow)]">
+                <CardContent className="py-8 text-sm text-[var(--muted-foreground)] space-y-3">
+                  <p>You don&apos;t have any vouchers yet. Submit a support request to get started.</p>
+                  <Link href="/app/request-help">
+                    <Button size="sm">Request support</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ) : (
+              vouchers.map((voucher) => (
+                <div key={voucher.id} className="flex flex-col gap-3">
+                  <VoucherCard
+                    code={voucher.code}
+                    status={voucher.status}
+                    valueLabel={formatCurrency(voucher.value_kobo)}
+                    expiryLabel={formatDate(voucher.expires_at)}
+                  />
+                  <div className="flex justify-end">
+                    <Link href={`/app/vouchers/${voucher.id}`}>
+                      <Button variant="outline" size="sm">View QR code</Button>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </section>
 
           <section>
