@@ -6,6 +6,7 @@
 import { query, getConnection } from './connection';
 import { generateId } from './ids';
 import { generateQRToken, generateVoucherCode } from '@/lib/utils/voucher-codes';
+import { logImpactEvent } from './impact';
 import type { RowDataPacket } from 'mysql2/promise';
 
 export interface Voucher {
@@ -38,6 +39,7 @@ export async function createVoucher(data: {
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [id, code, qr_token, data.value_kobo, data.beneficiary_user_id, data.issued_by_admin_id, data.expires_at]
   );
+  await logImpactEvent({ eventType: 'MEAL_FUNDED', relatedId: id });
   const result = await query('SELECT * FROM vouchers WHERE id = ?', [id]);
   return result.rows[0] as Voucher;
 }
@@ -135,13 +137,11 @@ export async function redeemVoucher(
       [redemptionId, voucherId, partnerId, redeemedByUserId, confirmedByStaffId, mealDescription, voucher.value_kobo]
     );
 
-    // Log impact event
-    const impactId = generateId();
-    await connection.execute(
-      `INSERT INTO impact_events (id, event_type, related_id)
-       VALUES (?, 'MEAL_SERVED', ?)`,
-      [impactId, redemptionId]
-    );
+    await logImpactEvent({
+      eventType: 'MEAL_SERVED',
+      relatedId: redemptionId,
+      connection,
+    });
 
     const [redemptionRows] = await connection.execute<RowDataPacket[]>(
       'SELECT * FROM voucher_redemptions WHERE id = ?',
