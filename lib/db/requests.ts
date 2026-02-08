@@ -18,6 +18,11 @@ export interface SupportRequest {
   created_at: Date;
 }
 
+export interface AdminSupportRequest extends SupportRequest {
+  full_name: string;
+  email: string;
+}
+
 /**
  * Create a support request
  */
@@ -38,6 +43,23 @@ export async function createSupportRequest(data: {
 }
 
 /**
+ * Create a support request (API-friendly signature)
+ */
+export async function createRequest(data: {
+  beneficiaryUserId: string;
+  requestType: SupportRequest['request_type'];
+  message?: string;
+  urgency: SupportRequest['urgency'];
+}) {
+  return createSupportRequest({
+    beneficiary_user_id: data.beneficiaryUserId,
+    request_type: data.requestType,
+    message: data.message,
+    urgency: data.urgency,
+  });
+}
+
+/**
  * Get requests by beneficiary
  */
 export async function getRequestsByBeneficiary(userId: string) {
@@ -46,6 +68,13 @@ export async function getRequestsByBeneficiary(userId: string) {
     [userId]
   );
   return result.rows as SupportRequest[];
+}
+
+/**
+ * Get user requests (API-friendly signature)
+ */
+export async function getUserRequests(userId: string) {
+  return getRequestsByBeneficiary(userId);
 }
 
 /**
@@ -60,6 +89,31 @@ export async function getPendingRequests() {
      ORDER BY sr.created_at ASC`
   );
   return result.rows;
+}
+
+/**
+ * Get admin requests, optionally filtered by status
+ */
+export async function getAdminRequests(status?: SupportRequest['status']) {
+  const filters: string[] = [];
+  const values: Array<string> = [];
+
+  if (status) {
+    filters.push('sr.status = ?');
+    values.push(status);
+  }
+
+  const whereClause = filters.length > 0 ? `WHERE ${filters.join(' AND ')}` : '';
+
+  const result = await query(
+    `SELECT sr.*, u.full_name, u.email
+     FROM support_requests sr
+     JOIN users u ON sr.beneficiary_user_id = u.id
+     ${whereClause}
+     ORDER BY sr.created_at DESC`,
+    values
+  );
+  return result.rows as AdminSupportRequest[];
 }
 
 /**
