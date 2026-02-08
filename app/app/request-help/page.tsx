@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 const helpfulTips = [
-  'Provide a preferred pickup window so partners can prepare meals for you.',
+  "Share when you're usually available so partners can prepare meals for you.",
   'Share any supporting details that help the team verify your request quickly.',
   'Keep your phone on in case the support team needs clarification.',
 ];
