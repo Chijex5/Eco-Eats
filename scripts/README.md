@@ -56,10 +56,11 @@ npm run seed
 - ✅ Sets up relationships between entities
 
 ### Notes
-- Safe to run multiple times (will create duplicate data)
-- For a clean slate, drop tables first: `DROP DATABASE ecoeats_db; CREATE DATABASE ecoeats_db;`
+- **NOT idempotent**: Running multiple times will create duplicate data and may cause unique constraint violations (duplicate emails). For a clean slate, drop and recreate the database first.
+- For a clean database: `DROP DATABASE ecoeats_db; CREATE DATABASE ecoeats_db;`
 - All users have `is_email_verified` set to `TRUE` for easier testing
 - Passwords are bcrypt-hashed for security
+- ⚠️ **WARNING**: The password 'password123' is for testing ONLY. Never use weak passwords in production!
 
 ### Example Output
 

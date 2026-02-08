@@ -11,6 +11,8 @@ import { createTables } from '../lib/db/schema';
 import { generateId } from '../lib/db/ids';
 
 // Helper function to generate short unique codes
+// Uses UUID to ensure uniqueness, then takes first N characters
+// Note: prefix + length should not exceed database column limits
 function generateShortCode(prefix: string, length: number = 8): string {
   // Use UUID to ensure uniqueness, then take first N characters
   const uuid = generateId().replace(/-/g, '').toUpperCase();
@@ -18,6 +20,8 @@ function generateShortCode(prefix: string, length: number = 8): string {
 }
 
 // Test user data for each role
+// WARNING: These use weak passwords for testing ONLY
+// NEVER use these patterns in production!
 const TEST_USERS = [
   {
     full_name: 'Alice Beneficiary',
