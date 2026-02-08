@@ -1,10 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
 import { updateRequestStatus } from '@/lib/db/requests';
 
 const ALLOWED_STATUS = new Set(['APPROVED', 'DECLINED']);
 
-export async function PATCH(request: Request, context: { params: { id: string } }) {
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getSession();
     if (!session) {
@@ -14,7 +17,7 @@ export async function PATCH(request: Request, context: { params: { id: string } 
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { id } = context.params;
+    const { id } = await context.params;
     if (!id) {
       return NextResponse.json({ error: 'Request id is required.' }, { status: 400 });
     }
