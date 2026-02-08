@@ -10,6 +10,13 @@ import { query, closePool } from '../lib/db/connection';
 import { createTables } from '../lib/db/schema';
 import { generateId } from '../lib/db/ids';
 
+// Helper function to generate short unique codes
+function generateShortCode(prefix: string, length: number = 8): string {
+  // Use UUID to ensure uniqueness, then take first N characters
+  const uuid = generateId().replace(/-/g, '').toUpperCase();
+  return prefix + uuid.substring(0, length);
+}
+
 // Test user data for each role
 const TEST_USERS = [
   {
@@ -203,7 +210,7 @@ async function seedDatabase() {
     // Step 7: Create vouchers
     console.log('\n🎫 Creating vouchers...');
     const voucherId1 = generateId();
-    const code1 = 'ECO' + Math.random().toString(36).substring(2, 10).toUpperCase();
+    const code1 = generateShortCode('ECO', 8);
     const qrToken1 = generateId();
     await query(
       `INSERT INTO vouchers (id, code, qr_token, value_kobo, beneficiary_user_id, issued_by_admin_id, status, expires_at)
@@ -221,7 +228,7 @@ async function seedDatabase() {
     console.log(`  ✓ Created ACTIVE voucher for Bob: ${code1} (₦5,000)`);
 
     const voucherId2 = generateId();
-    const code2 = 'ECO' + Math.random().toString(36).substring(2, 10).toUpperCase();
+    const code2 = generateShortCode('ECO', 8);
     const qrToken2 = generateId();
     await query(
       `INSERT INTO vouchers (id, code, qr_token, value_kobo, beneficiary_user_id, issued_by_admin_id, status, expires_at)
@@ -327,7 +334,7 @@ async function seedDatabase() {
     // Step 11: Create surplus claims
     console.log('\n📦 Creating surplus claims...');
     const claimId = generateId();
-    const pickupCode = 'PK' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    const pickupCode = generateShortCode('PK', 6);
     await query(
       `INSERT INTO surplus_claims (id, listing_id, beneficiary_user_id, status, pickup_code)
        VALUES (?, ?, ?, ?, ?)`,
