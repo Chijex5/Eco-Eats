@@ -38,8 +38,9 @@ export default function LoginPage() {
         return;
       }
 
-      const redirect = searchParams.get('redirect');
-      router.push(redirect || data?.redirect || '/');
+      const redirect = searchParams.get('redirect') || data?.redirect || '/';
+      router.push(redirect);
+      router.refresh();
     } catch (error) {
       console.error(error);
       setFormError('Something went wrong. Please try again.');
