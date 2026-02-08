@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth/session';
+import { getSessionFromCookies } from '@/lib/auth/session';
 import { updateRequestStatus } from '@/lib/db/requests';
 
 const ALLOWED_STATUS = new Set(['APPROVED', 'DECLINED']);
@@ -9,7 +9,7 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getSession();
+    const session = await getSessionFromCookies();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

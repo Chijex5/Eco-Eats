@@ -1,28 +1,36 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { VoucherCard } from '@/components/VoucherCard';
+import { VoucherStatus } from '@/components/VoucherCard';
 
-const vouchers = [
+const vouchers: Array<{
+  code: string;
+  location: string;
+  status: VoucherStatus;
+  expiryLabel: string;
+  valueLabel: string;
+}> = [
   {
     code: 'EAT-4821',
     location: 'Campus Kitchen',
-    status: 'Active',
-    expiry: 'Valid until Oct 14, 2024',
-    value: '₦2,500 meal credit',
+    status: 'ACTIVE',
+    expiryLabel: 'Valid until Oct 14, 2024',
+    valueLabel: '₦2,500 meal credit',
   },
   {
     code: 'EAT-4903',
     location: 'Green Cafe',
-    status: 'Active',
-    expiry: 'Valid until Oct 18, 2024',
-    value: '₦1,500 meal credit',
+    status: 'ACTIVE',
+    expiryLabel: 'Valid until Oct 18, 2024',
+    valueLabel: '₦1,500 meal credit',
   },
   {
     code: 'EAT-4669',
     location: 'Community Hub',
-    status: 'Redeemed',
-    expiry: 'Redeemed Oct 01, 2024',
-    value: '₦2,000 meal credit',
+    status: 'REDEEMED',
+    expiryLabel: 'Redeemed Oct 01, 2024',
+    valueLabel: '₦2,000 meal credit',
   },
 ];
 
@@ -56,22 +64,18 @@ export default function VoucherWalletPage() {
 
           <section className="grid gap-4">
             {vouchers.map((voucher) => (
-              <Card key={voucher.code} className="shadow-[var(--shadow)]">
-                <CardHeader className="flex flex-row items-start justify-between gap-4">
-                  <div>
-                    <CardTitle>{voucher.code}</CardTitle>
-                    <p className="text-sm text-[var(--muted-foreground)]">{voucher.location}</p>
-                  </div>
-                  <span className="text-xs uppercase tracking-[0.3em] text-[var(--primary)]">{voucher.status}</span>
-                </CardHeader>
-                <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="text-sm text-[var(--muted-foreground)] space-y-1">
-                    <p>{voucher.value}</p>
-                    <p>{voucher.expiry}</p>
-                  </div>
+              <div key={voucher.code} className="flex flex-col gap-3">
+                <VoucherCard
+                  code={voucher.code}
+                  location={voucher.location}
+                  status={voucher.status}
+                  valueLabel={voucher.valueLabel}
+                  expiryLabel={voucher.expiryLabel}
+                />
+                <div className="flex justify-end">
                   <Button variant="outline" size="sm">View QR code</Button>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </section>
 

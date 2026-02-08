@@ -71,10 +71,28 @@ export async function getRequestsByBeneficiary(userId: string) {
 }
 
 /**
- * Get user requests (API-friendly signature)
+ * Get request by ID
  */
-export async function getUserRequests(userId: string) {
-  return getRequestsByBeneficiary(userId);
+export async function getSupportRequestById(requestId: string) {
+  const result = await query(
+    'SELECT * FROM support_requests WHERE id = ?',
+    [requestId]
+  );
+  return result.rows[0] as SupportRequest | undefined;
+}
+
+/**
+ * Mark request as fulfilled
+ */
+export async function markRequestFulfilled(requestId: string, reviewedBy: string) {
+  await query(
+    `UPDATE support_requests 
+     SET status = 'FULFILLED', reviewed_by = ?, reviewed_at = NOW()
+     WHERE id = ?`,
+    [reviewedBy, requestId]
+  );
+  const result = await query('SELECT * FROM support_requests WHERE id = ?', [requestId]);
+  return result.rows[0] as SupportRequest;
 }
 
 /**

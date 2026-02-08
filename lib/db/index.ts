@@ -13,3 +13,4 @@ export * from './schema';
 export * from './users';
 export * from './requests';
 export * from './vouchers';
+export * from './redemptions';

@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth/session';
+import { getSessionFromCookies } from '@/lib/auth/session';
 import { getAdminRequests, type SupportRequest } from '@/lib/db/requests';
 
 const STATUS_VALUES = new Set(['PENDING', 'APPROVED', 'DECLINED', 'FULFILLED']);
 
 export async function GET(request: Request) {
   try {
-    const session = await getSession();
+    const session = await getSessionFromCookies();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
