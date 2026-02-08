@@ -64,8 +64,7 @@ interface NavigationClientProps {
 }
 
 export function NavigationClient({ session, navLinks, initials }: NavigationClientProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  console.log('NavigationClient props:', { session, navLinks, initials });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const naviLinks = session ? roleLinks[session.role] ?? publicLinks : publicLinks;
 
   // Close mobile menu when clicking outside

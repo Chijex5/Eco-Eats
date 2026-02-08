@@ -16,7 +16,6 @@ async function getSession() {
 
 export async function Navigation() {
   const session = await getSession();
-  console.log('Navigation session:', session);
   const navLinks = session ? roleLinks[session.role] ?? publicLinks : publicLinks;
   const initials = session?.name
     ? session.name
