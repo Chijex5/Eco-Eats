@@ -265,7 +265,7 @@ async function seedDatabase() {
         'Rice and chicken with salad'
       ]
     );
-    console.log('  ✓ Created redemption record for Alice\'s voucher at Campus Cafeteria');
+    console.log("  ✓ Created redemption record for Alice's voucher at Campus Cafeteria");
 
     // Step 9: Create donations
     console.log('\n💝 Creating donations...');
