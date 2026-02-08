@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth/session';
+import { getSessionFromCookies } from '@/lib/auth/session';
 import { createRequest } from '@/lib/db/requests';
 
 const REQUEST_TYPES = new Set(['VOUCHER', 'FOOD_PACK']);
@@ -15,7 +15,7 @@ function normalizeUrgency(input: string) {
 
 export async function POST(request: Request) {
   try {
-    const session = await getSession();
+    const session = await getSessionFromCookies();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

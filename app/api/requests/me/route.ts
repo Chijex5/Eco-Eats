@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth/session';
-import { getUserRequests } from '@/lib/db/requests';
+import { getSessionFromCookies } from '@/lib/auth/session';
+import { getRequestsByBeneficiary } from '@/lib/db/requests';
 
 export async function GET() {
   try {
-    const session = await getSession();
+    const session = await getSessionFromCookies();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const requests = await getUserRequests(session.userId);
+    const requests = await getRequestsByBeneficiary(session.userId);
     return NextResponse.json({ requests }, { status: 200 });
   } catch (error) {
     console.error('Get user requests error:', error);
