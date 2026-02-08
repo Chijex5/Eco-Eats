@@ -5,6 +5,7 @@
 
 import { query, getConnection } from './connection';
 import { generateId } from './ids';
+import { generateQRToken, generateVoucherCode } from '@/lib/utils/voucher-codes';
 import type { RowDataPacket } from 'mysql2/promise';
 
 export interface Voucher {
@@ -17,25 +18,6 @@ export interface Voucher {
   status: 'ACTIVE' | 'REDEEMED' | 'EXPIRED' | 'REVOKED';
   expires_at?: Date;
   created_at: Date;
-}
-
-/**
- * Generate a unique voucher code
- */
-function generateVoucherCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = 'EAT-';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
-
-/**
- * Generate a unique QR token
- */
-function generateQRToken(): string {
-  return `qr_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
 }
 
 /**
@@ -66,6 +48,17 @@ export async function createVoucher(data: {
 export async function getVouchersByBeneficiary(userId: string) {
   const result = await query(
     'SELECT * FROM vouchers WHERE beneficiary_user_id = ? ORDER BY created_at DESC',
+    [userId]
+  );
+  return result.rows as Voucher[];
+}
+
+/**
+ * Get non-revoked vouchers for a beneficiary
+ */
+export async function getUserVouchers(userId: string) {
+  const result = await query(
+    "SELECT * FROM vouchers WHERE beneficiary_user_id = ? AND status != 'REVOKED' ORDER BY created_at DESC",
     [userId]
   );
   return result.rows as Voucher[];
