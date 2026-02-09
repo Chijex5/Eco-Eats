@@ -4,153 +4,209 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
+type Voucher = {
+  id: string;
+  code: string;
+  qr_token: string;
+  value_kobo: number;
+  status: 'ACTIVE' | 'REDEEMED' | 'EXPIRED' | 'REVOKED';
+  expires_at?: string;
+};
+
+type Redemption = {
+  id: string;
+  redeemed_at: string;
+  meal_description?: string | null;
+  value_kobo: number;
+};
+
+type RedemptionResult = {
+  voucher: Voucher;
+  redemption: Redemption;
+};
+
+const formatCurrency = (valueKobo: number) => {
+  const value = valueKobo / 100;
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+
+const formatDateTime = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Just now';
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+};
+
 export default function PartnerRedeemPage() {
-  const [voucherCode, setVoucherCode] = useState('');
+  const [mode, setMode] = useState<'code' | 'qr'>('code');
+  const [code, setCode] = useState('');
   const [qrToken, setQrToken] = useState('');
   const [mealDescription, setMealDescription] = useState('');
-  const [voucherStatus, setVoucherStatus] = useState<string | null>(null);
-  const [voucherError, setVoucherError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState<RedemptionResult | null>(null);
 
-  const [pickupCode, setPickupCode] = useState('');
-  const [pickupStatus, setPickupStatus] = useState<string | null>(null);
-  const [pickupError, setPickupError] = useState('');
+  const handleRedeem = async () => {
+    setError('');
+    setResult(null);
 
-  const handleVoucherRedeem = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setVoucherStatus(null);
-    setVoucherError('');
+    const payload =
+      mode === 'code'
+        ? { code: code.trim(), mealDescription: mealDescription.trim() || undefined }
+        : { qrToken: qrToken.trim(), mealDescription: mealDescription.trim() || undefined };
 
+    if (mode === 'code' && !payload.code) {
+      setError('Enter a voucher code to continue.');
+      return;
+    }
+
+    if (mode === 'qr' && !payload.qrToken) {
+      setError('Enter a QR token to continue.');
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       const response = await fetch('/api/redeem/voucher', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code: voucherCode || undefined,
-          qrToken: qrToken || undefined,
-          mealDescription: mealDescription || undefined,
-        }),
+        body: JSON.stringify(payload),
       });
 
+      const data = (await response.json()) as RedemptionResult & { error?: string };
       if (!response.ok) {
-        const payload = await response.json().catch(() => ({}));
-        throw new Error(payload.error || 'Unable to redeem voucher.');
+        throw new Error(data.error || 'Unable to redeem voucher.');
       }
 
-      const data = await response.json();
-      setVoucherStatus(`Redeemed voucher ${data.voucher?.code ?? ''}`.trim());
-      setVoucherCode('');
+      setResult({ voucher: data.voucher, redemption: data.redemption });
+      setCode('');
       setQrToken('');
       setMealDescription('');
     } catch (err) {
-      setVoucherError(err instanceof Error ? err.message : 'Unable to redeem voucher.');
-    }
-  };
-
-  const handlePickupRedeem = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setPickupStatus(null);
-    setPickupError('');
-
-    try {
-      const response = await fetch('/api/redeem/surplus', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pickupCode }),
-      });
-
-      if (!response.ok) {
-        const payload = await response.json().catch(() => ({}));
-        throw new Error(payload.error || 'Unable to confirm pickup.');
-      }
-
-      const data = await response.json();
-      setPickupStatus(`Pickup confirmed for code ${data.claim?.pickup_code ?? ''}`.trim());
-      setPickupCode('');
-    } catch (err) {
-      setPickupError(err instanceof Error ? err.message : 'Unable to confirm pickup.');
+      setError(err instanceof Error ? err.message : 'Unable to redeem voucher.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="page-shell">
       <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-10">
-        <div className="max-w-5xl mx-auto space-y-10">
+        <div className="max-w-4xl mx-auto space-y-8">
           <section className="space-y-3">
-            <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-foreground)]">Redeem</p>
-            <h1 className="text-3xl sm:text-4xl text-[var(--foreground)]">Confirm vouchers and pickups.</h1>
+            <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-foreground)]">Partner redemption</p>
+            <h1 className="text-3xl sm:text-4xl text-[var(--foreground)]">Redeem vouchers on the spot.</h1>
             <p className="text-sm text-[var(--muted-foreground)] max-w-2xl">
-              Scan a QR or enter a code to record successful redemptions and surplus pickups.
+              Enter the voucher code or QR token provided by a beneficiary. Confirm redemption after verifying their ID.
             </p>
           </section>
 
-          <section className="grid gap-6 lg:grid-cols-2">
+          <Card className="shadow-[var(--shadow)]">
+            <CardHeader>
+              <CardTitle>Redeem a voucher</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant={mode === 'code' ? 'primary' : 'outline'}
+                  onClick={() => setMode('code')}
+                >
+                  Enter code
+                </Button>
+                <Button
+                  size="sm"
+                  variant={mode === 'qr' ? 'primary' : 'outline'}
+                  onClick={() => setMode('qr')}
+                >
+                  Scan QR / token
+                </Button>
+              </div>
+
+              {mode === 'code' ? (
+                <label className="text-sm text-[var(--muted-foreground)]">
+                  Voucher code
+                  <input
+                    value={code}
+                    onChange={(event) => setCode(event.target.value)}
+                    placeholder="Enter voucher code"
+                    className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
+                  />
+                </label>
+              ) : (
+                <label className="text-sm text-[var(--muted-foreground)]">
+                  QR token
+                  <input
+                    value={qrToken}
+                    onChange={(event) => setQrToken(event.target.value)}
+                    placeholder="Paste QR token"
+                    className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
+                  />
+                </label>
+              )}
+
+              <label className="text-sm text-[var(--muted-foreground)]">
+                Meal description (optional)
+                <input
+                  value={mealDescription}
+                  onChange={(event) => setMealDescription(event.target.value)}
+                  placeholder="E.g. Hot meal + drink"
+                  className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
+                />
+              </label>
+
+              {error ? <p className="text-sm text-rose-600">{error}</p> : null}
+
+              <Button size="sm" onClick={handleRedeem} disabled={isSubmitting}>
+                {isSubmitting ? 'Confirming...' : 'Confirm redemption'}
+              </Button>
+              <p className="text-xs text-[var(--muted-foreground)]">
+                QR camera scanning will be available in a future update. For now, enter the code or token manually.
+              </p>
+            </CardContent>
+          </Card>
+
+          {result ? (
             <Card className="shadow-[var(--shadow)]">
               <CardHeader>
-                <CardTitle>Redeem a voucher</CardTitle>
+                <CardTitle>Redemption confirmed</CardTitle>
               </CardHeader>
-              <CardContent>
-                <form className="space-y-4" onSubmit={handleVoucherRedeem}>
-                  <label className="text-sm text-[var(--muted-foreground)]">
-                    Voucher code
-                    <input
-                      className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                      value={voucherCode}
-                      onChange={(event) => setVoucherCode(event.target.value)}
-                      placeholder="e.g. ECO-1234"
-                    />
-                  </label>
-                  <label className="text-sm text-[var(--muted-foreground)]">
-                    QR token (optional)
-                    <input
-                      className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                      value={qrToken}
-                      onChange={(event) => setQrToken(event.target.value)}
-                      placeholder="Scan to autofill"
-                    />
-                  </label>
-                  <label className="text-sm text-[var(--muted-foreground)]">
-                    Meal description
-                    <input
-                      className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                      value={mealDescription}
-                      onChange={(event) => setMealDescription(event.target.value)}
-                      placeholder="Optional notes"
-                    />
-                  </label>
-
-                  {voucherError ? <p className="text-sm text-rose-600">{voucherError}</p> : null}
-                  {voucherStatus ? <p className="text-sm text-emerald-600">{voucherStatus}</p> : null}
-
-                  <Button type="submit" size="lg">Confirm voucher</Button>
-                </form>
+              <CardContent className="space-y-3 text-sm">
+                <p className="text-[var(--muted-foreground)]">
+                  Voucher <span className="font-semibold text-[var(--foreground)]">{result.voucher.code}</span> redeemed
+                  successfully.
+                </p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-lg border border-[var(--border)] px-3 py-3">
+                    <p className="text-xs text-[var(--muted-foreground)]">Meal value</p>
+                    <p className="text-base font-semibold text-[var(--foreground)]">
+                      {formatCurrency(result.voucher.value_kobo)}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-[var(--border)] px-3 py-3">
+                    <p className="text-xs text-[var(--muted-foreground)]">Redeemed at</p>
+                    <p className="text-base font-semibold text-[var(--foreground)]">
+                      {formatDateTime(result.redemption.redeemed_at)}
+                    </p>
+                  </div>
+                </div>
+                {result.redemption.meal_description ? (
+                  <p className="text-[var(--muted-foreground)]">
+                    Meal description: {result.redemption.meal_description}
+                  </p>
+                ) : null}
               </CardContent>
             </Card>
-
-            <Card className="shadow-[var(--shadow)]">
-              <CardHeader>
-                <CardTitle>Confirm surplus pickup</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form className="space-y-4" onSubmit={handlePickupRedeem}>
-                  <label className="text-sm text-[var(--muted-foreground)]">
-                    Pickup code
-                    <input
-                      className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                      value={pickupCode}
-                      onChange={(event) => setPickupCode(event.target.value)}
-                      placeholder="e.g. PACK-4492"
-                      required
-                    />
-                  </label>
-
-                  {pickupError ? <p className="text-sm text-rose-600">{pickupError}</p> : null}
-                  {pickupStatus ? <p className="text-sm text-emerald-600">{pickupStatus}</p> : null}
-
-                  <Button type="submit" size="lg">Confirm pickup</Button>
-                </form>
-              </CardContent>
-            </Card>
-          </section>
+          ) : null}
         </div>
       </div>
     </div>
