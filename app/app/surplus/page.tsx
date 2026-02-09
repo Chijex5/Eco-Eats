@@ -1,27 +1,30 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
-const surplusPacks = [
-  {
-    location: 'Green Cafe',
-    items: 'Vegetable wraps + juice',
-    window: 'Today, 5:00 - 6:00 PM',
-    spots: '4 slots remaining',
-  },
-  {
-    location: 'Campus Kitchen',
-    items: 'Rice bowl + fruit',
-    window: 'Tomorrow, 12:00 - 1:00 PM',
-    spots: '2 slots remaining',
-  },
-  {
-    location: 'Community Hub',
-    items: 'Soup + bread pack',
-    window: 'Tomorrow, 6:00 - 7:00 PM',
-    spots: '5 slots remaining',
-  },
-];
+type SurplusListing = {
+  id: string;
+  title: string;
+  description?: string | null;
+  pickup_deadline: string;
+  quantity_available: number;
+  claimed_count: number;
+  partner_name?: string | null;
+};
+
+const formatPickupWindow = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Pickup window to be confirmed';
+  return `Pickup by ${date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })}`;
+};
 
 const tips = [
   'Claiming a pack reserves a pickup code for you.',
@@ -30,6 +33,44 @@ const tips = [
 ];
 
 export default function SurplusPacksPage() {
+  const [packs, setPacks] = useState<SurplusListing[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadPacks = async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const response = await fetch('/api/surplus/available');
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload.error || 'Unable to load surplus packs.');
+        }
+        const data = (await response.json()) as { listings: SurplusListing[] };
+        setPacks(data.listings ?? []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unable to load surplus packs.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPacks();
+  }, []);
+
+  const formattedPacks = useMemo(
+    () =>
+      packs.map((pack) => {
+        const remaining = Math.max(pack.quantity_available - pack.claimed_count, 0);
+        return {
+          ...pack,
+          remaining,
+        };
+      }),
+    [packs]
+  );
+
   return (
     <div className="page-shell">
       <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-10">
@@ -51,21 +92,44 @@ export default function SurplusPacksPage() {
           </section>
 
           <section className="grid gap-4">
-            {surplusPacks.map((pack) => (
-              <Card key={pack.location} className="shadow-[var(--shadow)]">
-                <CardHeader>
-                  <CardTitle>{pack.location}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 text-sm text-[var(--muted-foreground)]">
-                  <p>{pack.items}</p>
-                  <p>{pack.window}</p>
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="text-xs uppercase tracking-[0.3em] text-[var(--primary)]">{pack.spots}</span>
-                    <Button variant="outline" size="sm">Claim pack</Button>
-                  </div>
+            {isLoading ? (
+              <Card className="shadow-[var(--shadow)]">
+                <CardContent className="py-8 text-sm text-[var(--muted-foreground)]">
+                  Loading surplus packs...
                 </CardContent>
               </Card>
-            ))}
+            ) : error ? (
+              <Card className="shadow-[var(--shadow)]">
+                <CardContent className="py-8 text-sm text-rose-600">{error}</CardContent>
+              </Card>
+            ) : formattedPacks.length === 0 ? (
+              <Card className="shadow-[var(--shadow)]">
+                <CardContent className="py-8 text-sm text-[var(--muted-foreground)]">
+                  No surplus packs are available right now. Check back soon.
+                </CardContent>
+              </Card>
+            ) : (
+              formattedPacks.map((pack) => (
+                <Card key={pack.id} className="shadow-[var(--shadow)]">
+                  <CardHeader>
+                    <CardTitle>{pack.partner_name ?? 'Partner location'}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm text-[var(--muted-foreground)]">
+                    <p className="text-[var(--foreground)] font-semibold">{pack.title}</p>
+                    {pack.description ? <p>{pack.description}</p> : null}
+                    <p>{formatPickupWindow(pack.pickup_deadline)}</p>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-xs uppercase tracking-[0.3em] text-[var(--primary)]">
+                        {pack.remaining} slots remaining
+                      </span>
+                      <Button variant="outline" size="sm" disabled={pack.remaining === 0}>
+                        {pack.remaining === 0 ? 'Sold out' : 'Claim pack'}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </section>
 
           <section>

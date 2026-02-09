@@ -64,8 +64,23 @@ interface NavigationClientProps {
 }
 
 export function NavigationClient({ session, navLinks, initials }: NavigationClientProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(false);
   const naviLinks = session ? roleLinks[session.role] ?? publicLinks : publicLinks;
+  const logoSrc = '/logo.png';
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {
+      // Ignore logout errors and continue to redirect to login.
+    } finally {
+      window.location.href = '/auth/login';
+    }
+  };
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -96,8 +111,19 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href={session ? naviLinks[0]?.href ?? '/' : '/'} className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-sm font-semibold shadow-sm group-hover:shadow-md transition-shadow">
-              {initials}
+            <div className="w-10 h-10 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow overflow-hidden">
+              {logoFailed ? (
+                <span className="text-sm font-semibold text-[var(--primary)]">{initials}</span>
+              ) : (
+                <img
+                  src={logoSrc}
+                  alt="EcoEats logo"
+                  className="h-8 w-8 object-contain"
+                  loading="eager"
+                  decoding="async"
+                  onError={() => setLogoFailed(true)}
+                />
+              )}
             </div>
             <div className="leading-tight">
               <span className="block text-lg font-semibold">EcoEats</span>
@@ -121,11 +147,9 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
 
           <div className="hidden md:flex items-center gap-3">
             {session ? (
-              <Link href="/auth/login">
-                <Button variant="ghost" size="sm">
-                  Switch account
-                </Button>
-              </Link>
+              <Button variant="outline" size="sm" onClick={handleLogout} disabled={isLoggingOut}>
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
+              </Button>
             ) : (
               <>
                 <Link href="/auth/login">
@@ -183,11 +207,18 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
           ))}
           <div className="pt-3 space-y-2 border-t border-[var(--border)] mt-3">
             {session ? (
-              <Link href="/auth/login" className="block" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button variant="outline" size="sm" className="w-full">
-                  Switch account
-                </Button>
-              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={async () => {
+                  setIsMobileMenuOpen(false);
+                  await handleLogout();
+                }}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
+              </Button>
             ) : (
               <>
                 <Link href="/auth/login" className="block" onClick={() => setIsMobileMenuOpen(false)}>

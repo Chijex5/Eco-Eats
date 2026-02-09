@@ -18,3 +18,7 @@ export * from './partners';
 export * from './surplus';
 export * from './donations';
 export * from './impact';
+export * from './admin-dashboard';
+export * from './partners';
+export * from './history';
+export * from './surplus';

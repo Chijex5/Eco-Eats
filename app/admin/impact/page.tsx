@@ -1,21 +1,106 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
-const impactMetrics = [
-  { label: 'Total requests', value: '94', detail: '14 pending review' },
-  { label: 'Vouchers issued', value: '68', detail: '₦170,000 total value' },
-  { label: 'Meals served', value: '53', detail: 'Redemptions confirmed' },
-  { label: 'Active vouchers', value: '15', detail: 'Ready to redeem' },
-];
-
-const insightNotes = [
-  'Peak redemptions occur between 12 PM and 3 PM.',
-  'Voucher redemption rate is 78% in the past 30 days.',
-  'Top partner: Campus Kitchen (18 meals served).',
-];
+type ImpactSummary = {
+  requests: {
+    total: number;
+    approved: number;
+    declined: number;
+    pending: number;
+    fulfilled: number;
+  };
+  vouchers: {
+    issued: number;
+    redeemed: number;
+    active: number;
+    expired: number;
+    revoked: number;
+  };
+  meals: {
+    funded: number;
+    served: number;
+  };
+  surplus: {
+    claimed: number;
+    pickedUp: number;
+  };
+  partners: {
+    joined: number;
+  };
+};
 
 export default function AdminImpactPage() {
+  const [summary, setSummary] = useState<ImpactSummary | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadImpact = async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const response = await fetch('/api/admin/impact');
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload.error || 'Unable to load impact summary.');
+        }
+        const data = (await response.json()) as { summary: ImpactSummary };
+        setSummary(data.summary);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unable to load impact summary.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadImpact();
+  }, []);
+
+  const metrics = useMemo(
+    () => [
+      {
+        label: 'Total requests',
+        value: summary?.requests.total ?? 0,
+        detail: `${summary?.requests.pending ?? 0} pending review`,
+      },
+      {
+        label: 'Vouchers issued',
+        value: summary?.vouchers.issued ?? 0,
+        detail: `${summary?.vouchers.redeemed ?? 0} redeemed`,
+      },
+      {
+        label: 'Meals served',
+        value: summary?.meals.served ?? 0,
+        detail: 'Redemptions confirmed',
+      },
+      {
+        label: 'Active vouchers',
+        value: summary?.vouchers.active ?? 0,
+        detail: `${summary?.vouchers.expired ?? 0} expired`,
+      },
+    ],
+    [summary]
+  );
+
+  const insights = useMemo(() => {
+    if (!summary) return [];
+    const redemptionRate = summary.vouchers.issued
+      ? Math.round((summary.vouchers.redeemed / summary.vouchers.issued) * 100)
+      : 0;
+
+    return [
+      `Pending reviews: ${summary.requests.pending} request${summary.requests.pending === 1 ? '' : 's'}.`,
+      summary.vouchers.issued > 0
+        ? `Voucher redemption rate is ${redemptionRate}% (${summary.vouchers.redeemed}/${summary.vouchers.issued}).`
+        : 'Voucher redemption rate will appear once vouchers are issued.',
+      `Surplus packs picked up: ${summary.surplus.pickedUp}.`,
+    ];
+  }, [summary]);
+
   return (
     <div className="page-shell">
       <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-12">
@@ -38,7 +123,7 @@ export default function AdminImpactPage() {
           </section>
 
           <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {impactMetrics.map((metric) => (
+            {metrics.map((metric) => (
               <Card key={metric.label} className="shadow-[var(--shadow)]">
                 <CardContent className="pt-6 pb-6 space-y-2">
                   <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-foreground)] font-semibold">
@@ -57,11 +142,15 @@ export default function AdminImpactPage() {
                 <CardTitle>Impact insights</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm text-[var(--muted-foreground)]">
-                {insightNotes.map((note) => (
-                  <p key={note}>• {note}</p>
-                ))}
+                {isLoading ? (
+                  <p>Loading insights...</p>
+                ) : error ? (
+                  <p className="text-rose-600">{error}</p>
+                ) : (
+                  insights.map((note) => <p key={note}>• {note}</p>)
+                )}
                 <p className="text-xs text-[var(--muted-foreground)]">
-                  Impact analytics will update automatically once the impact API is connected.
+                  Impact analytics refresh as approvals, redemptions, and surplus pickups are logged.
                 </p>
               </CardContent>
             </Card>

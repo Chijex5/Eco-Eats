@@ -14,6 +14,8 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const accessError = searchParams.get('error');
+  const logoSrc = '/logo.png';
+  const [logoFailed, setLogoFailed] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -69,7 +71,18 @@ export default function LoginPage() {
             <div className="text-center lg:text-left mb-8">
               <Link href="/" className="inline-flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-full bg-[var(--secondary)] text-[var(--foreground)] flex items-center justify-center text-sm font-semibold shadow-sm">
-                  EE
+                  {logoFailed ? (
+                    <span className="text-sm font-semibold text-[var(--primary)]">EE</span>
+                  ) : (
+                    <img
+                      src={logoSrc}
+                      alt="EcoEats logo"
+                      className="h-8 w-8 object-contain"
+                      loading="eager"
+                      decoding="async"
+                      onError={() => setLogoFailed(true)}
+                    />
+                  )}
                 </div>
                 <div className="text-left">
                   <p className="text-xl font-semibold text-[var(--foreground)] lg:text-[var(--surface)]">EcoEats</p>
