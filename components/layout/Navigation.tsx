@@ -66,7 +66,9 @@ interface NavigationClientProps {
 export function NavigationClient({ session, navLinks, initials }: NavigationClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(false);
   const naviLinks = session ? roleLinks[session.role] ?? publicLinks : publicLinks;
+  const logoSrc = '/logo.png';
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
@@ -109,8 +111,19 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href={session ? naviLinks[0]?.href ?? '/' : '/'} className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-sm font-semibold shadow-sm group-hover:shadow-md transition-shadow">
-              {initials}
+            <div className="w-10 h-10 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow overflow-hidden">
+              {logoFailed ? (
+                <span className="text-sm font-semibold text-[var(--primary)]">{initials}</span>
+              ) : (
+                <img
+                  src={logoSrc}
+                  alt="EcoEats logo"
+                  className="h-8 w-8 object-contain"
+                  loading="eager"
+                  decoding="async"
+                  onError={() => setLogoFailed(true)}
+                />
+              )}
             </div>
             <div className="leading-tight">
               <span className="block text-lg font-semibold">EcoEats</span>
