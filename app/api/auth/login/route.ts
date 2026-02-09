@@ -4,6 +4,7 @@ import { verifyPassword } from '@/lib/auth/password';
 import { applySessionCookie } from '@/lib/auth/cookies';
 import { roleHomePath } from '@/lib/auth/roles';
 import { signSessionToken } from '@/lib/auth/jwt';
+import { isBeneficiaryProfileComplete } from '@/lib/db/beneficiary-profiles';
 
 export async function POST(request: Request) {
   try {
@@ -32,6 +33,15 @@ export async function POST(request: Request) {
       name: user.full_name,
     });
 
+    let redirect = roleHomePath(user.role);
+    if (user.role === 'BENEFICIARY') {
+      const profileComplete = await isBeneficiaryProfileComplete(user.id).catch((error) => {
+        console.error('Beneficiary profile check error:', error);
+        return false;
+      });
+      redirect = profileComplete ? '/app' : '/app/profile';
+    }
+
     const response = NextResponse.json({
       user: {
         id: user.id,
@@ -39,7 +49,7 @@ export async function POST(request: Request) {
         email: user.email,
         role: user.role,
       },
-      redirect: roleHomePath(user.role),
+      redirect,
     });
     applySessionCookie(response, token);
     return response;

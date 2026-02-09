@@ -64,7 +64,8 @@ interface NavigationClientProps {
 }
 
 export function NavigationClient({ session, navLinks, initials }: NavigationClientProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const naviLinks = session ? roleLinks[session.role] ?? publicLinks : publicLinks;
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -94,7 +95,7 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
     <nav className="bg-[var(--background)]/90 backdrop-blur-md border-b border-[var(--border)] sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href={session ? navLinks[0]?.href ?? '/' : '/'} className="flex items-center gap-3 group">
+          <Link href={session ? naviLinks[0]?.href ?? '/' : '/'} className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-sm font-semibold shadow-sm group-hover:shadow-md transition-shadow">
               {initials}
             </div>
@@ -107,7 +108,7 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
           </Link>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            {navLinks.map((link) => (
+            {naviLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -170,7 +171,7 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
         }`}
       >
         <div className="px-4 py-4 space-y-2">
-          {navLinks.map((link) => (
+          {naviLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}

@@ -5,6 +5,7 @@
 
 import { query } from './connection';
 import { generateId } from './ids';
+import { logImpactEvent } from './impact';
 
 export interface SupportRequest {
   id: string;
@@ -148,6 +149,9 @@ export async function updateRequestStatus(
      WHERE id = ?`,
     [status, reviewedBy, requestId]
   );
+  if (status === 'APPROVED') {
+    await logImpactEvent({ eventType: 'REQUEST_APPROVED', relatedId: requestId });
+  }
   const result = await query('SELECT * FROM support_requests WHERE id = ?', [requestId]);
   return result.rows[0] as SupportRequest;
 }
