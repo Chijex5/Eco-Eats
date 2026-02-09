@@ -14,3 +14,5 @@ export * from './users';
 export * from './requests';
 export * from './vouchers';
 export * from './redemptions';
+export * from './donations';
+export * from './impact';
