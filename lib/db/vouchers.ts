@@ -31,12 +31,23 @@ export type AdminVoucherSummary = {
 export async function getAdminVoucherSummary(windowDays = 7): Promise<AdminVoucherSummary> {
   const result = await query<RowDataPacket>(
     `SELECT COUNT(*) AS issued,
-            SUM(CASE WHEN status = 'ACTIVE' THEN 1 ELSE 0 END) AS active,
+            SUM(
+              CASE
+                WHEN status = 'ACTIVE'
+                     AND (expires_at IS NULL OR expires_at >= NOW())
+                THEN 1 ELSE 0
+              END
+            ) AS active,
             SUM(CASE WHEN status = 'REDEEMED' THEN 1 ELSE 0 END) AS redeemed,
-            SUM(CASE WHEN status = 'ACTIVE'
-                      AND expires_at IS NOT NULL
-                      AND expires_at <= DATE_ADD(NOW(), INTERVAL ? DAY)
-                     THEN 1 ELSE 0 END) AS expiringSoon
+            SUM(
+              CASE
+                WHEN status = 'ACTIVE'
+                     AND expires_at IS NOT NULL
+                     AND expires_at >= NOW()
+                     AND expires_at <= DATE_ADD(NOW(), INTERVAL ? DAY)
+                THEN 1 ELSE 0
+              END
+            ) AS expiringSoon
      FROM vouchers`,
     [windowDays]
   );
