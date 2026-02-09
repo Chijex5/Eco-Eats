@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 const STATUS_STYLES: Record<SupportRequest['status'], string> = {
-  PENDING: 'bg-amber-100 text-amber-700',
-  APPROVED: 'bg-emerald-100 text-emerald-700',
-  DECLINED: 'bg-rose-100 text-rose-700',
-  FULFILLED: 'bg-[var(--primary)]/10 text-[var(--primary)]',
+  PENDING: 'bg-[var(--secondary)]/15 text-[var(--secondary)]',
+  APPROVED: 'bg-[var(--primary)]/15 text-[var(--primary)]',
+  DECLINED: 'bg-[var(--destructive)]/15 text-[var(--destructive)]',
+  FULFILLED: 'bg-[var(--accent)]/15 text-[var(--accent)]',
 };
+
+const metaBadgeStyles = 'rounded-full border border-[var(--border)] bg-[var(--surface-alt)] px-3 py-1 text-[var(--foreground)]';
 
 const REQUEST_TYPE_LABELS: Record<SupportRequest['request_type'], string> = {
   VOUCHER: 'Voucher',
@@ -212,13 +214,13 @@ export default function AdminRequestsPage() {
                           <p className="text-sm text-[var(--muted-foreground)]">{request.email}</p>
                         </div>
                         <div className="flex flex-wrap items-center gap-2 text-xs">
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                          <span className={metaBadgeStyles}>
                             {REQUEST_TYPE_LABELS[request.request_type]}
                           </span>
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                          <span className={metaBadgeStyles}>
                             Urgency: {URGENCY_LABELS[request.urgency]}
                           </span>
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                          <span className={metaBadgeStyles}>
                             {formatDate(request.created_at)}
                           </span>
                         </div>
@@ -277,13 +279,13 @@ export default function AdminRequestsPage() {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2 text-xs">
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                          <span className={metaBadgeStyles}>
                             {REQUEST_TYPE_LABELS[request.request_type]}
                           </span>
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                          <span className={metaBadgeStyles}>
                             Urgency: {URGENCY_LABELS[request.urgency]}
                           </span>
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                          <span className={metaBadgeStyles}>
                             {formatDate(request.created_at)}
                           </span>
                         </div>

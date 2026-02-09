@@ -2,21 +2,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f2ec;
-  --foreground: #1c2721;
-  --primary: #2f6b4f;
-  --primary-dark: #1f4a36;
-  --secondary: #d98a2d;
-  --accent: #2f7f6d;
-  --muted: #e7ece4;
-  --muted-foreground: #4a5c52;
-  --border: #cfd8ce;
-  --destructive: #d14b3a;
+  --background: #f4f2eb;
+  --foreground: #1b2a22;
+  --primary: #2f7a58;
+  --primary-dark: #1f5a40;
+  --secondary: #e3a441;
+  --accent: #3b8f7a;
+  --muted: #e4ece5;
+  --muted-foreground: #455a50;
+  --border: #cad7cd;
+  --destructive: #d35a4a;
   --surface: #ffffff;
-  --surface-alt: #f3f1ec;
+  --surface-alt: #eef2ee;
   --color-neutral-400: oklch(0.82 0 0);
   --color-neutral-500: oklch(0.7 0 0);
-  --ring: #2f6b4f;
+  --ring: #2f7a58;
   --shadow: 0 24px 50px rgba(31, 42, 36, 0.12);
   --shadow-soft: 0 12px 30px rgba(31, 42, 36, 0.08);
   --font-sans: "Space Grotesk", "Helvetica Neue", Helvetica, sans-serif;
@@ -49,13 +49,18 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #111815;
-    --foreground: #f4f3ed;
-    --muted: #1b251f;
-    --muted-foreground: #a6b2aa;
-    --border: #2a352e;
-    --surface: #16201a;
-    --surface-alt: #121a16;
+    --background: #0f1512;
+    --foreground: #f2f6f1;
+    --primary: #62b68b;
+    --primary-dark: #3f7c5d;
+    --secondary: #f0b357;
+    --accent: #4aa087;
+    --muted: #18211c;
+    --muted-foreground: #b0bdb4;
+    --border: #2a372f;
+    --destructive: #e17061;
+    --surface: #151e19;
+    --surface-alt: #111a15;
     --shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
     --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.25);
   }
@@ -67,8 +72,8 @@ html {
 
 body {
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(47, 107, 79, 0.18), transparent 60%),
-    radial-gradient(900px 500px at 90% 0%, rgba(214, 134, 44, 0.16), transparent 55%),
+    radial-gradient(1200px 600px at 10% -10%, color-mix(in srgb, var(--primary) 24%, transparent), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, color-mix(in srgb, var(--secondary) 22%, transparent), transparent 55%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
@@ -108,8 +113,12 @@ button {
 .page-shell {
   min-height: 100%;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 45%),
-    radial-gradient(900px 600px at 15% 20%, rgba(47, 127, 109, 0.12), transparent 60%);
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface) 78%, transparent) 0%,
+      color-mix(in srgb, var(--surface) 0%, transparent) 45%
+    ),
+    radial-gradient(900px 600px at 15% 20%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%);
   scroll-snap-type: y proximity;
 }
 
@@ -119,7 +128,7 @@ button {
 }
 
 .section-muted {
-  background: rgba(255, 255, 255, 0.7);
+  background: color-mix(in srgb, var(--surface) 70%, var(--surface-alt) 30%);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
@@ -151,7 +160,7 @@ button {
   bottom: -1px;
   width: min(760px, 90%);
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(47, 107, 79, 0.35), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary) 40%, transparent), transparent);
   transform: translateX(-50%);
 }
 
@@ -165,4 +174,3 @@ button {
     scroll-behavior: auto;
   }
 }
-
