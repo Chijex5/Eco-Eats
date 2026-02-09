@@ -209,7 +209,11 @@ export default function Spotlight() {
                   </Button>
                 </Link>
                 <Link href="/contact">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white text-[var(--primary)] border-white hover:bg-white/90">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto bg-[var(--surface)] text-[var(--primary)] border-[var(--surface)] hover:bg-[var(--surface)]/90"
+                  >
                     Nominate Someone
                   </Button>
                 </Link>

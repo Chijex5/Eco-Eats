@@ -56,7 +56,7 @@ export const QRCodeDisplay = ({
 
       <div className="mt-5 flex flex-col items-center gap-3">
         <div
-          className="flex items-center justify-center rounded-2xl border border-[var(--border)] bg-white p-4"
+          className="flex items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
           style={{ width: size + 32, height: size + 32 }}
         >
           {value && !imageError ? (

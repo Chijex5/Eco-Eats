@@ -394,7 +394,7 @@ export default function Contact() {
                     value={newsletterEmail}
                     onChange={(e) => setNewsletterEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="flex-1 px-4 py-3 rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-white"
+                    className="flex-1 px-4 py-3 rounded-lg bg-[var(--surface)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--surface)]"
                   />
                   <Button type="submit" size="lg" variant="secondary" className="whitespace-nowrap">
                     Subscribe

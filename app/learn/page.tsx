@@ -232,7 +232,11 @@ export default function Learn() {
                   </Button>
                 </Link>
                 <Link href="/spotlight">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white text-[var(--primary)] border-white hover:bg-white/90">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto bg-[var(--surface)] text-[var(--primary)] border-[var(--surface)] hover:bg-[var(--surface)]/90"
+                  >
                     See Our Heroes
                   </Button>
                 </Link>
