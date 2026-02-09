@@ -1,15 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { getPartnerIdForUser } from '@/lib/db/redemptions';
 import { updatePartner } from '@/lib/db/partners';
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   const session = await getSessionFromCookies();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const partnerId = params.id;
+  const { id: partnerId } = await context.params;
   if (!partnerId) {
     return NextResponse.json({ error: 'Partner id is required.' }, { status: 400 });
   }
