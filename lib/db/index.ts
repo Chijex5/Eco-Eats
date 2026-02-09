@@ -16,3 +16,5 @@ export * from './vouchers';
 export * from './redemptions';
 export * from './partners';
 export * from './surplus';
+export * from './donations';
+export * from './impact';
