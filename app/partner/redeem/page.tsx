@@ -118,14 +118,14 @@ export default function PartnerRedeemPage() {
               <div className="flex flex-wrap gap-2">
                 <Button
                   size="sm"
-                  variant={mode === 'code' ? 'default' : 'outline'}
+                  variant={mode === 'code' ? 'primary' : 'outline'}
                   onClick={() => setMode('code')}
                 >
                   Enter code
                 </Button>
                 <Button
                   size="sm"
-                  variant={mode === 'qr' ? 'default' : 'outline'}
+                  variant={mode === 'qr' ? 'primary' : 'outline'}
                   onClick={() => setMode('qr')}
                 >
                   Scan QR / token
