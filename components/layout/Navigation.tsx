@@ -64,8 +64,21 @@ interface NavigationClientProps {
 }
 
 export function NavigationClient({ session, navLinks, initials }: NavigationClientProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const naviLinks = session ? roleLinks[session.role] ?? publicLinks : publicLinks;
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {
+      // Ignore logout errors and continue to redirect to login.
+    } finally {
+      window.location.href = '/auth/login';
+    }
+  };
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -121,11 +134,9 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
 
           <div className="hidden md:flex items-center gap-3">
             {session ? (
-              <Link href="/auth/login">
-                <Button variant="ghost" size="sm">
-                  Switch account
-                </Button>
-              </Link>
+              <Button variant="outline" size="sm" onClick={handleLogout} disabled={isLoggingOut}>
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
+              </Button>
             ) : (
               <>
                 <Link href="/auth/login">
@@ -183,11 +194,18 @@ export function NavigationClient({ session, navLinks, initials }: NavigationClie
           ))}
           <div className="pt-3 space-y-2 border-t border-[var(--border)] mt-3">
             {session ? (
-              <Link href="/auth/login" className="block" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button variant="outline" size="sm" className="w-full">
-                  Switch account
-                </Button>
-              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={async () => {
+                  setIsMobileMenuOpen(false);
+                  await handleLogout();
+                }}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
+              </Button>
             ) : (
               <>
                 <Link href="/auth/login" className="block" onClick={() => setIsMobileMenuOpen(false)}>
