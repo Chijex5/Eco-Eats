@@ -21,6 +21,35 @@ export interface Voucher {
   created_at: Date;
 }
 
+export type AdminVoucherSummary = {
+  issued: number;
+  active: number;
+  redeemed: number;
+  expiringSoon: number;
+};
+
+export async function getAdminVoucherSummary(windowDays = 7): Promise<AdminVoucherSummary> {
+  const result = await query<RowDataPacket>(
+    `SELECT COUNT(*) AS issued,
+            SUM(CASE WHEN status = 'ACTIVE' THEN 1 ELSE 0 END) AS active,
+            SUM(CASE WHEN status = 'REDEEMED' THEN 1 ELSE 0 END) AS redeemed,
+            SUM(CASE WHEN status = 'ACTIVE'
+                      AND expires_at IS NOT NULL
+                      AND expires_at <= DATE_ADD(NOW(), INTERVAL ? DAY)
+                     THEN 1 ELSE 0 END) AS expiringSoon
+     FROM vouchers`,
+    [windowDays]
+  );
+
+  const row = result.rows[0] ?? {};
+  return {
+    issued: Number(row.issued ?? 0),
+    active: Number(row.active ?? 0),
+    redeemed: Number(row.redeemed ?? 0),
+    expiringSoon: Number(row.expiringSoon ?? 0),
+  };
+}
+
 /**
  * Create a voucher
  */

@@ -1,20 +1,55 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
-const voucherStats = [
-  { label: 'Active vouchers', value: '24', detail: 'Redeemable today' },
-  { label: 'Redeemed vouchers', value: '62', detail: 'Meals served' },
-  { label: 'Expiring soon', value: '5', detail: 'Next 7 days' },
-];
-
-const voucherTips = [
-  'Issue vouchers only for approved requests.',
-  'Set expiry windows to reduce unredeemed vouchers.',
-  'Encourage partners to log meal notes for impact reporting.',
-];
+type VoucherSummary = {
+  issued: number;
+  active: number;
+  redeemed: number;
+  expiringSoon: number;
+};
 
 export default function AdminVouchersPage() {
+  const [summary, setSummary] = useState<VoucherSummary | null>(null);
+  const [tips, setTips] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadSummary = async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const response = await fetch('/api/admin/vouchers/summary');
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload.error || 'Unable to load voucher summary.');
+        }
+        const data = (await response.json()) as { summary: VoucherSummary; tips: string[] };
+        setSummary(data.summary);
+        setTips(data.tips ?? []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unable to load voucher summary.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSummary();
+  }, []);
+
+  const voucherStats = useMemo(
+    () => [
+      { label: 'Active vouchers', value: summary?.active ?? 0, detail: 'Redeemable today' },
+      { label: 'Redeemed vouchers', value: summary?.redeemed ?? 0, detail: 'Meals served' },
+      { label: 'Expiring soon', value: summary?.expiringSoon ?? 0, detail: 'Next 7 days' },
+    ],
+    [summary]
+  );
+
   return (
     <div className="page-shell">
       <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-12">
@@ -73,9 +108,13 @@ export default function AdminVouchersPage() {
                 <CardTitle>Operational tips</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm text-[var(--muted-foreground)]">
-                {voucherTips.map((tip) => (
-                  <p key={tip}>• {tip}</p>
-                ))}
+                {isLoading ? (
+                  <p>Loading tips...</p>
+                ) : error ? (
+                  <p className="text-rose-600">{error}</p>
+                ) : (
+                  tips.map((tip) => <p key={tip}>• {tip}</p>)
+                )}
                 <Link href="/admin/impact" className="block pt-2">
                   <Button variant="outline" size="sm" className="w-full">
                     Review redemption impact

@@ -1,13 +1,56 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
-const highlights = [
-  { label: 'Pending requests', value: '12', detail: 'Awaiting review today' },
-  { label: 'Vouchers issued', value: '38', detail: 'Across 5 partners' },
-  { label: 'Meals served', value: '29', detail: 'Redeemed this week' },
-  { label: 'Partners active', value: '8', detail: 'Ready for redemptions' },
-];
+type DashboardSummary = {
+  pendingRequests: number;
+  vouchersIssued: number;
+  mealsServed: number;
+  activePartners: number;
+};
+
+type ImpactActivity = {
+  id: string;
+  event_type: string;
+  related_id?: string | null;
+  count: number;
+  created_at: string;
+};
+
+const formatRelativeTime = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Recently';
+  const diffSeconds = Math.round((Date.now() - date.getTime()) / 1000);
+  if (diffSeconds < 60) return `${diffSeconds}s ago`;
+  const diffMinutes = Math.round(diffSeconds / 60);
+  if (diffMinutes < 60) return `${diffMinutes}m ago`;
+  const diffHours = Math.round(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.round(diffHours / 24);
+  return `${diffDays}d ago`;
+};
+
+const activityLabel = (eventType: string, count: number) => {
+  switch (eventType) {
+    case 'MEAL_FUNDED':
+      return `${count} voucher${count === 1 ? '' : 's'} funded`;
+    case 'MEAL_SERVED':
+      return `${count} meal${count === 1 ? '' : 's'} served`;
+    case 'PACK_CLAIMED':
+      return `${count} surplus pack${count === 1 ? '' : 's'} claimed`;
+    case 'PACK_PICKED_UP':
+      return `${count} surplus pack${count === 1 ? '' : 's'} picked up`;
+    case 'REQUEST_APPROVED':
+      return `${count} request${count === 1 ? '' : 's'} approved`;
+    case 'PARTNER_JOINED':
+      return `${count} partner${count === 1 ? '' : 's'} joined`;
+    default:
+      return 'New activity logged';
+  }
+};
 
 const quickActions = [
   {
@@ -30,22 +73,61 @@ const quickActions = [
   },
 ];
 
-const activityLog = [
-  {
-    title: 'Voucher issued for Lagos Student Support',
-    detail: '₦2,500 · 3 minutes ago',
-  },
-  {
-    title: 'Request approved for Amina Yusuf',
-    detail: 'Food pack · 25 minutes ago',
-  },
-  {
-    title: 'Partner redemption confirmed',
-    detail: 'Campus Kitchen · 2 hours ago',
-  },
-];
-
 export default function AdminDashboardPage() {
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [activity, setActivity] = useState<ImpactActivity[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadDashboard = async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const response = await fetch('/api/admin/dashboard');
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload.error || 'Unable to load dashboard.');
+        }
+        const data = (await response.json()) as { summary: DashboardSummary; activity: ImpactActivity[] };
+        setSummary(data.summary);
+        setActivity(data.activity ?? []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unable to load dashboard.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadDashboard();
+  }, []);
+
+  const highlights = useMemo(
+    () => [
+      {
+        label: 'Pending requests',
+        value: summary?.pendingRequests ?? 0,
+        detail: 'Awaiting review',
+      },
+      {
+        label: 'Vouchers issued',
+        value: summary?.vouchersIssued ?? 0,
+        detail: 'Total issued',
+      },
+      {
+        label: 'Meals served',
+        value: summary?.mealsServed ?? 0,
+        detail: 'Confirmed redemptions',
+      },
+      {
+        label: 'Partners active',
+        value: summary?.activePartners ?? 0,
+        detail: 'Approved partners',
+      },
+    ],
+    [summary]
+  );
+
   return (
     <div className="page-shell">
       <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-12">
@@ -114,12 +196,25 @@ export default function AdminDashboardPage() {
                 <CardTitle>Latest activity</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
-                {activityLog.map((item) => (
-                  <div key={item.title} className="space-y-1 border-b border-dashed border-[var(--border)] pb-3 last:border-b-0 last:pb-0">
-                    <p className="font-semibold text-[var(--foreground)]">{item.title}</p>
-                    <p className="text-[var(--muted-foreground)]">{item.detail}</p>
-                  </div>
-                ))}
+                {isLoading ? (
+                  <p className="text-sm text-[var(--muted-foreground)]">Loading activity...</p>
+                ) : error ? (
+                  <p className="text-sm text-rose-600">{error}</p>
+                ) : activity.length === 0 ? (
+                  <p className="text-sm text-[var(--muted-foreground)]">No recent activity logged yet.</p>
+                ) : (
+                  activity.map((item) => (
+                    <div
+                      key={item.id}
+                      className="space-y-1 border-b border-dashed border-[var(--border)] pb-3 last:border-b-0 last:pb-0"
+                    >
+                      <p className="font-semibold text-[var(--foreground)]">
+                        {activityLabel(item.event_type, Number(item.count ?? 0))}
+                      </p>
+                      <p className="text-[var(--muted-foreground)]">{formatRelativeTime(item.created_at)}</p>
+                    </div>
+                  ))
+                )}
                 <Link href="/admin/requests" className="block pt-2">
                   <Button size="sm" className="w-full">Review pending requests</Button>
                 </Link>
