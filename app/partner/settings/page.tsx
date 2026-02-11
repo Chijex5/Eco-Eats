@@ -33,6 +33,14 @@ export default function PartnerSettingsPage() {
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [saveError, setSaveError] = useState('');
 
+  const [staffName, setStaffName] = useState('');
+  const [staffEmail, setStaffEmail] = useState('');
+  const [temporaryPassword, setTemporaryPassword] = useState('');
+  const [staffRole, setStaffRole] = useState('Counter staff');
+  const [canPostSurplus, setCanPostSurplus] = useState(false);
+  const [staffSaveState, setStaffSaveState] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const [staffSaveMessage, setStaffSaveMessage] = useState('');
+
   useEffect(() => {
     const loadPartner = async () => {
       setIsLoading(true);
@@ -89,6 +97,46 @@ export default function PartnerSettingsPage() {
     } catch (err) {
       setSaveState('error');
       setSaveError(err instanceof Error ? err.message : 'Unable to update partner profile.');
+    }
+  };
+
+  const handleAddStaff = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setStaffSaveState('saving');
+    setStaffSaveMessage('');
+
+    try {
+      const response = await fetch('/api/partners/staff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: staffName,
+          email: staffEmail,
+          temporaryPassword,
+          staffRole,
+          canPostSurplus,
+        }),
+      });
+
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(payload?.error || 'Unable to create staff member.');
+      }
+
+      if (payload?.staff) {
+        setStaff((current) => [payload.staff as StaffMember, ...current]);
+      }
+
+      setStaffName('');
+      setStaffEmail('');
+      setTemporaryPassword('');
+      setStaffRole('Counter staff');
+      setCanPostSurplus(false);
+      setStaffSaveState('success');
+      setStaffSaveMessage(payload?.message || 'Staff member added successfully.');
+    } catch (err) {
+      setStaffSaveState('error');
+      setStaffSaveMessage(err instanceof Error ? err.message : 'Unable to create staff member.');
     }
   };
 
@@ -157,7 +205,67 @@ export default function PartnerSettingsPage() {
               <CardHeader>
                 <CardTitle>Staff access</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
+                <form className="space-y-3 border border-dashed border-[var(--border)] rounded-xl p-4" onSubmit={handleAddStaff}>
+                  <p className="text-sm font-semibold text-[var(--foreground)]">Add staff login</p>
+                  <label className="text-sm text-[var(--muted-foreground)] block">
+                    Staff name
+                    <input
+                      value={staffName}
+                      onChange={(event) => setStaffName(event.target.value)}
+                      className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2"
+                      required
+                    />
+                  </label>
+                  <label className="text-sm text-[var(--muted-foreground)] block">
+                    Staff email
+                    <input
+                      type="email"
+                      value={staffEmail}
+                      onChange={(event) => setStaffEmail(event.target.value)}
+                      className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2"
+                      required
+                    />
+                  </label>
+                  <label className="text-sm text-[var(--muted-foreground)] block">
+                    Temporary password
+                    <input
+                      type="password"
+                      minLength={8}
+                      value={temporaryPassword}
+                      onChange={(event) => setTemporaryPassword(event.target.value)}
+                      className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2"
+                      required
+                    />
+                  </label>
+                  <label className="text-sm text-[var(--muted-foreground)] block">
+                    Staff role
+                    <input
+                      value={staffRole}
+                      onChange={(event) => setStaffRole(event.target.value)}
+                      className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2"
+                    />
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
+                    <input
+                      type="checkbox"
+                      checked={canPostSurplus}
+                      onChange={(event) => setCanPostSurplus(event.target.checked)}
+                    />
+                    Allow this staff member to post surplus listings
+                  </label>
+                  <p className="text-xs text-[var(--muted-foreground)]">
+                    Staff must change this temporary password immediately after first login.
+                  </p>
+
+                  {staffSaveState === 'error' ? <p className="text-sm text-rose-600">{staffSaveMessage}</p> : null}
+                  {staffSaveState === 'success' ? <p className="text-sm text-emerald-600">{staffSaveMessage}</p> : null}
+
+                  <Button type="submit" size="sm" disabled={staffSaveState === 'saving'}>
+                    {staffSaveState === 'saving' ? 'Adding staff...' : 'Add staff'}
+                  </Button>
+                </form>
+
                 {staff.length === 0 ? (
                   <p className="text-sm text-[var(--muted-foreground)]">No staff members added yet.</p>
                 ) : (

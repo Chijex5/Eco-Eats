@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createUser, findUserByEmail } from '@/lib/db/users';
+import { createPartner } from '@/lib/db/partners';
 import { hashPassword } from '@/lib/auth/password';
 import { applySessionCookie } from '@/lib/auth/cookies';
 import { normalizeRole, roleHomePath } from '@/lib/auth/roles';
@@ -16,6 +17,8 @@ export async function POST(request: Request) {
     const email = String(body.email || '').trim().toLowerCase();
     const password = String(body.password || '');
     const role = normalizeRole(body.role);
+    const partnerOrganization = String(body.organization || '').trim();
+    const partnerServiceArea = String(body.service_area || '').trim();
 
     if (!fullName || !email || !password || !role) {
       return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
@@ -42,6 +45,14 @@ export async function POST(request: Request) {
       role,
     });
 
+    if (role === 'PARTNER_OWNER') {
+      await createPartner({
+        owner_user_id: user.id,
+        name: partnerOrganization || `${fullName}'s Kitchen`,
+        location_text: partnerServiceArea || null,
+      });
+    }
+
     const token = await signSessionToken({
       userId: user.id,
       role: user.role,
@@ -60,8 +71,8 @@ export async function POST(request: Request) {
     });
     applySessionCookie(response, token);
     return response;
-  } catch (error: any) {
-    if (error?.code === 'ER_DUP_ENTRY') {
+  } catch (error: unknown) {
+    if ((error as { code?: string })?.code === 'ER_DUP_ENTRY') {
       return NextResponse.json({ error: 'Email already in use.' }, { status: 409 });
     }
     console.error('Register error:', error);
