@@ -147,7 +147,6 @@ export async function getAdminPartnerOverview({
 } = {}) {
   const boundedWindowDays = Math.max(1, Math.floor(windowDays));
   const boundedLimit = Math.max(1, Math.floor(limit));
-  const activityWindowStart = new Date(Date.now() - boundedWindowDays * 24 * 60 * 60 * 1000);
 
   const partners = await query<RowDataPacket>(
     `SELECT fp.id,
@@ -159,14 +158,13 @@ export async function getAdminPartnerOverview({
      FROM food_partners fp
      LEFT JOIN voucher_redemptions vr
        ON vr.partner_id = fp.id
-      AND vr.created_at >= ?
+      AND vr.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL ${boundedWindowDays} DAY)
      LEFT JOIN surplus_listings sl
        ON sl.partner_id = fp.id
-      AND sl.created_at >= ?
+      AND sl.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL ${boundedWindowDays} DAY)
      GROUP BY fp.id
      ORDER BY fp.created_at DESC
-     LIMIT ?`,
-    [activityWindowStart, activityWindowStart, boundedLimit]
+     LIMIT ${boundedLimit}`
   );
 
   const summary = await query<RowDataPacket>(
