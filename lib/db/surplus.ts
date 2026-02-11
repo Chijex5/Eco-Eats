@@ -30,6 +30,9 @@ export interface SurplusClaim {
 }
 
 export async function getAvailableSurplusListings(limit = 12) {
+  const parsedLimit = Number.isFinite(limit) ? Math.trunc(limit) : 12;
+  const safeLimit = Math.min(Math.max(parsedLimit, 1), 100);
+
   const result = await query<RowDataPacket>(
     `SELECT sl.id,
             sl.title,
@@ -48,8 +51,7 @@ export async function getAvailableSurplusListings(limit = 12) {
        AND sl.pickup_deadline >= NOW()
      GROUP BY sl.id
      ORDER BY sl.pickup_deadline ASC
-     LIMIT ?`,
-    [limit]
+     LIMIT ${safeLimit}`
   );
 
   return result.rows as SurplusListing[];
