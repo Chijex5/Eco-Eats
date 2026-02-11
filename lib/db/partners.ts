@@ -221,14 +221,16 @@ export async function getPartnerStats(partnerId: string): Promise<PartnerStats> 
 }
 
 export async function getPartnerRecentRedemptions(partnerId: string, limit = 5) {
+  const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : 5;
+
   const result = await query(
     `SELECT vr.id, vr.redeemed_at, vr.meal_description, vr.value_kobo, v.code AS voucher_code
      FROM voucher_redemptions vr
      LEFT JOIN vouchers v ON vr.voucher_id = v.id
      WHERE vr.partner_id = ?
      ORDER BY vr.redeemed_at DESC
-     LIMIT ?`,
-    [partnerId, limit]
+     LIMIT ${safeLimit}`,
+    [partnerId]
   );
 
   return result.rows as Array<{
@@ -241,14 +243,16 @@ export async function getPartnerRecentRedemptions(partnerId: string, limit = 5) 
 }
 
 export async function getPartnerRecentPickups(partnerId: string, limit = 5) {
+  const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : 5;
+
   const result = await query(
     `SELECT sc.id, sc.pickup_code, sc.status, sc.created_at, sl.title
      FROM surplus_claims sc
      JOIN surplus_listings sl ON sc.listing_id = sl.id
      WHERE sl.partner_id = ?
      ORDER BY sc.created_at DESC
-     LIMIT ?`,
-    [partnerId, limit]
+     LIMIT ${safeLimit}`,
+    [partnerId]
   );
 
   return result.rows as Array<{
