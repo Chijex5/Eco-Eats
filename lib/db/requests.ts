@@ -37,7 +37,7 @@ export async function createSupportRequest(data: {
   await query(
     `INSERT INTO support_requests (id, beneficiary_user_id, request_type, message, urgency)
      VALUES (?, ?, ?, ?, ?)`,
-    [id, data.beneficiary_user_id, data.request_type, data.message, data.urgency]
+    [id, data.beneficiary_user_id, data.request_type, data.message ?? null, data.urgency]
   );
   const result = await query('SELECT * FROM support_requests WHERE id = ?', [id]);
   return result.rows[0] as SupportRequest;
