@@ -102,7 +102,7 @@ export default function VoucherDetailPage() {
             <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-foreground)]">Voucher detail</p>
             <h1 className="text-3xl sm:text-4xl text-[var(--foreground)]">Show this voucher at pickup.</h1>
             <p className="text-sm text-[var(--muted-foreground)]">
-              Present the QR code below to redeem your meal. Keep the backup code handy just in case.
+              Voucher codes and QR tokens are only available while a voucher is active.
             </p>
           </section>
 
@@ -122,24 +122,38 @@ export default function VoucherDetailPage() {
           ) : (
             <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
               <div className="space-y-6">
-                <QRCodeDisplay
-                  value={voucher.qr_token}
-                  label="Voucher QR token"
-                  helperText="Scan this QR token at the partner counter."
-                />
-                <Card className="shadow-[var(--shadow)]">
-                  <CardHeader>
-                    <CardTitle>Backup code</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-semibold text-[var(--foreground)] tracking-[0.2em]">
-                      {voucher.code}
-                    </p>
-                    <p className="text-sm text-[var(--muted-foreground)] mt-2">
-                      Share this code if the QR scanner is unavailable.
-                    </p>
-                  </CardContent>
-                </Card>
+                {voucher.status === 'ACTIVE' ? (
+                  <>
+                    <QRCodeDisplay
+                      value={voucher.qr_token}
+                      label="Voucher QR token"
+                      helperText="Scan this QR token at the partner counter."
+                    />
+                    <Card className="shadow-[var(--shadow)]">
+                      <CardHeader>
+                        <CardTitle>Backup code</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-2xl font-semibold text-[var(--foreground)] tracking-[0.2em]">
+                          {voucher.code}
+                        </p>
+                        <p className="text-sm text-[var(--muted-foreground)] mt-2">
+                          Share this code if the QR scanner is unavailable.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </>
+                ) : (
+                  <Card className="shadow-[var(--shadow)]">
+                    <CardHeader>
+                      <CardTitle>Code unavailable</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-sm text-[var(--muted-foreground)]">
+                      This voucher is currently {voucher.status.toLowerCase()}. QR and backup code are hidden for
+                      non-active vouchers.
+                    </CardContent>
+                  </Card>
+                )}
               </div>
 
               <Card className="shadow-[var(--shadow)]">

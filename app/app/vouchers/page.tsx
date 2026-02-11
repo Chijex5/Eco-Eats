@@ -16,6 +16,13 @@ type Voucher = {
   created_at: string;
 };
 
+type VoucherRequest = {
+  id: string;
+  status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'FULFILLED';
+  urgency: 'LOW' | 'MED' | 'HIGH';
+  created_at: string;
+};
+
 const reminders = [
   'Show the QR code at the partner counter.',
   'Arrive during the listed pickup window.',
@@ -44,6 +51,7 @@ const formatDate = (value?: string) => {
 
 export default function VoucherWalletPage() {
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [voucherRequests, setVoucherRequests] = useState<VoucherRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -57,8 +65,9 @@ export default function VoucherWalletPage() {
           const payload = await response.json().catch(() => ({}));
           throw new Error(payload.error || 'Unable to load vouchers.');
         }
-        const data = (await response.json()) as { vouchers: Voucher[] };
+        const data = (await response.json()) as { vouchers: Voucher[]; voucherRequests?: VoucherRequest[] };
         setVouchers(data.vouchers || []);
+        setVoucherRequests(data.voucherRequests || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unable to load vouchers.');
       } finally {
@@ -72,6 +81,11 @@ export default function VoucherWalletPage() {
   const activeCount = useMemo(
     () => vouchers.filter((voucher) => voucher.status === 'ACTIVE').length,
     [vouchers]
+  );
+
+  const openRequests = useMemo(
+    () => voucherRequests.filter((request) => request.status === 'PENDING' || request.status === 'APPROVED'),
+    [voucherRequests]
   );
 
   return (
@@ -99,6 +113,27 @@ export default function VoucherWalletPage() {
           </section>
 
           <section className="grid gap-4">
+            {!isLoading && !error && openRequests.length > 0 ? (
+              <Card className="shadow-[var(--shadow)] border-amber-200 bg-amber-50/70">
+                <CardHeader>
+                  <CardTitle>Voucher requests in review</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm">
+                  {openRequests.map((request) => (
+                    <div key={request.id} className="rounded-xl border border-amber-200 bg-white px-4 py-3">
+                      <p className="font-semibold text-[var(--foreground)]">
+                        Request {request.status === 'APPROVED' ? 'approved' : 'pending review'}
+                      </p>
+                      <p className="text-[var(--muted-foreground)] mt-1">
+                        Submitted {formatDate(request.created_at)}. Voucher code and QR will appear here after voucher
+                        issuance.
+                      </p>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            ) : null}
+
             {isLoading ? (
               <Card className="shadow-[var(--shadow)]">
                 <CardContent className="py-8 text-sm text-[var(--muted-foreground)]">
@@ -128,9 +163,15 @@ export default function VoucherWalletPage() {
                     expiryLabel={formatDate(voucher.expires_at)}
                   />
                   <div className="flex justify-end">
-                    <Link href={`/app/vouchers/${voucher.id}`}>
-                      <Button variant="outline" size="sm">View QR code</Button>
-                    </Link>
+                    {voucher.status === 'ACTIVE' ? (
+                      <Link href={`/app/vouchers/${voucher.id}`}>
+                        <Button variant="outline" size="sm">View QR code</Button>
+                      </Link>
+                    ) : (
+                      <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
+                        QR unavailable for {voucher.status.toLowerCase()} vouchers
+                      </p>
+                    )}
                   </div>
                 </div>
               ))
