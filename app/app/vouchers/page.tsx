@@ -88,6 +88,11 @@ export default function VoucherWalletPage() {
     [voucherRequests]
   );
 
+  const latestActiveVoucher = useMemo(
+    () => vouchers.find((voucher) => voucher.status === 'ACTIVE'),
+    [vouchers]
+  );
+
   return (
     <div className="page-shell">
       <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-10">
@@ -125,9 +130,16 @@ export default function VoucherWalletPage() {
                         Request {request.status === 'APPROVED' ? 'approved' : 'pending review'}
                       </p>
                       <p className="text-[var(--muted-foreground)] mt-1">
-                        Submitted {formatDate(request.created_at)}. Voucher code and QR will appear here after voucher
-                        issuance.
+                        Submitted {formatDate(request.created_at)}. {request.status === 'APPROVED' ? 'Request is approved. ' : ''}Voucher code and QR appear immediately after voucher issuance.
                       </p>
+                      {request.status === 'APPROVED' && latestActiveVoucher ? (
+                        <div className="mt-2 flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-alt)] px-3 py-2">
+                          <p className="text-xs text-[var(--muted-foreground)]">Active voucher code: <span className="font-semibold text-[var(--foreground)]">{latestActiveVoucher.code}</span></p>
+                          <Link href={`/app/vouchers/${latestActiveVoucher.id}`}>
+                            <Button variant="outline" size="sm">View code</Button>
+                          </Link>
+                        </div>
+                      ) : null}
                     </div>
                   ))}
                 </CardContent>

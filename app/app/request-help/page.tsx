@@ -228,17 +228,29 @@ export default function RequestHelpPage() {
                   recentRequests.map((item) => (
                     <div
                       key={item.id}
-                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-[var(--border)] px-4 py-4"
+                      className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] px-4 py-4"
                     >
-                      <div>
-                        <p className="font-semibold text-[var(--foreground)]">
-                          {REQUEST_TYPE_LABELS[item.request_type]} · {URGENCY_LABELS[item.urgency]}
-                        </p>
-                        <p className="text-sm text-[var(--muted-foreground)]">Submitted {formatDate(item.created_at)}</p>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div>
+                          <p className="font-semibold text-[var(--foreground)]">
+                            {REQUEST_TYPE_LABELS[item.request_type]} · {URGENCY_LABELS[item.urgency]}
+                          </p>
+                          <p className="text-sm text-[var(--muted-foreground)]">Submitted {formatDate(item.created_at)}</p>
+                        </div>
+                        <span className="text-xs uppercase tracking-[0.3em] text-[var(--primary)]">
+                          {STATUS_LABELS[item.status]}
+                        </span>
                       </div>
-                      <span className="text-xs uppercase tracking-[0.3em] text-[var(--primary)]">
-                        {STATUS_LABELS[item.status]}
-                      </span>
+                      {item.request_type === 'VOUCHER' && (item.status === 'APPROVED' || item.status === 'FULFILLED') ? (
+                        <div className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--surface-alt)] px-3 py-2">
+                          <p className="text-xs text-[var(--muted-foreground)]">
+                            Voucher approved. Open wallet to view voucher code and QR.
+                          </p>
+                          <Link href="/app/vouchers">
+                            <Button size="sm" variant="outline">Open wallet</Button>
+                          </Link>
+                        </div>
+                      ) : null}
                     </div>
                   ))
                 )}
