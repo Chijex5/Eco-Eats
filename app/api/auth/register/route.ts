@@ -17,6 +17,9 @@ export async function POST(request: Request) {
     const email = String(body.email || '').trim().toLowerCase();
     const password = String(body.password || '');
     const role = normalizeRole(body.role);
+    if (role !== 'BENEFICIARY' && role !== 'DONOR' && role !== 'PARTNER_OWNER') {
+      return NextResponse.json({ error: 'Invalid role for registration.' }, { status: 400 });
+    }
     const partnerOrganization = String(body.organization || '').trim();
     const partnerServiceArea = String(body.service_area || '').trim();
 
