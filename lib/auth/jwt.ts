@@ -7,6 +7,7 @@ export type SessionPayload = {
   role: UserRole;
   email: string;
   name: string;
+  mustChangePassword?: boolean;
 };
 
 const encoder = new TextEncoder();

@@ -135,6 +135,8 @@ export default function Signup() {
     const email = String(formData.get('email') || '').trim();
     const password = String(formData.get('password') || '');
     const confirmPassword = String(formData.get('confirm-password') || '');
+    const organization = String(formData.get('organization') || '').trim();
+    const serviceArea = String(formData.get('service-area') || '').trim();
 
     if (!fullName || !email || !password || !confirmPassword) {
       setFormError('Please fill in all required fields.');
@@ -161,6 +163,8 @@ export default function Signup() {
           email,
           password,
           role: selectedRole,
+          organization,
+          service_area: serviceArea,
         }),
       });
 

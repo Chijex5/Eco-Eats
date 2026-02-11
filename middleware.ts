@@ -3,6 +3,13 @@ import { SESSION_COOKIE_NAME } from '@/lib/auth/constants';
 import { verifySessionToken } from '@/lib/auth/jwt';
 import { getRequiredRoles, isRoleAllowed } from '@/lib/auth/rbac';
 
+
+function requiresPasswordChangeRedirect(pathname: string) {
+  return pathname !== '/auth/change-password' &&
+    pathname !== '/api/auth/change-password' &&
+    pathname !== '/api/auth/logout';
+}
+
 function isPublicPath(pathname: string) {
   return (
     pathname.startsWith('/auth') ||
@@ -36,6 +43,13 @@ export async function middleware(request: NextRequest) {
 
   if (!isRoleAllowed(session.role, requiredRoles)) {
     return handleForbidden(request);
+  }
+
+  if (session.mustChangePassword && requiresPasswordChangeRedirect(pathname)) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Password change required.' }, { status: 403 });
+    }
+    return NextResponse.redirect(new URL('/auth/change-password', request.url));
   }
 
   return NextResponse.next();

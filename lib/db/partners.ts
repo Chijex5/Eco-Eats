@@ -290,3 +290,38 @@ export async function getPartnerStaff(partnerId: string) {
 
   return result.rows as PartnerStaffMember[];
 }
+
+
+export async function addPartnerStaffMember(data: {
+  partner_id: string;
+  user_id: string;
+  staff_role?: string | null;
+  can_redeem?: boolean;
+  can_post_surplus?: boolean;
+}) {
+  const id = generateId();
+  await query(
+    `INSERT INTO partner_staff (id, partner_id, user_id, staff_role, can_redeem, can_post_surplus)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [
+      id,
+      data.partner_id,
+      data.user_id,
+      data.staff_role ?? null,
+      data.can_redeem ?? true,
+      data.can_post_surplus ?? false,
+    ]
+  );
+
+  const result = await query(
+    `SELECT ps.id, ps.user_id, ps.staff_role, ps.can_redeem, ps.can_post_surplus,
+            ps.created_at, u.full_name, u.email
+     FROM partner_staff ps
+     JOIN users u ON ps.user_id = u.id
+     WHERE ps.id = ?
+     LIMIT 1`,
+    [id]
+  );
+
+  return result.rows[0] as PartnerStaffMember;
+}

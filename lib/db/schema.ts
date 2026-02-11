@@ -8,8 +8,19 @@ import { query } from './connection';
 async function safeCreateIndex(sql: string) {
   try {
     await query(sql);
-  } catch (error: any) {
-    if (error?.code === 'ER_DUP_KEYNAME') {
+  } catch (error: unknown) {
+    if ((error as { code?: string })?.code === 'ER_DUP_KEYNAME') {
+      return;
+    }
+    throw error;
+  }
+}
+
+async function safeAlterTable(sql: string) {
+  try {
+    await query(sql);
+  } catch (error: unknown) {
+    if ((error as { code?: string })?.code === 'ER_DUP_FIELDNAME') {
       return;
     }
     throw error;
@@ -29,12 +40,17 @@ export async function createTables() {
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
         role VARCHAR(30) NOT NULL CHECK (role IN ('BENEFICIARY', 'DONOR', 'PARTNER_OWNER', 'PARTNER_STAFF', 'VOLUNTEER', 'ADMIN')),
+        must_change_password BOOLEAN DEFAULT FALSE,
         is_email_verified BOOLEAN DEFAULT FALSE,
         phone VARCHAR(30),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       ) ENGINE=InnoDB;
     `);
+
+    await safeAlterTable(
+      'ALTER TABLE users ADD COLUMN must_change_password BOOLEAN DEFAULT FALSE AFTER role;'
+    );
 
     // 2. Beneficiary profiles
     await query(`
