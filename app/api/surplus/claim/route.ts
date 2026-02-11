@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
-import { hasApprovedFoodPackRequest } from '@/lib/db/requests';
+import { getFoodPackClaimEligibility } from '@/lib/db/requests';
 import { claimSurplusListing } from '@/lib/db/surplus';
 
 type ClaimPayload = {
@@ -21,10 +21,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'listingId is required.' }, { status: 400 });
     }
 
-    const canClaim = await hasApprovedFoodPackRequest(session.userId);
-    if (!canClaim) {
+    const eligibility = await getFoodPackClaimEligibility(session.userId);
+    if (!eligibility.hasApprovedFoodPack) {
       return NextResponse.json(
         { error: 'You do not have an approved food pack request yet.' },
+        { status: 403 }
+      );
+    }
+
+    if (!eligibility.canClaimSurplus) {
+      return NextResponse.json(
+        {
+          error:
+            'This food pack request has already been used. Cancel your existing surplus claim before claiming another.',
+        },
         { status: 403 }
       );
     }

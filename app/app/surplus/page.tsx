@@ -51,6 +51,7 @@ export default function SurplusPacksPage() {
   const [claimingId, setClaimingId] = useState('');
   const [claimMessage, setClaimMessage] = useState('');
   const [hasApprovedFoodPack, setHasApprovedFoodPack] = useState(false);
+  const [canClaimSurplus, setCanClaimSurplus] = useState(false);
 
   const loadPacks = async () => {
     setIsLoading(true);
@@ -64,10 +65,12 @@ export default function SurplusPacksPage() {
       const data = (await response.json()) as {
         listings: SurplusListing[];
         hasApprovedFoodPack?: boolean;
+        canClaimSurplus?: boolean;
         claims?: SurplusClaim[];
       };
       setPacks(data.listings ?? []);
       setHasApprovedFoodPack(Boolean(data.hasApprovedFoodPack));
+      setCanClaimSurplus(Boolean(data.canClaimSurplus));
       setClaims(data.claims ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to load surplus packs.');
@@ -140,10 +143,18 @@ export default function SurplusPacksPage() {
             </div>
           </section>
 
-          {!hasApprovedFoodPack && !isLoading ? (
+          {!isLoading && !hasApprovedFoodPack ? (
             <Card className="shadow-[var(--shadow)] border-amber-200 bg-amber-50/70">
               <CardContent className="py-5 text-sm text-amber-700">
                 You do not have an approved food pack request yet. Submit a food pack request first before claiming surplus packs.
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {!isLoading && hasApprovedFoodPack && !canClaimSurplus ? (
+            <Card className="shadow-[var(--shadow)] border-amber-200 bg-amber-50/70">
+              <CardContent className="py-5 text-sm text-amber-700">
+                Your approved food pack request has already been used. Cancel your current surplus claim before claiming another.
               </CardContent>
             </Card>
           ) : null}
@@ -211,11 +222,13 @@ export default function SurplusPacksPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleClaim(pack.id)}
-                        disabled={!hasApprovedFoodPack || pack.remaining === 0 || pack.claimedByMe || claimingId === pack.id}
+                        disabled={!hasApprovedFoodPack || !canClaimSurplus || pack.remaining === 0 || pack.claimedByMe || claimingId === pack.id}
                       >
                         {!hasApprovedFoodPack
                           ? 'Approval required'
-                          : pack.claimedByMe
+                          : !canClaimSurplus
+                            ? 'Request used'
+                            : pack.claimedByMe
                             ? 'Claimed'
                             : pack.remaining === 0
                               ? 'Sold out'

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { getAvailableSurplusListings, getBeneficiarySurplusClaims } from '@/lib/db/surplus';
-import { hasApprovedFoodPackRequest } from '@/lib/db/requests';
+import { getFoodPackClaimEligibility } from '@/lib/db/requests';
 
 export async function GET() {
   try {
@@ -10,13 +10,21 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const [listings, hasApprovedFoodPack, claims] = await Promise.all([
+    const [listings, eligibility, claims] = await Promise.all([
       getAvailableSurplusListings(),
-      hasApprovedFoodPackRequest(session.userId),
+      getFoodPackClaimEligibility(session.userId),
       getBeneficiarySurplusClaims(session.userId),
     ]);
 
-    return NextResponse.json({ listings, hasApprovedFoodPack, claims }, { status: 200 });
+    return NextResponse.json(
+      {
+        listings,
+        hasApprovedFoodPack: eligibility.hasApprovedFoodPack,
+        canClaimSurplus: eligibility.canClaimSurplus,
+        claims,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('Get surplus listings error:', error);
     return NextResponse.json({ error: 'Failed to fetch surplus listings.' }, { status: 500 });
