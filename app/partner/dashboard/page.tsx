@@ -34,6 +34,9 @@ type Pickup = {
   status: string;
   created_at: string;
   title: string;
+  pickup_deadline?: string;
+  beneficiary_name?: string | null;
+  beneficiary_email?: string | null;
 };
 
 const formatDate = (value?: string) => {
@@ -189,6 +192,12 @@ export default function PartnerDashboard() {
                         <div>
                           <p className="font-semibold text-[var(--foreground)]">{pickup.title}</p>
                           <p className="text-xs text-[var(--muted-foreground)]">Pickup code: {pickup.pickup_code}</p>
+                          <p className="text-xs text-[var(--muted-foreground)]">
+                            Beneficiary: {pickup.beneficiary_name || 'Unknown'}{pickup.beneficiary_email ? ` (${pickup.beneficiary_email})` : ''}
+                          </p>
+                          <p className="text-xs text-[var(--muted-foreground)]">
+                            Pickup due: {formatDate(pickup.pickup_deadline)}
+                          </p>
                         </div>
                         <div className="text-right">
                           <p className="text-xs uppercase tracking-[0.3em] text-[var(--primary)]">{pickup.status}</p>

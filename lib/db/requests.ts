@@ -6,6 +6,7 @@
 import { query } from './connection';
 import { generateId } from './ids';
 import { logImpactEvent } from './impact';
+import type { RowDataPacket } from 'mysql2/promise';
 
 export interface SupportRequest {
   id: string;
@@ -69,6 +70,48 @@ export async function getRequestsByBeneficiary(userId: string) {
     [userId]
   );
   return result.rows as SupportRequest[];
+}
+
+export type FoodPackClaimEligibility = {
+  hasApprovedFoodPack: boolean;
+  canClaimSurplus: boolean;
+  approvedFoodPackCount: number;
+  usedFoodPackCount: number;
+};
+
+export async function getFoodPackClaimEligibility(userId: string): Promise<FoodPackClaimEligibility> {
+  const [approvedResult, usedResult] = await Promise.all([
+    query<RowDataPacket>(
+      `SELECT COUNT(*) AS count
+       FROM support_requests
+       WHERE beneficiary_user_id = ?
+         AND request_type = 'FOOD_PACK'
+         AND status IN ('APPROVED', 'FULFILLED')`,
+      [userId]
+    ),
+    query<RowDataPacket>(
+      `SELECT COUNT(*) AS count
+       FROM surplus_claims
+       WHERE beneficiary_user_id = ?
+         AND status != 'CANCELLED'`,
+      [userId]
+    ),
+  ]);
+
+  const approvedFoodPackCount = Number(approvedResult.rows[0]?.count ?? 0);
+  const usedFoodPackCount = Number(usedResult.rows[0]?.count ?? 0);
+
+  return {
+    hasApprovedFoodPack: approvedFoodPackCount > 0,
+    canClaimSurplus: approvedFoodPackCount > usedFoodPackCount,
+    approvedFoodPackCount,
+    usedFoodPackCount,
+  };
+}
+
+export async function hasApprovedFoodPackRequest(userId: string) {
+  const eligibility = await getFoodPackClaimEligibility(userId);
+  return eligibility.hasApprovedFoodPack;
 }
 
 /**

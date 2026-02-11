@@ -14,6 +14,13 @@ type SupportRequest = {
   created_at: string;
 };
 
+type Voucher = {
+  id: string;
+  code: string;
+  status: 'ACTIVE' | 'REDEEMED' | 'EXPIRED' | 'REVOKED';
+  created_at: string;
+};
+
 const quickActions = [
   {
     title: 'Request food support',
@@ -79,47 +86,61 @@ const formatDate = (value: string) => {
 
 export default function BeneficiaryDashboard() {
   const [requests, setRequests] = useState<SupportRequest[]>([]);
+  const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const loadRequests = async () => {
+    const loadDashboardData = async () => {
       setIsLoading(true);
       setError('');
       try {
-        const response = await fetch('/api/requests/me');
-        if (!response.ok) {
-          const payload = await response.json().catch(() => ({}));
+        const [requestResponse, voucherResponse] = await Promise.all([
+          fetch('/api/requests/me'),
+          fetch('/api/vouchers/me'),
+        ]);
+
+        if (!requestResponse.ok) {
+          const payload = await requestResponse.json().catch(() => ({}));
           throw new Error(payload.error || 'Unable to fetch requests.');
         }
-        const data = (await response.json()) as { requests: SupportRequest[] };
-        setRequests(data.requests || []);
+
+        if (!voucherResponse.ok) {
+          const payload = await voucherResponse.json().catch(() => ({}));
+          throw new Error(payload.error || 'Unable to fetch vouchers.');
+        }
+
+        const requestData = (await requestResponse.json()) as { requests: SupportRequest[] };
+        const voucherData = (await voucherResponse.json()) as { vouchers: Voucher[] };
+        setRequests(requestData.requests || []);
+        setVouchers(voucherData.vouchers || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unable to fetch requests.');
+        setError(err instanceof Error ? err.message : 'Unable to fetch dashboard data.');
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadRequests();
+    loadDashboardData();
   }, []);
 
   const summaryStats = useMemo(() => {
     const pending = requests.filter((request) => request.status === 'PENDING').length;
     const approved = requests.filter((request) => request.status === 'APPROVED').length;
     const declined = requests.filter((request) => request.status === 'DECLINED').length;
-    const fulfilled = requests.filter((request) => request.status === 'FULFILLED').length;
+    const activeVouchers = vouchers.filter((voucher) => voucher.status === 'ACTIVE').length;
 
     return [
       { label: 'Pending requests', value: pending, detail: 'Awaiting admin review' },
-      { label: 'Approved requests', value: approved, detail: 'Ready for next steps' },
+      { label: 'Approved requests', value: approved, detail: 'Waiting voucher issuance' },
       { label: 'Declined requests', value: declined, detail: 'Review feedback in messages' },
-      { label: 'Fulfilled requests', value: fulfilled, detail: 'Vouchers issued or packs ready' },
+      { label: 'Active vouchers', value: activeVouchers, detail: 'Ready for redemption' },
     ];
-  }, [requests]);
+  }, [requests, vouchers]);
 
   const latestRequest = requests[0];
   const pendingRequests = requests.filter((request) => request.status === 'PENDING');
+  const latestActiveVoucher = vouchers.find((voucher) => voucher.status === 'ACTIVE');
 
   return (
     <div className="page-shell">
@@ -163,12 +184,9 @@ export default function BeneficiaryDashboard() {
                 <CardHeader>
                   <CardTitle className="text-2xl">Quick actions</CardTitle>
                 </CardHeader>
-                <CardContent className="grid gap-4">
+                <CardContent className="space-y-4">
                   {quickActions.map((action) => (
-                    <div
-                      key={action.title}
-                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border border-[var(--border)] px-4 py-4"
-                    >
+                    <div key={action.href} className="flex items-center justify-between gap-4 rounded-2xl border border-[var(--border)] p-4">
                       <div>
                         <p className="font-semibold text-[var(--foreground)]">{action.title}</p>
                         <p className="text-sm text-[var(--muted-foreground)]">{action.description}</p>
@@ -201,19 +219,31 @@ export default function BeneficiaryDashboard() {
                     requests.slice(0, 4).map((request) => (
                       <div
                         key={request.id}
-                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-[var(--border)] px-4 py-4"
+                        className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] px-4 py-4"
                       >
-                        <div>
-                          <p className="font-semibold text-[var(--foreground)]">
-                            {REQUEST_TYPE_LABELS[request.request_type]}
-                          </p>
-                          <p className="text-sm text-[var(--muted-foreground)]">Submitted {formatDate(request.created_at)}</p>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                          <div>
+                            <p className="font-semibold text-[var(--foreground)]">
+                              {REQUEST_TYPE_LABELS[request.request_type]}
+                            </p>
+                            <p className="text-sm text-[var(--muted-foreground)]">Submitted {formatDate(request.created_at)}</p>
+                          </div>
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${STATUS_STYLES[request.status]}`}
+                          >
+                            {STATUS_LABELS[request.status]}
+                          </span>
                         </div>
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${STATUS_STYLES[request.status]}`}
-                        >
-                          {STATUS_LABELS[request.status]}
-                        </span>
+                        {request.request_type === 'VOUCHER' && (request.status === 'APPROVED' || request.status === 'FULFILLED') ? (
+                          <div className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--surface-alt)] px-3 py-2">
+                            <p className="text-xs text-[var(--muted-foreground)]">
+                              Your voucher is approved. Open wallet to view voucher code/QR.
+                            </p>
+                            <Link href="/app/vouchers">
+                              <Button size="sm" variant="outline">Open wallet</Button>
+                            </Link>
+                          </div>
+                        ) : null}
                       </div>
                     ))
                   )}
@@ -241,11 +271,20 @@ export default function BeneficiaryDashboard() {
                       <p className="text-sm text-white/80">{REQUEST_TYPE_LABELS[latestRequest.request_type]}</p>
                       <p className="text-2xl font-semibold mt-2">{STATUS_LABELS[latestRequest.status]}</p>
                       <p className="text-sm text-white/70 mt-2">Submitted {formatDate(latestRequest.created_at)}</p>
-                      <Link href="/app/request-help">
-                        <Button variant="outline" size="sm" className="mt-4 text-white border-white/40 hover:border-white">
-                          View request
-                        </Button>
-                      </Link>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <Link href="/app/request-help">
+                          <Button variant="outline" size="sm" className="text-white border-white/40 hover:border-white">
+                            View request
+                          </Button>
+                        </Link>
+                        {(latestRequest.status === 'APPROVED' || latestRequest.status === 'FULFILLED') && latestRequest.request_type === 'VOUCHER' ? (
+                          <Link href="/app/vouchers">
+                            <Button variant="outline" size="sm" className="text-white border-white/40 hover:border-white">
+                              Open vouchers
+                            </Button>
+                          </Link>
+                        ) : null}
+                      </div>
                     </>
                   ) : (
                     <>
@@ -256,6 +295,32 @@ export default function BeneficiaryDashboard() {
                         <Button variant="outline" size="sm" className="mt-4 text-white border-white/40 hover:border-white">
                           New request
                         </Button>
+                      </Link>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-[var(--shadow)]">
+                <CardHeader>
+                  <CardTitle className="text-xl">Voucher quick access</CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm text-[var(--muted-foreground)] space-y-3">
+                  {isLoading ? (
+                    <p>Checking vouchers...</p>
+                  ) : latestActiveVoucher ? (
+                    <>
+                      <p className="text-[var(--foreground)] font-semibold">Active voucher code</p>
+                      <p className="text-xl tracking-[0.2em] text-[var(--foreground)]">{latestActiveVoucher.code}</p>
+                      <Link href="/app/vouchers">
+                        <Button variant="outline" size="sm">View all vouchers</Button>
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <p>No active voucher yet.</p>
+                      <Link href="/app/vouchers">
+                        <Button variant="outline" size="sm">Go to voucher wallet</Button>
                       </Link>
                     </>
                   )}
