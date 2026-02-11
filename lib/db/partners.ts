@@ -155,10 +155,10 @@ export async function getAdminPartnerOverview({
      FROM food_partners fp
      LEFT JOIN voucher_redemptions vr
        ON vr.partner_id = fp.id
-      AND vr.created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+      AND vr.created_at >= TIMESTAMPADD(DAY, -?, NOW())
      LEFT JOIN surplus_listings sl
        ON sl.partner_id = fp.id
-      AND sl.created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+      AND sl.created_at >= TIMESTAMPADD(DAY, -?, NOW())
      GROUP BY fp.id
      ORDER BY fp.created_at DESC
      LIMIT ?`,
