@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       await createPartner({
         owner_user_id: user.id,
         name: partnerOrganization || `${fullName}'s Kitchen`,
-        location_text: partnerServiceArea || null,
+        location_text: partnerServiceArea || undefined,
       });
     }
 
