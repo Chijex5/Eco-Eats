@@ -242,9 +242,17 @@ export async function getPartnerRecentRedemptions(partnerId: string, limit = 5) 
 
 export async function getPartnerRecentPickups(partnerId: string, limit = 5) {
   const result = await query(
-    `SELECT sc.id, sc.pickup_code, sc.status, sc.created_at, sl.title
+    `SELECT sc.id,
+            sc.pickup_code,
+            sc.status,
+            sc.created_at,
+            sl.title,
+            sl.pickup_deadline,
+            u.full_name AS beneficiary_name,
+            u.email AS beneficiary_email
      FROM surplus_claims sc
      JOIN surplus_listings sl ON sc.listing_id = sl.id
+     LEFT JOIN users u ON sc.beneficiary_user_id = u.id
      WHERE sl.partner_id = ?
      ORDER BY sc.created_at DESC
      LIMIT ?`,
@@ -257,6 +265,9 @@ export async function getPartnerRecentPickups(partnerId: string, limit = 5) {
     status: string;
     created_at: Date;
     title: string;
+    pickup_deadline: Date;
+    beneficiary_name?: string | null;
+    beneficiary_email?: string | null;
   }>;
 }
 

@@ -6,6 +6,7 @@
 import { query } from './connection';
 import { generateId } from './ids';
 import { logImpactEvent } from './impact';
+import type { RowDataPacket } from 'mysql2/promise';
 
 export interface SupportRequest {
   id: string;
@@ -69,6 +70,19 @@ export async function getRequestsByBeneficiary(userId: string) {
     [userId]
   );
   return result.rows as SupportRequest[];
+}
+
+export async function hasApprovedFoodPackRequest(userId: string) {
+  const result = await query<RowDataPacket>(
+    `SELECT COUNT(*) AS count
+     FROM support_requests
+     WHERE beneficiary_user_id = ?
+       AND request_type = 'FOOD_PACK'
+       AND status IN ('APPROVED', 'FULFILLED')`,
+    [userId]
+  );
+
+  return Number(result.rows[0]?.count ?? 0) > 0;
 }
 
 /**
