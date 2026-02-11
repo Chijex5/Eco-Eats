@@ -52,12 +52,12 @@ export async function getAdminDashboardSummary(): Promise<AdminDashboardSummary>
 }
 
 export async function getRecentImpactActivity(limit = 6): Promise<ImpactActivity[]> {
+  const safeLimit = Number.isFinite(limit) ? Math.max(1, Math.floor(limit)) : 6;
   const result = await query<RowDataPacket>(
     `SELECT id, event_type, related_id, count, created_at
      FROM impact_events
      ORDER BY created_at DESC
-     LIMIT ?`,
-    [limit]
+     LIMIT ${safeLimit}`
   );
 
   return result.rows as ImpactActivity[];
