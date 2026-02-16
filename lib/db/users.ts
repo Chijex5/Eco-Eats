@@ -19,6 +19,8 @@ export interface User {
   updated_at: Date;
 }
 
+export type PublicUser = Pick<User, 'id' | 'full_name' | 'email' | 'role' | 'is_email_verified' | 'created_at' | 'updated_at'>;
+
 /**
  * Create a new user
  */
@@ -68,6 +70,20 @@ export async function findUserById(id: string) {
     [id]
   );
   return result.rows[0] as User | undefined;
+}
+
+/**
+ * List users by role
+ */
+export async function listUsersByRole(role: User['role']) {
+  const result = await query(
+    `SELECT id, full_name, email, role, is_email_verified, created_at, updated_at
+     FROM users
+     WHERE role = ?
+     ORDER BY created_at DESC`,
+    [role]
+  );
+  return result.rows as PublicUser[];
 }
 
 /**

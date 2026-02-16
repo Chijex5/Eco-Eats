@@ -47,6 +47,7 @@ const roleLinks: Record<string, NavLink[]> = {
   ],
   ADMIN: [
     { href: '/admin/dashboard', label: 'Dashboard' },
+    { href: '/admin/admins', label: 'Admins' },
     { href: '/admin/requests', label: 'Requests' },
     { href: '/admin/partners', label: 'Partners' },
     { href: '/admin/vouchers', label: 'Vouchers' },
