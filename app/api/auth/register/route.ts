@@ -21,6 +21,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
     }
 
+    if (role !== 'BENEFICIARY' && role !== 'DONOR' && role !== 'PARTNER_OWNER') {
+      return NextResponse.json({ error: 'Selected role is not available for self-signup.' }, { status: 403 });
+    }
+
     if (!isValidEmail(email)) {
       return NextResponse.json({ error: 'Invalid email address.' }, { status: 400 });
     }
@@ -60,8 +64,8 @@ export async function POST(request: Request) {
     });
     applySessionCookie(response, token);
     return response;
-  } catch (error: any) {
-    if (error?.code === 'ER_DUP_ENTRY') {
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && "code" in error && error.code === 'ER_DUP_ENTRY') {
       return NextResponse.json({ error: 'Email already in use.' }, { status: 409 });
     }
     console.error('Register error:', error);

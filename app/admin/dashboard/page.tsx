@@ -54,6 +54,12 @@ const activityLabel = (eventType: string, count: number) => {
 
 const quickActions = [
   {
+    title: 'Add admin users',
+    description: 'Invite trusted teammates with full admin dashboard access.',
+    href: '/admin/admins',
+    action: 'Manage admins',
+  },
+  {
     title: 'Review beneficiary requests',
     description: 'Approve or decline new requests and issue vouchers.',
     href: '/admin/requests',

@@ -6,10 +6,10 @@ import { currentSpotlight } from '@/data/spotlightData';
 
 export default function Home() {
   const stats = [
-    { number: '10K+', label: 'Meals served' },
-    { number: '250+', label: 'Active partners' },
-    { number: '5K+', label: 'People helped' },
-    { number: '50+', label: 'Communities' },
+    { number: '10K+', label: 'Projected meals served' },
+    { number: '250+', label: 'Projected active partners' },
+    { number: '5K+', label: 'Projected people reached' },
+    { number: '50+', label: 'Projected communities served' },
   ];
 
   const features = [
@@ -83,7 +83,7 @@ export default function Home() {
               <CardHeader className="mb-6">
                 <CardTitle className="text-2xl">Impact snapshot</CardTitle>
                 <p className="text-sm text-[var(--muted-foreground)]">
-                  Verified activity across the EcoEats network.
+                  Launch-phase projections for what we aim to achieve across the EcoEats network.
                 </p>
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-4">
