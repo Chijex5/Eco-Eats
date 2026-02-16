@@ -12,6 +12,7 @@ export interface User {
   email: string;
   password_hash: string;
   role: 'BENEFICIARY' | 'DONOR' | 'PARTNER_OWNER' | 'PARTNER_STAFF' | 'VOLUNTEER' | 'ADMIN';
+  must_change_password: boolean;
   is_email_verified: boolean;
   phone?: string;
   created_at: Date;
@@ -27,12 +28,21 @@ export async function createUser(data: {
   password_hash: string;
   role: User['role'];
   phone?: string;
+  must_change_password?: boolean;
 }) {
   const id = generateId();
   await query(
-    `INSERT INTO users (id, full_name, email, password_hash, role, phone)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [id, data.full_name, data.email, data.password_hash, data.role, data.phone ?? null]
+    `INSERT INTO users (id, full_name, email, password_hash, role, must_change_password, phone)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [
+      id,
+      data.full_name,
+      data.email,
+      data.password_hash,
+      data.role,
+      data.must_change_password ?? false,
+      data.phone ?? null,
+    ]
   );
   const result = await query('SELECT * FROM users WHERE id = ?', [id]);
   return result.rows[0] as User;
@@ -79,7 +89,7 @@ export async function verifyUserEmail(userId: string) {
  */
 export async function updateUser(userId: string, data: Partial<User>) {
   const fields: string[] = [];
-  const values: any[] = [];
+  const values: Array<string | number | boolean | Date | null> = [];
 
   Object.entries(data).forEach(([key, value]) => {
     if (key !== 'id' && value !== undefined) {
@@ -99,6 +109,20 @@ export async function updateUser(userId: string, data: Partial<User>) {
     `UPDATE users SET ${fields.join(', ')} WHERE id = ?`,
     values
   );
+  const result = await query('SELECT * FROM users WHERE id = ?', [userId]);
+  return result.rows[0] as User;
+}
+
+export async function updateUserPassword(userId: string, passwordHash: string, clearMustChangePassword = true) {
+  await query(
+    `UPDATE users
+     SET password_hash = ?,
+         must_change_password = ?,
+         updated_at = NOW()
+     WHERE id = ?`,
+    [passwordHash, clearMustChangePassword ? false : true, userId]
+  );
+
   const result = await query('SELECT * FROM users WHERE id = ?', [userId]);
   return result.rows[0] as User;
 }

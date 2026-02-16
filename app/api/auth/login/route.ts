@@ -31,9 +31,14 @@ export async function POST(request: Request) {
       role: user.role,
       email: user.email,
       name: user.full_name,
+      mustChangePassword: Boolean(user.must_change_password),
     });
 
     let redirect = roleHomePath(user.role);
+
+    if (user.must_change_password) {
+      redirect = '/auth/change-password';
+    }
     if (user.role === 'BENEFICIARY') {
       const profileComplete = await isBeneficiaryProfileComplete(user.id).catch((error) => {
         console.error('Beneficiary profile check error:', error);
