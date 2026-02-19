@@ -1,4 +1,4 @@
-import { query } from './connection';
+import { query, getConnection } from './connection';
 import { generateId } from './ids';
 
 export type OtpPurpose = 'PASSWORD_RESET';
@@ -10,6 +10,7 @@ export interface AuthOtp {
   otp_hash: string;
   expires_at: Date;
   consumed_at: Date | null;
+  attempts: number;
   created_at: Date;
 }
 
@@ -120,4 +121,26 @@ export async function consumeOtp(otpId: string) {
       [otpId]
     )
   );
+}
+
+export async function incrementOtpAttempts(otpId: string): Promise<number> {
+  const conn = await getConnection();
+  try {
+    await conn.beginTransaction();
+    await conn.execute(
+      `UPDATE auth_otp_codes SET attempts = attempts + 1 WHERE id = ?`,
+      [otpId]
+    );
+    const [rows] = await conn.execute(
+      `SELECT attempts FROM auth_otp_codes WHERE id = ? FOR UPDATE`,
+      [otpId]
+    );
+    await conn.commit();
+    return (rows as { attempts: number }[])[0].attempts;
+  } catch (error) {
+    await conn.rollback();
+    throw error;
+  } finally {
+    conn.release();
+  }
 }
