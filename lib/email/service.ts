@@ -4,6 +4,7 @@ import {
   donationReceiptTemplate,
   newSurplusBroadcastTemplate,
   passwordResetOtpTemplate,
+  signupOtpTemplate,
   supportRequestDecisionTemplate,
   surplusClaimedTemplate,
   surplusPickedUpTemplate,
@@ -38,6 +39,12 @@ async function sendSafe(fn: () => Promise<void>) {
   } catch (error) {
     console.error('Email send error:', error);
   }
+}
+
+
+export async function sendSignupOtpEmail(to: string, name: string, otp: string) {
+  const template = signupOtpTemplate(name, otp);
+  await sendSafe(() => sendEmail({ to, from: emailConfig.authFrom, subject: template.subject, html: template.html }));
 }
 
 export async function sendPasswordResetOtpEmail(to: string, name: string, otp: string) {

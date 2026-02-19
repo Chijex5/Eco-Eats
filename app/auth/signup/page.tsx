@@ -30,6 +30,10 @@ export default function Signup() {
   const [formError, setFormError] = useState<string>('');
   const [formSuccess, setFormSuccess] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isResendingOtp, setIsResendingOtp] = useState(false);
   const logoSrc = '/logo.png';
   const [logoFailed, setLogoFailed] = useState(false);
   const router = useRouter();
@@ -110,6 +114,8 @@ export default function Signup() {
   const handleRoleSelect = (roleId: string) => {
     setSelectedRole(roleId);
     setStep('form');
+    setVerificationEmail('');
+    setOtp('');
     setFormError('');
     setFormSuccess('');
   };
@@ -175,13 +181,80 @@ export default function Signup() {
         return;
       }
 
-      setFormSuccess('Account created. Redirecting…');
-      router.push(data?.redirect || '/');
+      setVerificationEmail(data?.email || email.toLowerCase());
+      setOtp('');
+      setFormSuccess(data?.message || 'Account created. Enter the OTP sent to your email.');
     } catch (error) {
       console.error(error);
       setFormError('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+
+  const handleOtpVerification = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFormError('');
+    setFormSuccess('');
+
+    if (!verificationEmail || otp.trim().length !== 6) {
+      setFormError('Enter the 6-digit OTP sent to your email.');
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    try {
+      const response = await fetch('/api/auth/register/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: verificationEmail, otp: otp.trim() }),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        setFormError(data?.error || 'Unable to verify OTP.');
+        return;
+      }
+
+      setFormSuccess('Email verified. Redirecting…');
+      router.push(data?.redirect || '/');
+    } catch (error) {
+      console.error(error);
+      setFormError('Something went wrong. Please try again.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setFormError('');
+    setFormSuccess('');
+
+    if (!verificationEmail) {
+      setFormError('No verification email found. Create your account again.');
+      return;
+    }
+
+    setIsResendingOtp(true);
+    try {
+      const response = await fetch('/api/auth/register/resend-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: verificationEmail }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        setFormError(data?.error || 'Unable to resend OTP.');
+        return;
+      }
+      setFormSuccess(data?.message || 'A new OTP was sent.');
+    } catch (error) {
+      console.error(error);
+      setFormError('Something went wrong. Please try again.');
+    } finally {
+      setIsResendingOtp(false);
     }
   };
 
@@ -271,13 +344,18 @@ export default function Signup() {
               >
                 <CardContent className="pt-6">
                   <button
-                    onClick={() => setStep('role')}
+                    onClick={() => {
+                      setStep('role');
+                      setVerificationEmail('');
+                      setOtp('');
+                    }}
                     className="flex items-center text-sm font-semibold text-[var(--primary)] lg:text-[var(--secondary)] hover:text-[var(--primary-dark)] mb-6"
                   >
                     <span className="mr-2">←</span>
                     Change role
                   </button>
 
+                  {!verificationEmail ? (
                   <form className="space-y-6" onSubmit={handleSubmit}>
                     <div>
                       <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-3">
@@ -434,18 +512,73 @@ export default function Signup() {
                         </a>
                       </span>
                     </label>
-
-                    {formError && (
-                      <p className="text-sm text-red-500">{formError}</p>
-                    )}
-                    {formSuccess && (
-                      <p className="text-sm text-emerald-600">{formSuccess}</p>
-                    )}
-
                     <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
                       {isSubmitting ? 'Creating account…' : 'Create Account'}
                     </Button>
                   </form>
+                  ) : (
+                    <form className="space-y-5" onSubmit={handleOtpVerification}>
+                      <p className="text-sm text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-80">
+                        Enter the verification code sent to <span className="font-semibold">{verificationEmail}</span>.
+                      </p>
+
+                      <div>
+                        <label
+                          htmlFor="signup-otp"
+                          className="block text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-70 mb-2"
+                        >
+                          Verification Code
+                        </label>
+                        <input
+                          id="signup-otp"
+                          name="signup-otp"
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]{6}"
+                          maxLength={6}
+                          required
+                          value={otp}
+                          onChange={(event) => setOtp(event.target.value.replace(/\D/g, ''))}
+                          className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base tracking-[0.35em] text-center font-semibold text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
+                          placeholder="000000"
+                        />
+                      </div>
+
+                      <Button type="submit" size="lg" className="w-full" disabled={isVerifyingOtp}>
+                        {isVerifyingOtp ? 'Verifying…' : 'Verify and continue'}
+                      </Button>
+
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="lg"
+                          className="w-full lg:text-[var(--surface)] lg:border-[var(--surface)]/40 lg:hover:border-[var(--secondary)] lg:hover:text-[var(--secondary)] lg:hover:bg-[var(--secondary)]/10"
+                          onClick={handleResendOtp}
+                          disabled={isResendingOtp}
+                        >
+                          {isResendingOtp ? 'Resending…' : 'Resend code'}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="lg"
+                          className="w-full lg:text-[var(--surface)] lg:border-[var(--surface)]/40 lg:hover:border-[var(--secondary)] lg:hover:text-[var(--secondary)] lg:hover:bg-[var(--secondary)]/10"
+                          onClick={() => {
+                            setVerificationEmail('');
+                            setOtp('');
+                            setFormError('');
+                            setFormSuccess('');
+                          }}
+                        >
+                          Edit details
+                        </Button>
+                      </div>
+                    </form>
+                  )}
+
+                  {formError && <p className="mt-4 text-sm text-red-500">{formError}</p>}
+                  {formSuccess && <p className="mt-4 text-sm text-emerald-600">{formSuccess}</p>}
 
                   <div className="mt-6 text-center text-sm text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-80">
                     Already have an account?

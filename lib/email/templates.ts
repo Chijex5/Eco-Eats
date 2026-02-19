@@ -35,6 +35,21 @@ function noticeTemplate(title: string, intro: string, lines: string[], footer?: 
   );
 }
 
+
+export function signupOtpTemplate(name: string, otp: string) {
+  return {
+    subject: 'Verify your EcoEats account',
+    html: shell(
+      `<p style="margin:0 0 12px;">Hi ${name},</p>
+       <p style="margin:0 0 16px;">Welcome to EcoEats. Use this one-time code to verify your email and complete signup.</p>
+       <div style="margin:0 0 16px;padding:14px 16px;background:#F0FDF4;border:1px solid #0B6E4F;border-radius:10px;font-size:28px;letter-spacing:6px;font-weight:700;text-align:center;color:#0B6E4F;">${otp}</div>
+       <p style="margin:0 0 10px;">This code expires in 10 minutes and can be used once.</p>
+       <p style="margin:0;color:#627D98;">If you did not create this account, you can ignore this email.</p>`,
+      `Your EcoEats signup verification code is ${otp}`
+    ),
+  };
+}
+
 export function passwordResetOtpTemplate(name: string, otp: string) {
   return {
     subject: 'Your EcoEats password reset code',
