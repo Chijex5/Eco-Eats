@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createUser, findUserByEmail } from '@/lib/db/users';
-import { createPartner } from '@/lib/db/partners';
+import { createPartner, getPartnerByOwnerUserId } from '@/lib/db/partners';
 import { hashPassword } from '@/lib/auth/password';
 import { normalizeRole } from '@/lib/auth/roles';
 import { createOtp, invalidateOtps } from '@/lib/db/auth-otp';
@@ -48,6 +48,21 @@ export async function POST(request: Request) {
     }
 
     if (existing && !existing.is_email_verified) {
+      if (existing.role === 'PARTNER_OWNER') {
+        const existingPartner = await getPartnerByOwnerUserId(existing.id);
+        if (!existingPartner) {
+          console.warn('Register recovery: missing partner profile for unverified partner owner. Recreating.', {
+            userId: existing.id,
+            email: existing.email,
+          });
+          await createPartner({
+            owner_user_id: existing.id,
+            name: partnerOrganization || `${existing.full_name}'s Kitchen`,
+            location_text: partnerServiceArea || undefined,
+          });
+        }
+      }
+
       await invalidateOtps(existing.id, 'PASSWORD_RESET');
       const otp = generateOtpCode();
       const expiresAt = new Date(Date.now() + OTP_TTL_MINUTES * 60 * 1000);
