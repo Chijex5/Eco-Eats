@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { findVoucherByCode, findVoucherByQRToken, redeemVoucher } from '@/lib/db/vouchers';
 import { getPartnerIdForUser } from '@/lib/db/redemptions';
+import { findUserById } from '@/lib/db/users';
+import { sendVoucherRedeemedEmail } from '@/lib/email/service';
 
 type RedeemPayload = {
   code?: string;
@@ -51,8 +53,16 @@ export async function POST(request: Request) {
       payload.mealDescription
     );
 
+    if (voucher.beneficiary_user_id) {
+      const beneficiary = await findUserById(voucher.beneficiary_user_id);
+      if (beneficiary) {
+        await sendVoucherRedeemedEmail(beneficiary.email, beneficiary.full_name, voucher.code);
+      }
+    }
+
     return NextResponse.json({ success: true, voucher, redemption });
-  } catch (error: any) {
-    return NextResponse.json({ error: error?.message ?? 'Unable to redeem voucher' }, { status: 400 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unable to redeem voucher';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }

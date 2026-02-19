@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { getPartnerIdForUser } from '@/lib/db/redemptions';
 import { createSurplusListing, getPartnerSurplusListings } from '@/lib/db/surplus';
+import { getPartnerById } from '@/lib/db/partners';
+import { listUsersByRole } from '@/lib/db/users';
+import { sendSurplusBroadcastEmail } from '@/lib/email/service';
 
 export async function GET(
   _: NextRequest,
@@ -84,6 +87,23 @@ export async function POST(
     claim_limit_per_user: payload.claimLimitPerUser,
     pickup_deadline: pickupDeadline,
   });
+
+  const [partner, beneficiaries] = await Promise.all([
+    getPartnerById(partnerId),
+    listUsersByRole('BENEFICIARY'),
+  ]);
+
+  await Promise.all(
+    beneficiaries.map((beneficiary) =>
+      sendSurplusBroadcastEmail(
+        beneficiary.email,
+        partner?.name || 'A partner',
+        listing.title,
+        listing.quantity_available,
+        new Date(listing.pickup_deadline).toLocaleString()
+      )
+    )
+  );
 
   return NextResponse.json({ listing }, { status: 201 });
 }

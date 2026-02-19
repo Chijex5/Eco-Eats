@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { createUser, findUserByEmail, listUsersByRole } from '@/lib/db/users';
 import { hashPassword } from '@/lib/auth/password';
+import { generateTemporaryPassword } from '@/lib/auth/otp';
+import { sendAdminInviteEmail } from '@/lib/email/service';
 
 function isValidEmail(email: string) {
   return /.+@.+\..+/.test(email);
@@ -38,9 +40,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const fullName = String(body.full_name || '').trim();
     const email = String(body.email || '').trim().toLowerCase();
-    const password = String(body.password || '');
-
-    if (!fullName || !email || !password) {
+    if (!fullName || !email) {
       return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
     }
 
@@ -48,22 +48,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid email address.' }, { status: 400 });
     }
 
-    if (password.length < 8) {
-      return NextResponse.json({ error: 'Password must be at least 8 characters.' }, { status: 400 });
-    }
-
     const existing = await findUserByEmail(email);
     if (existing) {
       return NextResponse.json({ error: 'Email already in use.' }, { status: 409 });
     }
 
-    const passwordHash = await hashPassword(password);
+    const tempPassword = generateTemporaryPassword();
+    const passwordHash = await hashPassword(tempPassword);
     const admin = await createUser({
       full_name: fullName,
       email,
       password_hash: passwordHash,
       role: 'ADMIN',
+      must_change_password: true,
     });
+
+    await sendAdminInviteEmail(admin.email, admin.full_name, tempPassword);
 
     return NextResponse.json(
       {

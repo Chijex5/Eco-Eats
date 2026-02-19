@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { createVoucher } from '@/lib/db/vouchers';
 import { getSupportRequestById, markRequestFulfilled } from '@/lib/db/requests';
+import { findUserById } from '@/lib/db/users';
+import { sendVoucherIssuedEmail } from '@/lib/email/service';
 
 type IssueVoucherPayload = {
   requestId: string;
@@ -59,6 +61,17 @@ export async function POST(request: Request) {
   });
 
   await markRequestFulfilled(supportRequest.id, session.userId);
+
+  const beneficiary = await findUserById(supportRequest.beneficiary_user_id);
+  if (beneficiary) {
+    await sendVoucherIssuedEmail(
+      beneficiary.email,
+      beneficiary.full_name,
+      (voucher.value_kobo / 100).toFixed(2),
+      voucher.code,
+      voucher.expires_at ? new Date(voucher.expires_at).toLocaleString() : 'No expiry'
+    );
+  }
 
   return NextResponse.json({ voucher });
 }
