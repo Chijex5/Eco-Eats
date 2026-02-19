@@ -93,7 +93,8 @@ export async function POST(
     listUsersByRole('BENEFICIARY'),
   ]);
 
-  await Promise.all(
+  // Fire-and-forget: do not await so the API responds immediately
+  Promise.allSettled(
     beneficiaries.map((beneficiary) =>
       sendSurplusBroadcastEmail(
         beneficiary.email,
@@ -103,7 +104,12 @@ export async function POST(
         new Date(listing.pickup_deadline).toLocaleString()
       )
     )
-  );
+  ).then((results) => {
+    const failed = results.filter((r) => r.status === 'rejected');
+    if (failed.length > 0) {
+      console.error(`Surplus broadcast: ${failed.length} email(s) failed to send.`);
+    }
+  });
 
   return NextResponse.json({ listing }, { status: 201 });
 }
