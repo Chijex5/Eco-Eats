@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { getFoodPackClaimEligibility } from '@/lib/db/requests';
 import { claimSurplusListing } from '@/lib/db/surplus';
+import { findUserById } from '@/lib/db/users';
+import { sendSurplusClaimedEmail } from '@/lib/email/service';
 
 type ClaimPayload = {
   listingId?: string;
@@ -40,6 +42,17 @@ export async function POST(request: Request) {
     }
 
     const claim = await claimSurplusListing(listingId, session.userId);
+
+    const beneficiary = await findUserById(session.userId);
+    if (beneficiary) {
+      await sendSurplusClaimedEmail(
+        beneficiary.email,
+        beneficiary.full_name,
+        claim.title,
+        claim.pickup_code
+      );
+    }
+
     return NextResponse.json({ claim }, { status: 201 });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unable to claim this surplus listing.';

@@ -156,12 +156,12 @@ export default function LoginPage() {
                       Remember me
                     </label>
 
-                    <a
-                      href="#"
+                    <Link
+                      href="/auth/forgot-password"
                       className="font-semibold text-[var(--primary)] lg:text-[var(--secondary)] hover:text-[var(--primary-dark)]"
                     >
                       Forgot password?
-                    </a>
+                    </Link>
                   </div>
 
                   <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>

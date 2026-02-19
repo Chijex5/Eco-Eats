@@ -26,6 +26,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 });
     }
 
+    if (!user.is_email_verified) {
+      return NextResponse.json(
+        { error: 'Please verify your email with the OTP sent during signup.', needs_verification: true },
+        { status: 403 }
+      );
+    }
+
     const token = await signSessionToken({
       userId: user.id,
       role: user.role,

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { createDonation, getDonationsByDonor, getDonorDonationSummary } from '@/lib/db/donations';
+import { findUserById } from '@/lib/db/users';
+import { sendDonationReceiptEmail } from '@/lib/email/service';
 
 const DONATION_TYPES = new Set(['VOUCHER', 'FOOD_PACK', 'SURPLUS']);
 
@@ -58,6 +60,16 @@ export async function POST(request: Request) {
       donationType,
       mealCount: mealCount ? Math.round(mealCount) : undefined,
     });
+
+    const donor = await findUserById(session.userId);
+    if (donor) {
+      await sendDonationReceiptEmail(
+        donor.email,
+        donor.full_name,
+        (donation.amount_kobo / 100).toFixed(2),
+        donation.donation_type
+      );
+    }
 
     return NextResponse.json({ donation }, { status: 201 });
   } catch (error) {

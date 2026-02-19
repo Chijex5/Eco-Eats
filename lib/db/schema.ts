@@ -210,6 +210,25 @@ export async function createTables() {
       ) ENGINE=InnoDB;
     `);
 
+    // 12. Auth OTP codes
+    await query(`
+      CREATE TABLE IF NOT EXISTS auth_otp_codes (
+        id CHAR(36) PRIMARY KEY,
+        user_id CHAR(36) NOT NULL,
+        purpose VARCHAR(30) NOT NULL CHECK (purpose IN ('PASSWORD_RESET')),
+        otp_hash VARCHAR(128) NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
+        consumed_at TIMESTAMP NULL,
+        attempts INT DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB;
+    `);
+
+    await safeAlterTable(
+      'ALTER TABLE auth_otp_codes ADD COLUMN attempts INT DEFAULT 0 AFTER consumed_at;'
+    );
+
     // Create indexes for better query performance
     await safeCreateIndex('CREATE INDEX idx_users_email ON users(email);');
     await safeCreateIndex('CREATE INDEX idx_users_role ON users(role);');
@@ -221,6 +240,7 @@ export async function createTables() {
     await safeCreateIndex('CREATE INDEX idx_surplus_listings_status ON surplus_listings(status);');
     await safeCreateIndex('CREATE INDEX idx_impact_events_type ON impact_events(event_type);');
     await safeCreateIndex('CREATE INDEX idx_impact_events_created_at ON impact_events(created_at);');
+    await safeCreateIndex('CREATE INDEX idx_auth_otp_user_purpose ON auth_otp_codes(user_id, purpose);');
 
     console.log('✅ All database tables created successfully');
     return { success: true };
@@ -236,6 +256,7 @@ export async function createTables() {
 export async function dropTables() {
   try {
     await query('DROP TABLE IF EXISTS impact_events;');
+    await query('DROP TABLE IF EXISTS auth_otp_codes;');
     await query('DROP TABLE IF EXISTS surplus_claims;');
     await query('DROP TABLE IF EXISTS surplus_listings;');
     await query('DROP TABLE IF EXISTS voucher_redemptions;');

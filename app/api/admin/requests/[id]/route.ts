@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { updateRequestStatus } from '@/lib/db/requests';
+import { findUserById } from '@/lib/db/users';
+import { sendSupportRequestDecisionEmail } from '@/lib/email/service';
 
 const ALLOWED_STATUS = new Set(['APPROVED', 'DECLINED']);
 
@@ -33,6 +35,16 @@ export async function PATCH(
       status as 'APPROVED' | 'DECLINED',
       session.userId
     );
+
+    const beneficiary = await findUserById(updated.beneficiary_user_id);
+    if (beneficiary) {
+      await sendSupportRequestDecisionEmail(
+        beneficiary.email,
+        beneficiary.full_name,
+        status as 'APPROVED' | 'DECLINED',
+        updated.request_type
+      );
+    }
 
     return NextResponse.json({ request: updated }, { status: 200 });
   } catch (error) {

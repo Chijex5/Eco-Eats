@@ -22,3 +22,4 @@ export * from './admin-dashboard';
 export * from './partners';
 export * from './history';
 export * from './surplus';
+export * from './auth-otp';

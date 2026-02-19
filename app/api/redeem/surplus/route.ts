@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { getPartnerIdForUser } from '@/lib/db/redemptions';
 import { redeemSurplusPickup } from '@/lib/db/surplus';
+import { findUserById } from '@/lib/db/users';
+import { sendSurplusPickedUpEmail } from '@/lib/email/service';
 
 export async function POST(request: Request) {
   const session = await getSessionFromCookies();
@@ -28,8 +30,15 @@ export async function POST(request: Request) {
 
   try {
     const claim = await redeemSurplusPickup(pickupCode, partnerId, session.userId);
+
+    const beneficiary = await findUserById(claim.beneficiary_user_id);
+    if (beneficiary) {
+      await sendSurplusPickedUpEmail(beneficiary.email, beneficiary.full_name, claim.pickup_code);
+    }
+
     return NextResponse.json({ success: true, claim });
-  } catch (error: any) {
-    return NextResponse.json({ error: error?.message ?? 'Unable to confirm pickup' }, { status: 400 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unable to confirm pickup';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }

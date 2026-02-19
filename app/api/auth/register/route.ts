@@ -2,9 +2,12 @@ import { NextResponse } from 'next/server';
 import { createUser, findUserByEmail } from '@/lib/db/users';
 import { createPartner } from '@/lib/db/partners';
 import { hashPassword } from '@/lib/auth/password';
-import { applySessionCookie } from '@/lib/auth/cookies';
-import { normalizeRole, roleHomePath } from '@/lib/auth/roles';
-import { signSessionToken } from '@/lib/auth/jwt';
+import { normalizeRole } from '@/lib/auth/roles';
+import { createOtp, invalidateOtps } from '@/lib/db/auth-otp';
+import { generateOtpCode, hashOtp } from '@/lib/auth/otp';
+import { sendSignupOtpEmail } from '@/lib/email/service';
+
+const OTP_TTL_MINUTES = 10;
 
 function isValidEmail(email: string) {
   return /.+@.+\..+/.test(email);
@@ -40,8 +43,21 @@ export async function POST(request: Request) {
     }
 
     const existing = await findUserByEmail(email);
-    if (existing) {
+    if (existing && existing.is_email_verified) {
       return NextResponse.json({ error: 'Email already in use.' }, { status: 409 });
+    }
+
+    if (existing && !existing.is_email_verified) {
+      await invalidateOtps(existing.id, 'PASSWORD_RESET');
+      const otp = generateOtpCode();
+      const expiresAt = new Date(Date.now() + OTP_TTL_MINUTES * 60 * 1000);
+      await createOtp({ userId: existing.id, purpose: 'PASSWORD_RESET', otpHash: hashOtp(otp), expiresAt });
+      await sendSignupOtpEmail(existing.email, existing.full_name, otp);
+      return NextResponse.json({
+        message: 'A verification code was sent to your email.',
+        requires_verification: true,
+        email: existing.email,
+      });
     }
 
     const passwordHash = await hashPassword(password);
@@ -60,24 +76,16 @@ export async function POST(request: Request) {
       });
     }
 
-    const token = await signSessionToken({
-      userId: user.id,
-      role: user.role,
-      email: user.email,
-      name: user.full_name,
-    });
+    const otp = generateOtpCode();
+    const expiresAt = new Date(Date.now() + OTP_TTL_MINUTES * 60 * 1000);
+    await createOtp({ userId: user.id, purpose: 'PASSWORD_RESET', otpHash: hashOtp(otp), expiresAt });
+    await sendSignupOtpEmail(user.email, user.full_name, otp);
 
-    const response = NextResponse.json({
-      user: {
-        id: user.id,
-        full_name: user.full_name,
-        email: user.email,
-        role: user.role,
-      },
-      redirect: roleHomePath(user.role),
+    return NextResponse.json({
+      message: 'Account created. Enter the OTP sent to your email to complete signup.',
+      requires_verification: true,
+      email: user.email,
     });
-    applySessionCookie(response, token);
-    return response;
   } catch (error: unknown) {
     if (error && typeof error === 'object' && "code" in error && error.code === 'ER_DUP_ENTRY') {
       return NextResponse.json({ error: 'Email already in use.' }, { status: 409 });
