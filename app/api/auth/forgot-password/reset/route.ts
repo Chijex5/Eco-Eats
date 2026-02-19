@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { findUserByEmail, updateUserPassword } from '@/lib/db/users';
 import { hashPassword } from '@/lib/auth/password';
-import { getLatestActiveOtp, consumeOtp } from '@/lib/db/auth-otp';
+import { getLatestActiveOtp, consumeOtp, incrementOtpAttempts } from '@/lib/db/auth-otp';
 import { hashOtp } from '@/lib/auth/otp';
+
+const MAX_OTP_ATTEMPTS = 5;
 
 export async function POST(request: Request) {
   try {
@@ -33,8 +35,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'OTP has expired.' }, { status: 400 });
     }
 
+    if (record.attempts >= MAX_OTP_ATTEMPTS) {
+      return NextResponse.json({ error: 'Too many failed attempts. Please request a new OTP.' }, { status: 429 });
+    }
+
     if (hashOtp(otp) !== record.otp_hash) {
-      return NextResponse.json({ error: 'Invalid OTP.' }, { status: 400 });
+      const attempts = await incrementOtpAttempts(record.id);
+      const remaining = MAX_OTP_ATTEMPTS - attempts;
+      if (remaining <= 0) {
+        return NextResponse.json({ error: 'Too many failed attempts. Please request a new OTP.' }, { status: 429 });
+      }
+      return NextResponse.json({ error: `Invalid OTP. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.` }, { status: 400 });
     }
 
     const passwordHash = await hashPassword(newPassword);

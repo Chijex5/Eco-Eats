@@ -219,10 +219,15 @@ export async function createTables() {
         otp_hash VARCHAR(128) NOT NULL,
         expires_at TIMESTAMP NOT NULL,
         consumed_at TIMESTAMP NULL,
+        attempts INT DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       ) ENGINE=InnoDB;
     `);
+
+    await safeAlterTable(
+      'ALTER TABLE auth_otp_codes ADD COLUMN attempts INT DEFAULT 0 AFTER consumed_at;'
+    );
 
     // Create indexes for better query performance
     await safeCreateIndex('CREATE INDEX idx_users_email ON users(email);');
