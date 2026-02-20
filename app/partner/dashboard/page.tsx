@@ -74,11 +74,13 @@ export default function PartnerDashboard() {
           throw new Error(payload.error || 'Unable to load partner profile.');
         }
         const data = await response.json();
+        console.log('Loaded partner data:', data);
         setPartner(data.partner);
         setStats(data.stats);
         setRedemptions(data.recentRedemptions || []);
         setPickups(data.recentPickups || []);
       } catch (err) {
+        console.error('Error loading partner data:', err);
         setError(err instanceof Error ? err.message : 'Unable to load partner profile.');
       } finally {
         setIsLoading(false);

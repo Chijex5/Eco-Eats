@@ -36,11 +36,21 @@ export async function GET() {
 
   const partnerId = await getPartnerIdForUser(session.userId);
   if (!partnerId) {
+    console.warn('Partner GET: partner profile lookup failed.', {
+      userId: session.userId,
+      role: session.role,
+      reason: 'No partner_id found in partner_staff or food_partners.owner_user_id',
+    });
     return NextResponse.json({ error: 'Partner profile not found' }, { status: 404 });
   }
 
   const partner = await getPartnerById(partnerId);
   if (!partner) {
+    console.warn('Partner GET: partner_id resolved but row missing from food_partners.', {
+      userId: session.userId,
+      role: session.role,
+      partnerId,
+    });
     return NextResponse.json({ error: 'Partner profile not found' }, { status: 404 });
   }
 
