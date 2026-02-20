@@ -1,12 +1,7 @@
-const brand = {
+const palette = {
+  background: '#F5F7FA',
+  foreground: '#0F172A',
   primary: '#0B6E4F',
-  primarySoft: '#EAF8F1',
-  ink: '#102A43',
-  body: '#334E68',
-  muted: '#627D98',
-  border: '#D9E2EC',
-  panel: '#F8FAFC',
-  canvas: '#F2F5F8',
 };
 
 type ShellOptions = {
@@ -20,27 +15,27 @@ type ShellOptions = {
 
 function shell({ preheader, eyebrow, heading, intro, body, callout }: ShellOptions) {
   return `
-  <div style="margin:0;padding:0;background:${brand.canvas};font-family:Inter,Segoe UI,Arial,sans-serif;color:${brand.ink};">
+  <div style="margin:0;padding:0;background:${palette.background};font-family:Inter,Segoe UI,Arial,sans-serif;color:${palette.foreground};">
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preheader}</div>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:44px 16px;background:${brand.canvas};">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:48px 16px;background:${palette.background};">
       <tr>
         <td align="center">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px;background:#FFFFFF;border:1px solid ${brand.border};border-radius:22px;overflow:hidden;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px;background:${palette.background};">
             <tr>
-              <td style="padding:36px 38px 30px;background:linear-gradient(180deg, #FFFFFF 0%, #FBFDFC 100%);border-bottom:1px solid ${brand.border};">
-                <p style="margin:0 0 16px;font-size:12px;line-height:1;letter-spacing:0.12em;text-transform:uppercase;color:${brand.primary};font-weight:700;">${eyebrow}</p>
-                <h1 style="margin:0;font-size:34px;line-height:1.2;font-weight:700;color:${brand.ink};">${heading}</h1>
-                ${intro ? `<p style="margin:18px 0 0;font-size:17px;line-height:1.9;color:${brand.body};">${intro}</p>` : ''}
+              <td style="padding:0 10px 30px;">
+                <p style="margin:0 0 14px;font-size:12px;line-height:1;letter-spacing:0.12em;text-transform:uppercase;color:${palette.foreground};font-weight:600;opacity:0.7;">${eyebrow}</p>
+                <h1 style="margin:0;font-size:36px;line-height:1.2;font-weight:700;color:${palette.foreground};">${heading}</h1>
+                ${intro ? `<p style="margin:18px 0 0;font-size:18px;line-height:1.9;color:${palette.foreground};opacity:0.86;">${intro}</p>` : ''}
               </td>
             </tr>
             <tr>
-              <td style="padding:34px 38px 38px;font-size:16px;line-height:1.8;color:${brand.body};">
+              <td style="padding:0 10px;font-size:17px;line-height:1.95;color:${palette.foreground};opacity:0.9;">
                 ${body}
               </td>
             </tr>
-            ${callout ? `<tr><td style="padding:0 38px 32px;"><div style="padding:16px 18px;border:1px solid ${brand.border};border-radius:12px;background:${brand.panel};font-size:14px;line-height:1.7;color:${brand.muted};">${callout}</div></td></tr>` : ''}
+            ${callout ? `<tr><td style="padding:28px 10px 0;"><p style="margin:0;padding-left:14px;border-left:3px solid ${palette.primary};font-size:15px;line-height:1.8;color:${palette.foreground};opacity:0.78;">${callout}</p></td></tr>` : ''}
             <tr>
-              <td style="padding:0 38px 36px;font-size:13px;line-height:1.8;color:${brand.muted};">
+              <td style="padding:34px 10px 0;font-size:13px;line-height:1.8;color:${palette.foreground};opacity:0.6;">
                 You are receiving this email because of activity on your EcoEats account.
               </td>
             </tr>
@@ -55,20 +50,20 @@ function detailRows(lines: string[]) {
   return lines
     .map(
       (line, index) =>
-        `<tr><td style="padding:${index === 0 ? '0 0 18px' : '18px 0'};font-size:16px;line-height:1.7;color:${brand.body};border-bottom:${index === lines.length - 1 ? 'none' : `1px solid ${brand.border}`};">${line}</td></tr>`
+        `<tr><td style="padding:${index === 0 ? '0 0 18px' : '18px 0'};font-size:16px;line-height:1.8;color:${palette.foreground};opacity:0.88;border-bottom:${index === lines.length - 1 ? 'none' : `1px solid ${palette.foreground}22`};">${line}</td></tr>`
     )
     .join('');
 }
 
 function detailsPanel(lines: string[]) {
-  return `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:24px 0 0;padding:0 24px;background:${brand.panel};border:1px solid ${brand.border};border-radius:14px;">${detailRows(lines)}</table>`;
+  return `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:28px 0 0;padding:0 22px;background:transparent;border-top:1px solid ${palette.foreground}2E;border-bottom:1px solid ${palette.foreground}2E;">${detailRows(lines)}</table>`;
 }
 
 function noticeTemplate(title: string, intro: string, lines: string[], footer?: string) {
   const body = `
-    <p style="margin:0;font-size:17px;line-height:1.9;color:${brand.body};">${intro}</p>
+    <p style="margin:0;font-size:17px;line-height:1.95;color:${palette.foreground};opacity:0.88;">${intro}</p>
     ${detailsPanel(lines)}
-    ${footer ? `<p style="margin:24px 0 0;font-size:16px;line-height:1.8;color:${brand.muted};">${footer}</p>` : ''}
+    ${footer ? `<p style="margin:26px 0 0;font-size:16px;line-height:1.85;color:${palette.foreground};opacity:0.72;">${footer}</p>` : ''}
   `;
 
   return shell({
@@ -81,9 +76,9 @@ function noticeTemplate(title: string, intro: string, lines: string[], footer?: 
 
 function otpBlock(label: string, otp: string) {
   return `
-    <div style="margin:30px 0;padding:30px 24px;border-radius:16px;border:1px solid ${brand.primary};background:${brand.primarySoft};text-align:center;">
-      <p style="margin:0 0 14px;font-size:12px;line-height:1;letter-spacing:0.1em;text-transform:uppercase;color:${brand.muted};font-weight:700;">${label}</p>
-      <p style="margin:0;font-size:48px;line-height:1.05;letter-spacing:12px;color:${brand.primary};font-weight:800;">${otp}</p>
+    <div style="margin:34px 0;padding:34px 20px;border:1px solid ${palette.primary};text-align:center;">
+      <p style="margin:0 0 14px;font-size:12px;line-height:1;letter-spacing:0.1em;text-transform:uppercase;color:${palette.foreground};opacity:0.65;font-weight:700;">${label}</p>
+      <p style="margin:0;font-size:52px;line-height:1.05;letter-spacing:12px;color:${palette.primary};font-weight:800;">${otp}</p>
     </div>
   `;
 }
@@ -97,9 +92,9 @@ export function signupOtpTemplate(name: string, otp: string) {
       heading: 'Confirm your email address',
       intro: `Hi ${name}, welcome to EcoEats.`,
       body: `
-        <p style="margin:0;font-size:17px;line-height:1.9;color:${brand.body};">Use the code below to verify your email and finish creating your account.</p>
+        <p style="margin:0;font-size:17px;line-height:1.95;color:${palette.foreground};opacity:0.88;">Use the code below to verify your email and finish creating your account.</p>
         ${otpBlock('Verification code', otp)}
-        <p style="margin:0;font-size:16px;line-height:1.8;color:${brand.body};">This code expires in <strong>10 minutes</strong> and works once.</p>
+        <p style="margin:0;font-size:16px;line-height:1.85;color:${palette.foreground};opacity:0.82;">This code expires in <strong>10 minutes</strong> and works once.</p>
       `,
       callout: 'If you did not create an EcoEats account, you can ignore this message.',
     }),
@@ -115,9 +110,9 @@ export function passwordResetOtpTemplate(name: string, otp: string) {
       heading: 'Reset your password',
       intro: `Hi ${name}, we received a request to reset your EcoEats password.`,
       body: `
-        <p style="margin:0;font-size:17px;line-height:1.9;color:${brand.body};">Enter this code in the app to continue securely.</p>
+        <p style="margin:0;font-size:17px;line-height:1.95;color:${palette.foreground};opacity:0.88;">Enter this code in the app to continue securely.</p>
         ${otpBlock('Password reset code', otp)}
-        <p style="margin:0;font-size:16px;line-height:1.8;color:${brand.body};">This code expires in <strong>10 minutes</strong> and works once.</p>
+        <p style="margin:0;font-size:16px;line-height:1.85;color:${palette.foreground};opacity:0.82;">This code expires in <strong>10 minutes</strong> and works once.</p>
       `,
       callout: 'If you did not request a password reset, please ignore this email. Your account is still secure.',
     }),
@@ -133,7 +128,7 @@ export function adminInviteTemplate(name: string, email: string, tempPassword: s
       heading: 'Your admin access is ready',
       intro: `Hi ${name}, an EcoEats admin account has been created for you.`,
       body: `
-        <p style="margin:0;font-size:17px;line-height:1.9;color:${brand.body};">Use the credentials below to sign in and update your password immediately.</p>
+        <p style="margin:0;font-size:17px;line-height:1.95;color:${palette.foreground};opacity:0.88;">Use the credentials below to sign in and update your password immediately.</p>
         ${detailsPanel([`<strong>Email:</strong> ${email}`, `<strong>Temporary password:</strong> ${tempPassword}`, '<strong>Login:</strong> https://ecoeatsng.com/auth/login'])}
       `,
       callout: 'For security, share these details only through approved internal channels.',
