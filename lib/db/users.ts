@@ -6,6 +6,13 @@
 import { query } from './connection';
 import { generateId } from './ids';
 
+function isMissingMustChangePasswordColumn(error: unknown) {
+  return (
+    (error as { code?: string })?.code === 'ER_BAD_FIELD_ERROR' &&
+    String((error as { sqlMessage?: string })?.sqlMessage ?? '').includes('must_change_password')
+  );
+}
+
 export interface User {
   id: string;
   full_name: string;
@@ -33,19 +40,38 @@ export async function createUser(data: {
   must_change_password?: boolean;
 }) {
   const id = generateId();
-  await query(
-    `INSERT INTO users (id, full_name, email, password_hash, role, must_change_password, phone)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [
-      id,
-      data.full_name,
-      data.email,
-      data.password_hash,
-      data.role,
-      data.must_change_password ?? false,
-      data.phone ?? null,
-    ]
-  );
+  try {
+    await query(
+      `INSERT INTO users (id, full_name, email, password_hash, role, must_change_password, phone)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        data.full_name,
+        data.email,
+        data.password_hash,
+        data.role,
+        data.must_change_password ?? false,
+        data.phone ?? null,
+      ]
+    );
+  } catch (error) {
+    if (!isMissingMustChangePasswordColumn(error)) {
+      throw error;
+    }
+
+    await query(
+      `INSERT INTO users (id, full_name, email, password_hash, role, phone)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        data.full_name,
+        data.email,
+        data.password_hash,
+        data.role,
+        data.phone ?? null,
+      ]
+    );
+  }
   const result = await query('SELECT * FROM users WHERE id = ?', [id]);
   return result.rows[0] as User;
 }
@@ -130,14 +156,28 @@ export async function updateUser(userId: string, data: Partial<User>) {
 }
 
 export async function updateUserPassword(userId: string, passwordHash: string, clearMustChangePassword = true) {
-  await query(
-    `UPDATE users
-     SET password_hash = ?,
-         must_change_password = ?,
-         updated_at = NOW()
-     WHERE id = ?`,
-    [passwordHash, clearMustChangePassword ? false : true, userId]
-  );
+  try {
+    await query(
+      `UPDATE users
+       SET password_hash = ?,
+           must_change_password = ?,
+           updated_at = NOW()
+       WHERE id = ?`,
+      [passwordHash, clearMustChangePassword ? false : true, userId]
+    );
+  } catch (error) {
+    if (!isMissingMustChangePasswordColumn(error)) {
+      throw error;
+    }
+
+    await query(
+      `UPDATE users
+       SET password_hash = ?,
+           updated_at = NOW()
+       WHERE id = ?`,
+      [passwordHash, userId]
+    );
+  }
 
   const result = await query('SELECT * FROM users WHERE id = ?', [userId]);
   return result.rows[0] as User;
