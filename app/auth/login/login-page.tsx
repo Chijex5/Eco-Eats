@@ -10,7 +10,12 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState<string>('');
+  const [formSuccess, setFormSuccess] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isResendingOtp, setIsResendingOtp] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const accessError = searchParams.get('error');
@@ -20,6 +25,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setFormError('');
+    setFormSuccess('');
 
     if (!email || !password) {
       setFormError('Please enter your email and password.');
@@ -36,6 +42,12 @@ export default function LoginPage() {
 
       const data = await response.json().catch(() => null);
       if (!response.ok) {
+        if (data?.needs_verification) {
+          setVerificationEmail(String(data?.email || email).toLowerCase());
+          setOtp('');
+          setFormSuccess(data?.error || 'Use the OTP sent to your email to verify your account.');
+          return;
+        }
         setFormError(data?.error || 'Unable to sign in.');
         return;
       }
@@ -48,6 +60,72 @@ export default function LoginPage() {
       setFormError('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleOtpVerification = async (e: FormEvent) => {
+    e.preventDefault();
+    setFormError('');
+    setFormSuccess('');
+
+    if (!verificationEmail || otp.trim().length !== 6) {
+      setFormError('Enter the 6-digit OTP sent to your email.');
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    try {
+      const response = await fetch('/api/auth/register/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: verificationEmail, otp: otp.trim() }),
+      });
+
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        setFormError(data?.error || 'Unable to verify OTP.');
+        return;
+      }
+
+      setFormSuccess('Email verified. Redirecting…');
+      router.push(data?.redirect || '/');
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      setFormError('Something went wrong. Please try again.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setFormError('');
+    setFormSuccess('');
+
+    if (!verificationEmail) {
+      setFormError('Enter your email and password first.');
+      return;
+    }
+
+    setIsResendingOtp(true);
+    try {
+      const response = await fetch('/api/auth/register/resend-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: verificationEmail }),
+      });
+
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        setFormError(data?.error || 'Unable to resend OTP.');
+        return;
+      }
+      setFormSuccess(data?.message || 'A new OTP was sent.');
+    } catch (error) {
+      console.error(error);
+      setFormError('Something went wrong. Please try again.');
+    } finally {
+      setIsResendingOtp(false);
     }
   };
 
@@ -167,6 +245,44 @@ export default function LoginPage() {
                   <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? 'Signing in…' : 'Sign In'}
                   </Button>
+
+                  {verificationEmail && (
+                    <div className="rounded-2xl border border-[var(--border)] p-4 space-y-3">
+                      <p className="text-sm text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-80">
+                        Verify <span className="font-semibold">{verificationEmail}</span> to continue.
+                      </p>
+                      <form className="space-y-3" onSubmit={handleOtpVerification}>
+                        <input
+                          id="login-otp"
+                          name="login-otp"
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]{6}"
+                          maxLength={6}
+                          required
+                          value={otp}
+                          onChange={(event) => setOtp(event.target.value.replace(/\D/g, ''))}
+                          className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base tracking-[0.35em] text-center font-semibold text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
+                          placeholder="000000"
+                        />
+                        <Button type="submit" size="lg" className="w-full" disabled={isVerifyingOtp}>
+                          {isVerifyingOtp ? 'Verifying…' : 'Verify email'}
+                        </Button>
+                      </form>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="lg"
+                        className="w-full"
+                        onClick={handleResendOtp}
+                        disabled={isResendingOtp}
+                      >
+                        {isResendingOtp ? 'Resending…' : 'Resend OTP'}
+                      </Button>
+                    </div>
+                  )}
+
+                  {formSuccess && <p className="text-sm text-emerald-600">{formSuccess}</p>}
                   {formError && <p className="text-sm text-red-500">{formError}</p>}
                 </form>
 
