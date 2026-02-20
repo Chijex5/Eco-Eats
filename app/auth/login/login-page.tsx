@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [otp, setOtp] = useState('');
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [isResendingOtp, setIsResendingOtp] = useState(false);
+  const [verificationNotice, setVerificationNotice] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
   const accessError = searchParams.get('error');
@@ -43,9 +44,11 @@ export default function LoginPage() {
       const data = await response.json().catch(() => null);
       if (!response.ok) {
         if (data?.needs_verification) {
+          setFormError('');
+          setFormSuccess('');
           setVerificationEmail(String(data?.email || email).toLowerCase());
           setOtp('');
-          setFormSuccess(data?.error || 'Use the OTP sent to your email to verify your account.');
+          setVerificationNotice(data?.error || 'Use the OTP sent to your email to verify your account.');
           return;
         }
         setFormError(data?.error || 'Unable to sign in.');
@@ -88,6 +91,8 @@ export default function LoginPage() {
       }
 
       setFormSuccess('Email verified. Redirecting…');
+      setVerificationEmail('');
+      setVerificationNotice('');
       router.push(data?.redirect || '/');
       router.refresh();
     } catch (error) {
@@ -101,6 +106,7 @@ export default function LoginPage() {
   const handleResendOtp = async () => {
     setFormError('');
     setFormSuccess('');
+    setVerificationNotice('');
 
     if (!verificationEmail) {
       setFormError('Enter your email and password first.');
@@ -246,42 +252,6 @@ export default function LoginPage() {
                     {isSubmitting ? 'Signing in…' : 'Sign In'}
                   </Button>
 
-                  {verificationEmail && (
-                    <div className="rounded-2xl border border-[var(--border)] p-4 space-y-3">
-                      <p className="text-sm text-[var(--muted-foreground)] lg:text-[var(--surface)] lg:opacity-80">
-                        Verify <span className="font-semibold">{verificationEmail}</span> to continue.
-                      </p>
-                      <form className="space-y-3" onSubmit={handleOtpVerification}>
-                        <input
-                          id="login-otp"
-                          name="login-otp"
-                          type="text"
-                          inputMode="numeric"
-                          pattern="[0-9]{6}"
-                          maxLength={6}
-                          required
-                          value={otp}
-                          onChange={(event) => setOtp(event.target.value.replace(/\D/g, ''))}
-                          className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base tracking-[0.35em] text-center font-semibold text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
-                          placeholder="000000"
-                        />
-                        <Button type="submit" size="lg" className="w-full" disabled={isVerifyingOtp}>
-                          {isVerifyingOtp ? 'Verifying…' : 'Verify email'}
-                        </Button>
-                      </form>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="lg"
-                        className="w-full"
-                        onClick={handleResendOtp}
-                        disabled={isResendingOtp}
-                      >
-                        {isResendingOtp ? 'Resending…' : 'Resend OTP'}
-                      </Button>
-                    </div>
-                  )}
-
                   {formSuccess && <p className="text-sm text-emerald-600">{formSuccess}</p>}
                   {formError && <p className="text-sm text-red-500">{formError}</p>}
                 </form>
@@ -309,6 +279,69 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {verificationEmail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <Card className="w-full max-w-md shadow-[var(--shadow)] bg-[var(--surface)]">
+            <CardContent className="pt-6 space-y-4">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-lg font-semibold text-[var(--foreground)]">Verify your email</h2>
+                  <p className="text-sm text-[var(--muted-foreground)] mt-1">
+                    Enter the code sent to <span className="font-semibold">{verificationEmail}</span>.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  aria-label="Close verification modal"
+                  className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                  onClick={() => {
+                    setVerificationEmail('');
+                    setOtp('');
+                    setVerificationNotice('');
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {verificationNotice && <p className="text-sm text-emerald-600">{verificationNotice}</p>}
+              {formSuccess && <p className="text-sm text-emerald-600">{formSuccess}</p>}
+
+              <form className="space-y-3" onSubmit={handleOtpVerification}>
+                <input
+                  id="login-otp"
+                  name="login-otp"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
+                  required
+                  value={otp}
+                  onChange={(event) => setOtp(event.target.value.replace(/\D/g, ''))}
+                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base tracking-[0.35em] text-center font-semibold text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none"
+                  placeholder="000000"
+                />
+                <Button type="submit" size="lg" className="w-full" disabled={isVerifyingOtp}>
+                  {isVerifyingOtp ? 'Verifying…' : 'Verify email'}
+                </Button>
+              </form>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className="w-full"
+                onClick={handleResendOtp}
+                disabled={isResendingOtp}
+              >
+                {isResendingOtp ? 'Resending…' : 'Resend OTP'}
+              </Button>
+              {formError && <p className="text-sm text-red-500">{formError}</p>}
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
