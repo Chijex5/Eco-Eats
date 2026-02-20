@@ -1,17 +1,25 @@
 function shell(content: string, preheader: string) {
   return `
-  <div style="margin:0;padding:0;background:#F6F8FB;font-family:Inter,Arial,sans-serif;color:#102A43;">
+  <div style="margin:0;padding:0;background:#EEF2F6;font-family:Inter,Arial,sans-serif;color:#102A43;">
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preheader}</div>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:24px 0;background:#F6F8FB;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:40px 16px;background:#EEF2F6;">
       <tr>
         <td align="center">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#FFFFFF;border:1px solid #D9E2EC;border-radius:12px;overflow:hidden;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#FFFFFF;border:1px solid #D9E2EC;border-radius:18px;overflow:hidden;">
             <tr>
-              <td style="background:#0B6E4F;padding:20px 24px;color:#FFFFFF;font-size:18px;font-weight:700;">EcoEats</td>
+              <td style="background:#0B6E4F;padding:28px 32px;color:#FFFFFF;">
+                <p style="margin:0;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;opacity:0.9;">EcoEats</p>
+                <p style="margin:8px 0 0;font-size:24px;line-height:1.2;font-weight:700;">Updates from your EcoEats account</p>
+              </td>
             </tr>
             <tr>
-              <td style="padding:24px;line-height:1.6;font-size:15px;">
+              <td style="padding:36px 32px;line-height:1.75;font-size:16px;">
                 ${content}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 32px 32px;font-size:13px;line-height:1.7;color:#627D98;">
+                Need help? Reply to this email and our team will assist you.
               </td>
             </tr>
           </table>
@@ -23,14 +31,19 @@ function shell(content: string, preheader: string) {
 
 function noticeTemplate(title: string, intro: string, lines: string[], footer?: string) {
   const details = lines
-    .map((line) => `<li style="margin:0 0 8px;">${line}</li>`)
+    .map(
+      (line) =>
+        `<li style="margin:0 0 12px;padding:0 0 12px;border-bottom:1px solid #E4E7EB;font-size:15px;line-height:1.6;color:#334E68;">${line}</li>`
+    )
     .join('');
 
   return shell(
-    `<h2 style="margin:0 0 10px;font-size:20px;line-height:1.3;color:#102A43;">${title}</h2>
-     <p style="margin:0 0 14px;">${intro}</p>
-     <ul style="margin:0 0 14px 18px;padding:0;">${details}</ul>
-     ${footer ? `<p style="margin:0;color:#627D98;">${footer}</p>` : ''}`,
+    `<h2 style="margin:0 0 14px;font-size:30px;line-height:1.2;color:#102A43;">${title}</h2>
+     <p style="margin:0 0 24px;font-size:17px;line-height:1.8;color:#334E68;">${intro}</p>
+     <div style="margin:0 0 24px;padding:22px 24px;border:1px solid #D9E2EC;border-radius:14px;background:#F8FAFC;">
+       <ul style="margin:0;padding:0;list-style:none;">${details}</ul>
+     </div>
+     ${footer ? `<p style="margin:0;font-size:15px;line-height:1.8;color:#627D98;">${footer}</p>` : ''}`,
     title
   );
 }
@@ -40,11 +53,14 @@ export function signupOtpTemplate(name: string, otp: string) {
   return {
     subject: 'Verify your EcoEats account',
     html: shell(
-      `<p style="margin:0 0 12px;">Hi ${name},</p>
-       <p style="margin:0 0 16px;">Welcome to EcoEats. Use this one-time code to verify your email and complete signup.</p>
-       <div style="margin:0 0 16px;padding:14px 16px;background:#F0FDF4;border:1px solid #0B6E4F;border-radius:10px;font-size:28px;letter-spacing:6px;font-weight:700;text-align:center;color:#0B6E4F;">${otp}</div>
-       <p style="margin:0 0 10px;">This code expires in 10 minutes and can be used once.</p>
-       <p style="margin:0;color:#627D98;">If you did not create this account, you can ignore this email.</p>`,
+      `<p style="margin:0 0 16px;font-size:18px;">Hi ${name},</p>
+       <p style="margin:0 0 26px;font-size:17px;color:#334E68;">Welcome to EcoEats. Enter this one-time code to verify your email and complete your signup.</p>
+       <div style="margin:0 0 26px;padding:24px 20px;background:#F0FDF4;border:1px solid #0B6E4F;border-radius:14px;text-align:center;">
+         <p style="margin:0 0 10px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#486581;">Verification code</p>
+         <p style="margin:0;font-size:42px;line-height:1.1;letter-spacing:10px;font-weight:700;color:#0B6E4F;">${otp}</p>
+       </div>
+       <p style="margin:0 0 10px;font-size:15px;color:#486581;">This code expires in <strong>10 minutes</strong> and can only be used once.</p>
+       <p style="margin:0;font-size:15px;color:#627D98;">If you did not create an EcoEats account, you can safely ignore this email.</p>`,
       `Your EcoEats signup verification code is ${otp}`
     ),
   };
@@ -54,11 +70,14 @@ export function passwordResetOtpTemplate(name: string, otp: string) {
   return {
     subject: 'Your EcoEats password reset code',
     html: shell(
-      `<p style="margin:0 0 12px;">Hi ${name},</p>
-       <p style="margin:0 0 16px;">Use the code below to reset your EcoEats password.</p>
-       <div style="margin:0 0 16px;padding:14px 16px;background:#F0FDF4;border:1px solid #0B6E4F;border-radius:10px;font-size:28px;letter-spacing:6px;font-weight:700;text-align:center;color:#0B6E4F;">${otp}</div>
-       <p style="margin:0 0 10px;">This code expires in 10 minutes and can be used once.</p>
-       <p style="margin:0;color:#627D98;">If you did not request this change, you can ignore this message.</p>`,
+      `<p style="margin:0 0 16px;font-size:18px;">Hi ${name},</p>
+       <p style="margin:0 0 26px;font-size:17px;color:#334E68;">Use the code below to reset your EcoEats password.</p>
+       <div style="margin:0 0 26px;padding:24px 20px;background:#F0FDF4;border:1px solid #0B6E4F;border-radius:14px;text-align:center;">
+         <p style="margin:0 0 10px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#486581;">Password reset code</p>
+         <p style="margin:0;font-size:42px;line-height:1.1;letter-spacing:10px;font-weight:700;color:#0B6E4F;">${otp}</p>
+       </div>
+       <p style="margin:0 0 10px;font-size:15px;color:#486581;">This code expires in <strong>10 minutes</strong> and can only be used once.</p>
+       <p style="margin:0;font-size:15px;color:#627D98;">If you did not request this change, you can ignore this message.</p>`,
       `Your EcoEats reset code is ${otp}`
     ),
   };
@@ -68,14 +87,14 @@ export function adminInviteTemplate(name: string, email: string, tempPassword: s
   return {
     subject: 'You have been invited as an EcoEats admin',
     html: shell(
-      `<p style="margin:0 0 12px;">Hi ${name},</p>
-       <p style="margin:0 0 16px;">An EcoEats account has been created for you with admin access.</p>
-       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 16px;border:1px solid #D9E2EC;border-radius:10px;">
-         <tr><td style="padding:12px 14px;border-bottom:1px solid #D9E2EC;"><strong>Email:</strong> ${email}</td></tr>
-         <tr><td style="padding:12px 14px;"><strong>Temporary password:</strong> ${tempPassword}</td></tr>
+      `<p style="margin:0 0 16px;font-size:18px;">Hi ${name},</p>
+       <p style="margin:0 0 24px;font-size:17px;color:#334E68;">An EcoEats account has been created for you with admin access.</p>
+       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 20px;border:1px solid #D9E2EC;border-radius:14px;background:#F8FAFC;overflow:hidden;">
+         <tr><td style="padding:16px 18px;border-bottom:1px solid #D9E2EC;font-size:15px;"><strong>Email:</strong> ${email}</td></tr>
+         <tr><td style="padding:16px 18px;font-size:15px;"><strong>Temporary password:</strong> ${tempPassword}</td></tr>
        </table>
-       <p style="margin:0 0 10px;">Sign in and change your password immediately.</p>
-       <p style="margin:0;color:#627D98;">Login URL: https://ecoeatsng.com/auth/login</p>`,
+       <p style="margin:0 0 10px;font-size:15px;color:#486581;">Sign in and change your password immediately.</p>
+       <p style="margin:0;font-size:15px;color:#627D98;">Login URL: https://ecoeatsng.com/auth/login</p>`,
       'Your EcoEats admin invitation details'
     ),
   };
