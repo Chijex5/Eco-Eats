@@ -27,6 +27,7 @@ export interface User {
 }
 
 export type PublicUser = Pick<User, 'id' | 'full_name' | 'email' | 'role' | 'is_email_verified' | 'created_at' | 'updated_at'>;
+export type UserRoleCount = Pick<User, 'role'> & { total: number };
 
 /**
  * Create a new user
@@ -110,6 +111,35 @@ export async function listUsersByRole(role: User['role']) {
     [role]
   );
   return result.rows as PublicUser[];
+}
+
+/**
+ * List all users for admin reporting
+ */
+export async function listUsersForAdmin() {
+  const result = await query(
+    `SELECT id, full_name, email, role, is_email_verified, created_at, updated_at
+     FROM users
+     ORDER BY created_at DESC`
+  );
+  return result.rows as PublicUser[];
+}
+
+/**
+ * Count users grouped by role
+ */
+export async function countUsersByRole() {
+  const result = await query(
+    `SELECT role, COUNT(*) AS total
+     FROM users
+     GROUP BY role
+     ORDER BY total DESC, role ASC`
+  );
+
+  return (result.rows as Array<{ role: User['role']; total: number | string }>).map((row) => ({
+    role: row.role,
+    total: Number(row.total),
+  })) as UserRoleCount[];
 }
 
 /**
