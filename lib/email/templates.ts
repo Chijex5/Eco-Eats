@@ -1,25 +1,47 @@
-function shell(content: string, preheader: string) {
+const brand = {
+  primary: '#0B6E4F',
+  primarySoft: '#EAF8F1',
+  ink: '#102A43',
+  body: '#334E68',
+  muted: '#627D98',
+  border: '#D9E2EC',
+  panel: '#F8FAFC',
+  canvas: '#F2F5F8',
+};
+
+type ShellOptions = {
+  preheader: string;
+  eyebrow: string;
+  heading: string;
+  intro?: string;
+  body: string;
+  callout?: string;
+};
+
+function shell({ preheader, eyebrow, heading, intro, body, callout }: ShellOptions) {
   return `
-  <div style="margin:0;padding:0;background:#EEF2F6;font-family:Inter,Arial,sans-serif;color:#102A43;">
+  <div style="margin:0;padding:0;background:${brand.canvas};font-family:Inter,Segoe UI,Arial,sans-serif;color:${brand.ink};">
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preheader}</div>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:40px 16px;background:#EEF2F6;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:44px 16px;background:${brand.canvas};">
       <tr>
         <td align="center">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#FFFFFF;border:1px solid #D9E2EC;border-radius:18px;overflow:hidden;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px;background:#FFFFFF;border:1px solid ${brand.border};border-radius:22px;overflow:hidden;">
             <tr>
-              <td style="background:#0B6E4F;padding:28px 32px;color:#FFFFFF;">
-                <p style="margin:0;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;opacity:0.9;">EcoEats</p>
-                <p style="margin:8px 0 0;font-size:24px;line-height:1.2;font-weight:700;">Updates from your EcoEats account</p>
+              <td style="padding:36px 38px 30px;background:linear-gradient(180deg, #FFFFFF 0%, #FBFDFC 100%);border-bottom:1px solid ${brand.border};">
+                <p style="margin:0 0 16px;font-size:12px;line-height:1;letter-spacing:0.12em;text-transform:uppercase;color:${brand.primary};font-weight:700;">${eyebrow}</p>
+                <h1 style="margin:0;font-size:34px;line-height:1.2;font-weight:700;color:${brand.ink};">${heading}</h1>
+                ${intro ? `<p style="margin:18px 0 0;font-size:17px;line-height:1.9;color:${brand.body};">${intro}</p>` : ''}
               </td>
             </tr>
             <tr>
-              <td style="padding:36px 32px;line-height:1.75;font-size:16px;">
-                ${content}
+              <td style="padding:34px 38px 38px;font-size:16px;line-height:1.8;color:${brand.body};">
+                ${body}
               </td>
             </tr>
+            ${callout ? `<tr><td style="padding:0 38px 32px;"><div style="padding:16px 18px;border:1px solid ${brand.border};border-radius:12px;background:${brand.panel};font-size:14px;line-height:1.7;color:${brand.muted};">${callout}</div></td></tr>` : ''}
             <tr>
-              <td style="padding:0 32px 32px;font-size:13px;line-height:1.7;color:#627D98;">
-                Need help? Reply to this email and our team will assist you.
+              <td style="padding:0 38px 36px;font-size:13px;line-height:1.8;color:${brand.muted};">
+                You are receiving this email because of activity on your EcoEats account.
               </td>
             </tr>
           </table>
@@ -29,74 +51,93 @@ function shell(content: string, preheader: string) {
   </div>`;
 }
 
-function noticeTemplate(title: string, intro: string, lines: string[], footer?: string) {
-  const details = lines
+function detailRows(lines: string[]) {
+  return lines
     .map(
-      (line) =>
-        `<li style="margin:0 0 12px;padding:0 0 12px;border-bottom:1px solid #E4E7EB;font-size:15px;line-height:1.6;color:#334E68;">${line}</li>`
+      (line, index) =>
+        `<tr><td style="padding:${index === 0 ? '0 0 18px' : '18px 0'};font-size:16px;line-height:1.7;color:${brand.body};border-bottom:${index === lines.length - 1 ? 'none' : `1px solid ${brand.border}`};">${line}</td></tr>`
     )
     .join('');
-
-  return shell(
-    `<h2 style="margin:0 0 14px;font-size:30px;line-height:1.2;color:#102A43;">${title}</h2>
-     <p style="margin:0 0 24px;font-size:17px;line-height:1.8;color:#334E68;">${intro}</p>
-     <div style="margin:0 0 24px;padding:22px 24px;border:1px solid #D9E2EC;border-radius:14px;background:#F8FAFC;">
-       <ul style="margin:0;padding:0;list-style:none;">${details}</ul>
-     </div>
-     ${footer ? `<p style="margin:0;font-size:15px;line-height:1.8;color:#627D98;">${footer}</p>` : ''}`,
-    title
-  );
 }
 
+function detailsPanel(lines: string[]) {
+  return `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:24px 0 0;padding:0 24px;background:${brand.panel};border:1px solid ${brand.border};border-radius:14px;">${detailRows(lines)}</table>`;
+}
+
+function noticeTemplate(title: string, intro: string, lines: string[], footer?: string) {
+  const body = `
+    <p style="margin:0;font-size:17px;line-height:1.9;color:${brand.body};">${intro}</p>
+    ${detailsPanel(lines)}
+    ${footer ? `<p style="margin:24px 0 0;font-size:16px;line-height:1.8;color:${brand.muted};">${footer}</p>` : ''}
+  `;
+
+  return shell({
+    preheader: title,
+    eyebrow: 'EcoEats notification',
+    heading: title,
+    body,
+  });
+}
+
+function otpBlock(label: string, otp: string) {
+  return `
+    <div style="margin:30px 0;padding:30px 24px;border-radius:16px;border:1px solid ${brand.primary};background:${brand.primarySoft};text-align:center;">
+      <p style="margin:0 0 14px;font-size:12px;line-height:1;letter-spacing:0.1em;text-transform:uppercase;color:${brand.muted};font-weight:700;">${label}</p>
+      <p style="margin:0;font-size:48px;line-height:1.05;letter-spacing:12px;color:${brand.primary};font-weight:800;">${otp}</p>
+    </div>
+  `;
+}
 
 export function signupOtpTemplate(name: string, otp: string) {
   return {
     subject: 'Verify your EcoEats account',
-    html: shell(
-      `<p style="margin:0 0 16px;font-size:18px;">Hi ${name},</p>
-       <p style="margin:0 0 26px;font-size:17px;color:#334E68;">Welcome to EcoEats. Enter this one-time code to verify your email and complete your signup.</p>
-       <div style="margin:0 0 26px;padding:24px 20px;background:#F0FDF4;border:1px solid #0B6E4F;border-radius:14px;text-align:center;">
-         <p style="margin:0 0 10px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#486581;">Verification code</p>
-         <p style="margin:0;font-size:42px;line-height:1.1;letter-spacing:10px;font-weight:700;color:#0B6E4F;">${otp}</p>
-       </div>
-       <p style="margin:0 0 10px;font-size:15px;color:#486581;">This code expires in <strong>10 minutes</strong> and can only be used once.</p>
-       <p style="margin:0;font-size:15px;color:#627D98;">If you did not create an EcoEats account, you can safely ignore this email.</p>`,
-      `Your EcoEats signup verification code is ${otp}`
-    ),
+    html: shell({
+      preheader: `Your EcoEats signup verification code is ${otp}`,
+      eyebrow: 'Account verification',
+      heading: 'Confirm your email address',
+      intro: `Hi ${name}, welcome to EcoEats.`,
+      body: `
+        <p style="margin:0;font-size:17px;line-height:1.9;color:${brand.body};">Use the code below to verify your email and finish creating your account.</p>
+        ${otpBlock('Verification code', otp)}
+        <p style="margin:0;font-size:16px;line-height:1.8;color:${brand.body};">This code expires in <strong>10 minutes</strong> and works once.</p>
+      `,
+      callout: 'If you did not create an EcoEats account, you can ignore this message.',
+    }),
   };
 }
 
 export function passwordResetOtpTemplate(name: string, otp: string) {
   return {
     subject: 'Your EcoEats password reset code',
-    html: shell(
-      `<p style="margin:0 0 16px;font-size:18px;">Hi ${name},</p>
-       <p style="margin:0 0 26px;font-size:17px;color:#334E68;">Use the code below to reset your EcoEats password.</p>
-       <div style="margin:0 0 26px;padding:24px 20px;background:#F0FDF4;border:1px solid #0B6E4F;border-radius:14px;text-align:center;">
-         <p style="margin:0 0 10px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#486581;">Password reset code</p>
-         <p style="margin:0;font-size:42px;line-height:1.1;letter-spacing:10px;font-weight:700;color:#0B6E4F;">${otp}</p>
-       </div>
-       <p style="margin:0 0 10px;font-size:15px;color:#486581;">This code expires in <strong>10 minutes</strong> and can only be used once.</p>
-       <p style="margin:0;font-size:15px;color:#627D98;">If you did not request this change, you can ignore this message.</p>`,
-      `Your EcoEats reset code is ${otp}`
-    ),
+    html: shell({
+      preheader: `Your EcoEats reset code is ${otp}`,
+      eyebrow: 'Password security',
+      heading: 'Reset your password',
+      intro: `Hi ${name}, we received a request to reset your EcoEats password.`,
+      body: `
+        <p style="margin:0;font-size:17px;line-height:1.9;color:${brand.body};">Enter this code in the app to continue securely.</p>
+        ${otpBlock('Password reset code', otp)}
+        <p style="margin:0;font-size:16px;line-height:1.8;color:${brand.body};">This code expires in <strong>10 minutes</strong> and works once.</p>
+      `,
+      callout: 'If you did not request a password reset, please ignore this email. Your account is still secure.',
+    }),
   };
 }
 
 export function adminInviteTemplate(name: string, email: string, tempPassword: string) {
   return {
     subject: 'You have been invited as an EcoEats admin',
-    html: shell(
-      `<p style="margin:0 0 16px;font-size:18px;">Hi ${name},</p>
-       <p style="margin:0 0 24px;font-size:17px;color:#334E68;">An EcoEats account has been created for you with admin access.</p>
-       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 20px;border:1px solid #D9E2EC;border-radius:14px;background:#F8FAFC;overflow:hidden;">
-         <tr><td style="padding:16px 18px;border-bottom:1px solid #D9E2EC;font-size:15px;"><strong>Email:</strong> ${email}</td></tr>
-         <tr><td style="padding:16px 18px;font-size:15px;"><strong>Temporary password:</strong> ${tempPassword}</td></tr>
-       </table>
-       <p style="margin:0 0 10px;font-size:15px;color:#486581;">Sign in and change your password immediately.</p>
-       <p style="margin:0;font-size:15px;color:#627D98;">Login URL: https://ecoeatsng.com/auth/login</p>`,
-      'Your EcoEats admin invitation details'
-    ),
+    html: shell({
+      preheader: 'Your EcoEats admin invitation details',
+      eyebrow: 'Admin invitation',
+      heading: 'Your admin access is ready',
+      intro: `Hi ${name}, an EcoEats admin account has been created for you.`,
+      body: `
+        <p style="margin:0;font-size:17px;line-height:1.9;color:${brand.body};">Use the credentials below to sign in and update your password immediately.</p>
+        ${detailsPanel([`<strong>Email:</strong> ${email}`, `<strong>Temporary password:</strong> ${tempPassword}`, '<strong>Login:</strong> https://ecoeatsng.com/auth/login'])}
+      `,
+      callout: 'For security, share these details only through approved internal channels.',
+    }),
   };
 }
 
@@ -105,9 +146,9 @@ export function voucherIssuedTemplate(name: string, amountNgn: string, code: str
     subject: 'Your EcoEats voucher has been approved',
     html: noticeTemplate(
       `Hi ${name}, your voucher is ready`,
-      'Your support request was approved and a voucher was issued to your account.',
-      [`Voucher code: ${code}`, `Value: ₦${amountNgn}`, `Expires: ${expires}`],
-      'You can use this voucher in the EcoEats app.'
+      'Your support request was approved and a voucher has now been issued to your account.',
+      [`Voucher code: <strong>${code}</strong>`, `Voucher value: <strong>₦${amountNgn}</strong>`, `Expires: <strong>${expires}</strong>`],
+      'Open your EcoEats dashboard to redeem your voucher.'
     ),
   };
 }
@@ -119,9 +160,9 @@ export function supportRequestDecisionTemplate(name: string, status: 'APPROVED' 
     html: noticeTemplate(
       `Hi ${name}, your ${requestType.toLowerCase()} request is ${approved ? 'approved' : 'declined'}`,
       approved
-        ? 'Your request has been reviewed and approved.'
+        ? 'Your request has been reviewed and approved by the EcoEats team.'
         : 'Your request has been reviewed and was not approved this time.',
-      [approved ? 'You can now continue from your dashboard.' : 'You may submit another request with updated details.']
+      [approved ? 'You can now continue from your dashboard.' : 'You can submit another request after updating your details.']
     ),
   };
 }
@@ -131,9 +172,9 @@ export function newSurplusBroadcastTemplate(partnerName: string, title: string, 
     subject: 'New food pack surplus is now available',
     html: noticeTemplate(
       'New surplus posted for beneficiaries',
-      `${partnerName} just posted a new surplus listing.`,
-      [`Listing: ${title}`, `Quantity: ${quantity}`, `Pickup deadline: ${pickupDeadline}`],
-      'Open your EcoEats beneficiary dashboard to claim quickly.'
+      `${partnerName} posted a new surplus listing. Claim quickly while stock is available.`,
+      [`Listing: <strong>${title}</strong>`, `Quantity available: <strong>${quantity}</strong>`, `Pickup deadline: <strong>${pickupDeadline}</strong>`],
+      'Open your beneficiary dashboard now to claim this listing.'
     ),
   };
 }
@@ -142,10 +183,10 @@ export function surplusClaimedTemplate(name: string, title: string, pickupCode: 
   return {
     subject: 'Your food pack claim is confirmed',
     html: noticeTemplate(
-      `Hi ${name}, your claim is saved`,
-      'Your surplus food pack claim has been recorded.',
-      [`Listing: ${title}`, `Pickup code: ${pickupCode}`],
-      'Show this code to partner staff during pickup.'
+      `Hi ${name}, your claim is confirmed`,
+      'Your food pack claim has been recorded successfully.',
+      [`Listing: <strong>${title}</strong>`, `Pickup code: <strong>${pickupCode}</strong>`],
+      'Present your pickup code to partner staff during collection.'
     ),
   };
 }
@@ -155,8 +196,8 @@ export function surplusPickedUpTemplate(name: string, pickupCode: string) {
     subject: 'Food pack pickup completed',
     html: noticeTemplate(
       `Hi ${name}, pickup completed`,
-      'Your surplus pickup was confirmed by partner staff.',
-      [`Pickup code: ${pickupCode}`]
+      'Your surplus pickup has been confirmed by partner staff.',
+      [`Pickup code used: <strong>${pickupCode}</strong>`]
     ),
   };
 }
@@ -164,7 +205,11 @@ export function surplusPickedUpTemplate(name: string, pickupCode: string) {
 export function voucherRedeemedTemplate(name: string, code: string) {
   return {
     subject: 'Your voucher has been redeemed',
-    html: noticeTemplate(`Hi ${name}, voucher redeemed`, 'Your voucher redemption was successful.', [`Voucher code: ${code}`]),
+    html: noticeTemplate(
+      `Hi ${name}, voucher redeemed`,
+      'Your voucher redemption was completed successfully.',
+      [`Voucher code: <strong>${code}</strong>`]
+    ),
   };
 }
 
@@ -173,9 +218,8 @@ export function donationReceiptTemplate(name: string, amountNgn: string, donatio
     subject: 'Thank you for supporting EcoEats',
     html: noticeTemplate(
       `Thank you, ${name}`,
-      'Your donation was received successfully.',
-      [`Amount: ₦${amountNgn}`, `Category: ${donationType}`],
-      'Your support helps us fund meals, vouchers, and food packs.'
+      'Your donation has been received successfully. Your support helps us extend food access across communities.',
+      [`Amount received: <strong>₦${amountNgn}</strong>`, `Category: <strong>${donationType}</strong>`]
     ),
   };
 }
