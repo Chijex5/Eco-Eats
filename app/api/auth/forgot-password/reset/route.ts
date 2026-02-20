@@ -35,9 +35,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'OTP has expired.' }, { status: 400 });
     }
 
+    console.log('Forgot password reset attempt:', { userId: user.id, email: user.email, otpHash: record.otp_hash, attempts: record.attempts });
+
     if (record.attempts >= MAX_OTP_ATTEMPTS) {
       return NextResponse.json({ error: 'Too many failed attempts. Please request a new OTP.' }, { status: 429 });
     }
+
+    console.log('Comparing OTP:', { providedOtp: otp, otpHash: record.otp_hash });
 
     if (hashOtp(otp) !== record.otp_hash) {
       const attempts = await incrementOtpAttempts(record.id);
@@ -48,13 +52,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: `Invalid OTP. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.` }, { status: 400 });
     }
 
+    console.log('OTP verified successfully for user:', { userId: user.id, email: user.email });
+
     const passwordHash = await hashPassword(newPassword);
     await updateUserPassword(user.id, passwordHash, true);
     await consumeOtp(record.id);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Forgot password reset error:', error);
+    console.log('Forgot password reset error:', error);
     return NextResponse.json({ error: 'Failed to reset password.' }, { status: 500 });
   }
 }
