@@ -110,8 +110,8 @@ export async function countUsersByRole() {
      ORDER BY total DESC, role ASC`
   );
 
-  return result.rows.map((row) => ({
-    role: row.role as User['role'],
+  return (result.rows as Array<{ role: User['role']; total: number | string }>).map((row) => ({
+    role: row.role,
     total: Number(row.total),
   })) as UserRoleCount[];
 }
