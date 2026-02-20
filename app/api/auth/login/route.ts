@@ -5,6 +5,11 @@ import { applySessionCookie } from '@/lib/auth/cookies';
 import { roleHomePath } from '@/lib/auth/roles';
 import { signSessionToken } from '@/lib/auth/jwt';
 import { isBeneficiaryProfileComplete } from '@/lib/db/beneficiary-profiles';
+import { createOtp, invalidateOtps } from '@/lib/db/auth-otp';
+import { generateOtpCode, hashOtp } from '@/lib/auth/otp';
+import { sendSignupOtpEmail } from '@/lib/email/service';
+
+const OTP_TTL_MINUTES = 10;
 
 export async function POST(request: Request) {
   try {
@@ -27,8 +32,18 @@ export async function POST(request: Request) {
     }
 
     if (!user.is_email_verified) {
+      await invalidateOtps(user.id, 'PASSWORD_RESET');
+      const otp = generateOtpCode();
+      const expiresAt = new Date(Date.now() + OTP_TTL_MINUTES * 60 * 1000);
+      await createOtp({ userId: user.id, purpose: 'PASSWORD_RESET', otpHash: hashOtp(otp), expiresAt });
+      await sendSignupOtpEmail(user.email, user.full_name, otp);
+
       return NextResponse.json(
-        { error: 'Please verify your email with the OTP sent during signup.', needs_verification: true },
+        {
+          error: 'Please verify your email to continue. We sent a fresh OTP to your inbox.',
+          needs_verification: true,
+          email: user.email,
+        },
         { status: 403 }
       );
     }
